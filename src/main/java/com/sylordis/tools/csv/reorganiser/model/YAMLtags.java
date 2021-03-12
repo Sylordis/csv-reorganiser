@@ -11,7 +11,7 @@ public final class YAMLtags {
 	/**
 	 * Main tag at root for all operations
 	 */
-	public static final String OPDEF_MAIN_KEY = "structure";
+	public static final String OPDEF_ROOT_KEY = "structure";
 	/**
 	 * Necessary tag for all operations
 	 */

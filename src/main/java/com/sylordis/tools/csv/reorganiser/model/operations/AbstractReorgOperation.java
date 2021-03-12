@@ -2,6 +2,7 @@ package com.sylordis.tools.csv.reorganiser.model.operations;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -64,9 +65,19 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 
 	/**
 	 * Hidden setup of the operation, setting all properties to be given using
-	 * {@link #addProperty(String, String)}.
+	 * {@link #addProperty(String, String)}. If not overridden, this method will get all annotations
+	 * {@link OperationRequiredProperty} to automatically fill the properties map.
 	 */
-	protected abstract void setup();
+	protected void setup() {
+		logger.debug("Setting up");
+		OperationRequiredProperty[] properties = this.getClass().getAnnotationsByType(OperationRequiredProperty.class);
+		logger.debug("class={} annotations={}", this.getClass(), Arrays.toString(properties));
+		for (OperationRequiredProperty prop : properties) {
+			logger.debug("Setting property {} linking to field {}", prop.name(), prop.field());
+			addProperty(prop.name(), prop.field());
+		}
+		logger.debug("setup complete: {}", this.properties);
+	}
 
 	/**
 	 * Adds a mandatory property to the innate configuration of this operation.

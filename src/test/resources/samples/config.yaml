@@ -1,0 +1,13 @@
+structure:
+- column: Name
+  source: first_name
+- column: Identifier
+  source: id
+- column: something
+  value: s
+- column: Gender
+  operation:
+    type: regreplace
+    source: gender
+    pattern: "(.).*"
+    replace: "$1"

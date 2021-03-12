@@ -3,40 +3,32 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
+import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * "Value" (type = value, constant) operation returns a constant value.
- *
- * Required properties:
- * <dl>
- * <dt>value</dt>
- * <dd>Constant value to output</dd>
- * </dl>
  *
  * @author sylordis
  * @since 0.1
  *
  */
+@OperationRequiredProperty(name = "value", field = "value", description = "Constant value to output")
 public class ValueOperation extends AbstractReorgOperation {
 
 	/**
 	 * Required properties for value specification.
 	 */
 	public static final String OPDATA_VALUE = "value";
-	/**
-	 * Fixed configuration for requirement properties names.
-	 */
-	public static final String[] DATA_REQUIRED_PROPS = { OPDATA_VALUE };
 
 	/**
 	 * Index of the source column.
 	 */
 	private String value;
 
-	@Override
-	protected void setup() {
-		addProperty(OPDATA_VALUE, OPDATA_VALUE);
-	}
+	//	@Override
+	//	protected void setup() {
+	//		addProperty(OPDATA_VALUE, OPDATA_VALUE);
+	//	}
 
 	/**
 	 * Constructs a new basic value extraction operation.

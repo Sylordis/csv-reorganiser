@@ -3,25 +3,19 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
+import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * Regular expression Replacement (type = "RegReplace") applies a regular expression replacement to
  * the value of a column. The base string will be returned if the pattern cannot be found.
  *
- * Required properties:
- * <dl>
- * <dt>source</dt>
- * <dd>Column of the source to take the data from.</dd>
- * <dt>pattern</dt>
- * <dd>Pattern to replace in the value.</dd>
- * <dt>replacement</dt>
- * <dd>Replacement for the pattern.</dd>
- * </dl>
- *
  * @author sylordis
  * @since 0.1
  *
  */
+@OperationRequiredProperty(name = "source", field = "srcColumn", description = "Column of the source to take the data from")
+@OperationRequiredProperty(name = "pattern", field = "pattern", description = "Pattern to replace in the value")
+@OperationRequiredProperty(name = "replace", field = "replacement", description = "Replacement for the pattern")
 public class RegReplaceOperation extends AbstractReorgOperation {
 
 	/**
@@ -44,10 +38,6 @@ public class RegReplaceOperation extends AbstractReorgOperation {
 	 * Required properties for source specification.
 	 */
 	public static final String OPDATA_REPLACEMENT_FIELD = "replacement";
-	/**
-	 * Fixed configuration for requirement properties names.
-	 */
-	public static final String[] DATA_REQUIRED_PROPS = { OPDATA_SOURCE_ID, OPDATA_PATTERN_ID, OPDATA_REPLACEMENT_ID };
 
 	/**
 	 * Pattern to search for.
@@ -62,12 +52,12 @@ public class RegReplaceOperation extends AbstractReorgOperation {
 	 */
 	private String srcColumn;
 
-	@Override
-	protected void setup() {
-		addProperty(OPDATA_SOURCE_ID, OPDATA_SOURCE_FIELD);
-		addProperty(OPDATA_PATTERN_ID, OPDATA_PATTERN_ID);
-		addProperty(OPDATA_REPLACEMENT_ID, OPDATA_REPLACEMENT_FIELD);
-	}
+	//	@Override
+	//	protected void setup() {
+	//		addProperty(OPDATA_SOURCE_ID, OPDATA_SOURCE_FIELD);
+	//		addProperty(OPDATA_PATTERN_ID, OPDATA_PATTERN_ID);
+	//		addProperty(OPDATA_REPLACEMENT_ID, OPDATA_REPLACEMENT_FIELD);
+	//	}
 
 	/**
 	 * Constructs a fully configured new Regular Expression Replacement operation.

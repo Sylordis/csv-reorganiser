@@ -20,10 +20,12 @@ It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
 * [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/)
 * [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
+* [Apache Commons IO](https://commons.apache.org/proper/commons-io/)
 * [Apache Log4J2](https://logging.apache.org/log4j/2.x/)
 
 Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
+* [Mockito](https://site.mockito.org/)
 * [Hamcrest 2](http://hamcrest.org/JavaHamcrest)
 
 Check the `pom.xml` file for dependencies versions.
@@ -36,7 +38,7 @@ Follow typical Maven goals regarding your intention (`compile`, `package`, `inst
 ### Installing
 
 Just download the jar file associated to the release or run `mvn package` (at least) from the repository.
-Jar file should be provided in `target/` folder under the name `csv-reorganiser-<VERSION>.jar`
+Jar file should be provided under `target/csv-reorganiser-<VERSION>.jar`
 
 ### Executing program
 
@@ -50,6 +52,12 @@ With:
 * `yaml-cfg` the YAML configuration file to be used for the reorganisation. Examples are provided in the `examples/` folder.
 * `csv-source` the base CSV file to be reorganised.
 * `csv-target` the target file to be written. If existing, it will be overwritten.
+
+### Executing unit tests
+
+A simple `mvn test` should suffice. Check the wiki for known issues. This project has been built with the idea of achieving at least 80% of code coverage through unit and functional tests.
+
+If you want to skip unit tests to package or install, run command for installing (see before) with option `-DskipTests`.
 
 ## Help
 
@@ -72,3 +80,6 @@ This project is licensed under the Apache License v2 - see the LICENSE file for 
 ## Links
 
 Project website: <https://github.com/sylordis/csv-reorganiser>
+
+# Known issues
+Check the [wiki/Known issues](https://github.com/Sylordis/csv-reorganiser/wiki/Known-issues).

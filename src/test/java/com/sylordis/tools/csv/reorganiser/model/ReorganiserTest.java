@@ -1,24 +1,43 @@
 package com.sylordis.tools.csv.reorganiser.model;
 
+import static com.sylordis.tools.csv.reorganiser.test.SamplesFilesConstants.CONFIG_CONTENT;
+import static com.sylordis.tools.csv.reorganiser.test.SamplesFilesConstants.SOURCE_CONTENT;
+import static com.sylordis.tools.csv.reorganiser.test.SamplesFilesConstants.TARGET_CONTENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.sylordis.tools.csv.reorganiser.model.exceptions.ConfigurationException;
+import com.sylordis.tools.csv.reorganiser.model.exceptions.ReorganiserRuntimeException;
+import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
 
 /**
  * Test suite for {@link Reorganiser} class.
@@ -29,10 +48,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ReorganiserTest {
 
-	/**
-	 * Test source file
-	 */
-	private final String SOURCE_CONTENT = "people.csv";
 
 	/**
 	 * Instance under test (reset during setup).
@@ -41,7 +56,14 @@ class ReorganiserTest {
 	/**
 	 * Mock instance of the configuration.
 	 */
+	@Mock
 	private ReorgConfiguration cfg;
+	/**
+	 * Mock instance of the operation.
+	 */
+	@Mock
+	private AbstractReorgOperation op;
+
 	@TempDir
 	File workingDir;
 	private File srcFile;
@@ -49,14 +71,9 @@ class ReorganiserTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		cfg = new ReorgConfiguration();
 		srcFile = File.createTempFile("srcFile", null, workingDir);
 		targetFile = File.createTempFile("targetFile", null, workingDir);
 		reorg = new Reorganiser(srcFile, targetFile, cfg);
-		try (OutputStream stream = new FileOutputStream(srcFile);
-				InputStream istream = ReorganiserTest.class.getClassLoader().getResourceAsStream(SOURCE_CONTENT)) {
-			stream.write(istream.readAllBytes());
-		}
 	}
 
 	@AfterEach
@@ -66,7 +83,21 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#Reorganiser(java.io.File, java.io.File, com.sylordis.tools.csv.reorganiser.model.ReorgConfiguration)}.
+	 * Fills {@link #srcFile} with sample data from {@link #SOURCE_CONTENT}.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	private void fillFileWithSamples(File file, String samplesStream) throws IOException, FileNotFoundException {
+		try (OutputStream stream = new FileOutputStream(file);
+				InputStream istream = ReorganiserTest.class.getClassLoader().getResourceAsStream(samplesStream)) {
+			stream.write(istream.readAllBytes());
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#Reorganiser(java.io.File, java.io.File, com.sylordis.tools.csv.reorganiser.model.ReorgConfiguration)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -88,8 +119,8 @@ class ReorganiserTest {
 	 * @throws IOException
 	 */
 	@Test
-	void testSetSrcFile() throws IOException {
-		File file = File.createTempFile("aNewSrcFile", null, workingDir);
+	void testSetSrcFile(TestInfo testInfo) throws IOException {
+		File file = File.createTempFile(testInfo.getDisplayName(), null, workingDir);
 		reorg.setSrcFile(file);
 		assertEquals(file, reorg.getSrcFile(), "Source file should be equal to the one set");
 	}
@@ -119,8 +150,8 @@ class ReorganiserTest {
 	 * @throws IOException
 	 */
 	@Test
-	void testSetTargetFile() throws IOException {
-		File file = File.createTempFile("aNewTargetFile", null, workingDir);
+	void testSetTargetFile(TestInfo testInfo) throws IOException {
+		File file = File.createTempFile(testInfo.getDisplayName(), null, workingDir);
 		reorg.setTargetFile(file);
 		assertEquals(file, reorg.getTargetFile(), "Target file should be equal to the one set");
 	}
@@ -167,16 +198,31 @@ class ReorganiserTest {
 	}
 
 	/*
+	 * ==========================================
 	 * Functional tests
+	 * ==========================================
 	 */
 
 	/**
 	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#reorganise()} when an
 	 * operation fails to process.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	@Test
-	void testReorganiseWithFailedOperation() {
-		fail("Not yet implemented");
+	@Tag("FunctionalTest")
+	void testReorganiseWithFailedOperation() throws FileNotFoundException, IOException {
+		List<AbstractReorgOperation> operations = new ArrayList<>();
+		when(op.getName()).thenReturn("Failure");
+		when(op.apply(any(CSVRecord.class))).thenThrow(new IllegalArgumentException("trooper"));
+		operations.add(op);
+		when(cfg.getOperations()).thenReturn(operations);
+		fillFileWithSamples(srcFile, SOURCE_CONTENT);
+		assertThrows(ReorganiserRuntimeException.class, reorg::reorganise,
+				"An exception should be thrown when an operation is failing.");
+		assertTrue(targetFile.length() > 0L,
+				"Target file should have generated content (comment + header, plus some records before failing)");
 	}
 
 	/**
@@ -184,8 +230,34 @@ class ReorganiserTest {
 	 * the source is not reachable.
 	 */
 	@Test
+	@Tag("FunctionalTest")
 	void testReorganiseWithUnreachableSource() {
-		fail("Not yet implemented");
+		List<AbstractReorgOperation> operations = new ArrayList<>();
+		operations.add(op);
+		when(cfg.getOperations()).thenReturn(operations);
+		reorg.setSrcFile(new File("I/do/not/exist"));
+		assertThrows(FileNotFoundException.class, reorg::reorganise, "A FileNotFound exception should be thrown");
+		assertEquals(0L, targetFile.length(), "File should not be written in if source is unreachable");
+	}
+
+	/**
+	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#reorganise()} when
+	 * the source is not readable.
+	 *
+	 * @throws IOException
+	 */
+	@Test
+	@Tag("FunctionalTest")
+	void testReorganiseWithUnreadableSource(TestInfo info) throws IOException {
+		List<AbstractReorgOperation> operations = new ArrayList<>();
+		operations.add(op);
+		when(cfg.getOperations()).thenReturn(operations);
+		final File sourceFile = File.createTempFile(info.getDisplayName(), null, workingDir);
+		sourceFile.setReadable(false, false);
+		reorg.setSrcFile(sourceFile);
+		assertThrows(IOException.class, reorg::reorganise,
+				"An IO exception should be thrown because the file cannot be read");
+		assertEquals(0L, targetFile.length(), "File should not be written in if the source is unreadable");
 	}
 
 	/**
@@ -193,17 +265,47 @@ class ReorganiserTest {
 	 * the target file is not reachable.
 	 */
 	@Test
+	@Tag("FunctionalTest")
 	void testReorganiseWithUnreachableTarget() {
-		fail("Not yet implemented");
+		List<AbstractReorgOperation> operations = new ArrayList<>();
+		operations.add(op);
+		when(cfg.getOperations()).thenReturn(operations);
+		reorg.setTargetFile(new File("I/do/not/exist"));
+		assertThrows(FileNotFoundException.class, reorg::reorganise, "A FileNotFound exception should be thrown");
 	}
 
 	/**
 	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#reorganise()} when
-	 * the configuration is not set at all.
+	 * the target file is not reachable.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	@Test
-	void testReorganiseWithEmptyConfiguration() {
-		fail("Not yet implemented");
+	@Tag("FunctionalTest")
+	void testReorganiseWithUnwritableTarget() throws FileNotFoundException, IOException {
+		List<AbstractReorgOperation> operations = new ArrayList<>();
+		operations.add(op);
+		when(cfg.getOperations()).thenReturn(operations);
+		targetFile.setWritable(false);
+		assertThrows(IOException.class, reorg::reorganise, "An exception should be thrown as the file is not writable");
+	}
+
+	/**
+	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#reorganise()} when
+	 * the configuration is not null but empty. An error should be triggered as copying the file is
+	 * useless.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	@Tag("FunctionalTest")
+	void testReorganiseWithEmptyConfiguration() throws FileNotFoundException, IOException {
+		when(cfg.getOperations()).thenReturn(new ArrayList<AbstractReorgOperation>());
+		assertThrows(ConfigurationException.class, reorg::reorganise, "A Configuration exception should be thrown");
+		assertTrue(reorg.getCfg().getOperations().isEmpty());
+		assertEquals(0L, targetFile.length(), "File should not be written in if no configuration has been done");
 	}
 
 	/**
@@ -211,20 +313,50 @@ class ReorganiserTest {
 	 * null configuration object is set.
 	 */
 	@Test
+	@Tag("FunctionalTest")
 	void testReorganiseWithNullConfiguration() {
-		fail("Not yet implemented");
+		reorg.setCfg(null);
+		assertThrows(ConfigurationException.class, reorg::reorganise, "A Configuration exception should be thrown");
+		assertEquals(0L, targetFile.length(), "File should not be written in if a null configuration is provided");
 	}
 
 	/**
 	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.Reorganiser#reorganise()}.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	@Test
-	void testReorganise() {
-		// Setup configuration
+	@Tag("FunctionalTest")
+	void testReorganise(TestInfo testinfo) throws FileNotFoundException, IOException {
+		// Setup files and samples
+		File sourceBackup = File.createTempFile(testinfo.getDisplayName() + "-srcbkp", null, workingDir);
+		fillFileWithSamples(srcFile, SOURCE_CONTENT);
+		fillFileWithSamples(sourceBackup, SOURCE_CONTENT);
+		File expectedFile = File.createTempFile(testinfo.getDisplayName() + "-tgt", null, workingDir);
+		fillFileWithSamples(expectedFile, TARGET_CONTENT);
+		File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
+		fillFileWithSamples(configFile, CONFIG_CONTENT);
 		// Reorganise
-		// Check source file hasn't changed
-		// Check target file content
-		fail("Not yet implemented");
+		cfg = ReorgConfiguration.fromFile(configFile);
+		reorg.setCfg(cfg);
+		reorg.reorganise();
+		// Checks
+		assertTrue(FileUtils.contentEquals(sourceBackup, srcFile), "Source file should not be modified");
+		try (BufferedReader readerExpected = new BufferedReader(new FileReader(expectedFile));
+				BufferedReader readerTarget = new BufferedReader(new FileReader(targetFile))) {
+			String lineExpected = readerExpected.readLine(), lineTarget = readerTarget.readLine();
+			assertTrue(lineTarget.matches(Reorganiser.TARGET_COMMENT.replace("%DATE", ".*")),
+					"First line of target file should be a comment");
+			while ((lineExpected = readerExpected.readLine()) != null
+					&& (lineTarget = readerTarget.readLine()) != null) {
+				assertEquals(lineExpected, lineTarget, "Target and expected files should be equal");
+			}
+		}
+		// Clean up
+		sourceBackup.delete();
+		expectedFile.delete();
+		configFile.delete();
 	}
 
 }

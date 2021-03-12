@@ -35,8 +35,11 @@ public final class CSVReorganiserMain {
 	}
 
 	/**
+	 * Runs the activity of taking the input, error checking it and running the Reorganiser model to
+	 * perform the required operations.
 	 *
-	 * @param args
+	 * @param args command line arguments
+	 * @see #usage()
 	 */
 	public void reorganise(String[] args) {
 		logger.debug("Starting {} {}", Arrays.toString(args), args.length);
@@ -98,7 +101,7 @@ public final class CSVReorganiserMain {
 	 * Prints basic usage.
 	 */
 	public void usage() {
-		logger.info("usage: <src> <target> <cfgfile>");
+		logger.info("usage: <cfgfile> <src> <target>");
 	}
 
 	/**

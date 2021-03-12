@@ -72,13 +72,14 @@ class ValueOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#setup()}.
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#setup()}.
 	 */
 	@Test
 	void testSetup() {
 		final Collection<String> keys = bop.getRequiredProperties();
 		assertTrue(!keys.isEmpty(), "List of required properties should not be empty");
-		assertIterableEquals(Arrays.asList(ValueOperation.DATA_REQUIRED_PROPS), keys,
+		assertIterableEquals(Arrays.asList(new String[] { ValueOperation.OPDATA_VALUE }), keys,
 				"Setup should configure all required properties.");
 	}
 
@@ -139,7 +140,8 @@ class ValueOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#ValueOperation(java.lang.String, java.lang.String)}.
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#ValueOperation(java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -150,7 +152,8 @@ class ValueOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#ValueOperation(java.lang.String)}.
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#ValueOperation(java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -161,7 +164,8 @@ class ValueOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#toString()}.
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation#toString()}.
 	 */
 	@Test
 	void testToString() {

@@ -27,7 +27,7 @@ import com.sylordis.tools.csv.reorganiser.test.defs.WrongFakeOperation;
 import com.sylordis.tools.csv.reorganiser.test.matchers.MapContainsAllMatcher;
 
 /**
- * Test suite for {@link ReorgOperationBuilder}
+ * Test suite for {@link ReorgOperationBuilder}.
  *
  * @author sylordis
  *

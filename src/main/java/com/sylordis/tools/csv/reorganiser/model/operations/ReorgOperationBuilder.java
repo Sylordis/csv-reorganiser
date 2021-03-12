@@ -21,7 +21,7 @@ import com.sylordis.tools.csv.reorganiser.utils.YAMLUtils;
  * Auto builder for all reorganisation operations, basing its values and configuration upon an
  * operation dictionary that can be set via the following methods:
  * <ul>
- * <li>{@link #withDefaultConfiguration()}</li>
+ * <li>{@link #withDefaultConfiguration()}: takes all entries from {@link ReorgOperationType}</li>
  * <li>{@link #withCustomConfiguration(Map)}</li>
  * <li>{@link #addCustomConfiguration(Map)}</li>
  * <li>{@link #withReflectedConfiguration()} (future release)</li>

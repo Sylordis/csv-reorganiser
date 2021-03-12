@@ -11,7 +11,9 @@ import com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation;
 /**
  * All different reorganisation operation types. Each enumeration value possess a field "javaClass"
  * made to provide a way to call the constructor via
- * {@link Class#getDeclaredConstructors()}.newInstance().
+ * {@link Class#getDeclaredConstructors()}.newInstance() used by
+ * {@link ReorgOperationBuilder#fromData(String, Map)}. This is the base dictionary loaded when
+ * calling {@link ReorgOperationBuilder#withDefaultConfiguration()}.
  *
  * @author sylordis
  *

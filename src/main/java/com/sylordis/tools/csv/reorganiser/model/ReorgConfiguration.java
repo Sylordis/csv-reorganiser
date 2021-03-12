@@ -1,9 +1,9 @@
 package com.sylordis.tools.csv.reorganiser.model;
 
 import static com.sylordis.tools.csv.reorganiser.model.YAMLtags.OPDEF_COLUMN_KEY;
-import static com.sylordis.tools.csv.reorganiser.model.YAMLtags.OPDEF_MAIN_KEY;
 import static com.sylordis.tools.csv.reorganiser.model.YAMLtags.OPDEF_OPERATIONS_KEY;
 import static com.sylordis.tools.csv.reorganiser.model.YAMLtags.OPDEF_OPERATION_KEY;
+import static com.sylordis.tools.csv.reorganiser.model.YAMLtags.OPDEF_ROOT_KEY;
 import static com.sylordis.tools.csv.reorganiser.utils.YAMLUtils.get;
 import static com.sylordis.tools.csv.reorganiser.utils.YAMLUtils.strValue;
 
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.Message;
@@ -43,7 +44,7 @@ public class ReorgConfiguration {
 	 */
 	private final Logger logger;
 	/**
-	 * List of operations to perform for reorganisation.
+	 * List of operations to perform for reorganisation. It can be empty, but never null.
 	 */
 	private final List<AbstractReorgOperation> operations;
 
@@ -61,7 +62,7 @@ public class ReorgConfiguration {
 	 * @param cfgFile yaml configuration file to load
 	 * @throws FileNotFoundException        if no file is found
 	 * @throws IOException                  if something goes wrong while reading the configuration file
-	 * @throws ConfigurationImportException if the configuration is wrong
+	 * @throws ConfigurationImportException if the configuration is wrong or empty
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadFromFile(File cfgFile) throws FileNotFoundException, IOException, ConfigurationImportException {
@@ -69,26 +70,31 @@ public class ReorgConfiguration {
 		Yaml yamlFile = new Yaml();
 		try (FileInputStream yamlStream = new FileInputStream(cfgFile)) {
 			Map<String, Object> root = yamlFile.load(yamlStream);
+			if (root == null)
+				throw new ConfigurationImportException("Configuration file is empty");
 			logger.debug("Loading yaml file {}: {}", cfgFile.getAbsolutePath(), root);
 			// Check that structure tag is present at root
-			if (root.containsKey(YAMLtags.OPDEF_MAIN_KEY)) {
-				logger.debug("Checking '{}' tag: ({}){}", OPDEF_MAIN_KEY,
-						root.get(OPDEF_MAIN_KEY).getClass(),
-						root.get(OPDEF_MAIN_KEY));
+			if (root.containsKey(YAMLtags.OPDEF_ROOT_KEY)) {
+				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY,
+						root.get(OPDEF_ROOT_KEY).getClass(),
+						root.get(OPDEF_ROOT_KEY));
 				// Check that structure tag contains a usable list
-				if (yamlCheckIfChildIsClass(root, OPDEF_MAIN_KEY, ArrayList.class)) {
-					((ArrayList<Object>) root.get(OPDEF_MAIN_KEY)).stream()
+				if (yamlCheckIfChildIsClass(root, OPDEF_ROOT_KEY, ArrayList.class)) {
+					((ArrayList<Object>) root.get(OPDEF_ROOT_KEY)).stream()
 					.map(o -> createOperation((Map<String, Object>) o)).forEach(operations::add);
 				} else {
 					throw new ConfigurationImportException(
-							"Error in configuration file: 'structure' tag should contain a list of operations.");
+							"Error in configuration file: '" + OPDEF_ROOT_KEY
+							+ "' tag should contain a list of operations.");
 				}
 			} else {
 				throw new ConfigurationImportException(
-						"Error in configuration file: no 'structure' tag was found at the root.");
+						"Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found at the root.");
 			}
 			logger.debug("{}", this);
 			logger.info("Configuration imported.");
+		} catch (ClassCastException e) {
+			throw new ConfigurationImportException("Provided file is not a yaml file", e);
 		}
 	}
 
@@ -107,8 +113,9 @@ public class ReorgConfiguration {
 	/**
 	 * Transforms a Yaml entry into a usable operation by the software.
 	 *
-	 * @param yaml
-	 * @return
+	 * @param yaml yaml definition of the operation
+	 * @throws ConfigurationImportException if a yaml configuration object is malformed
+	 * @return an operation
 	 */
 	public AbstractReorgOperation createOperation(Map<String, Object> yaml) {
 		AbstractReorgOperation op = null;
@@ -119,9 +126,10 @@ public class ReorgConfiguration {
 			// Checking specification: shortcuts, single operation or nested
 			if (yaml.containsKey(OPDEF_OPERATIONS_KEY)) {
 				// TODO Nested operations
+				throw new NotImplementedException("Nested operations is not implemented yet");
 			} else if (yaml.containsKey(OPDEF_OPERATION_KEY)) {
 				// Single operation
-				op = new ReorgOperationBuilder().fromData(columnName,
+				op = new ReorgOperationBuilder().withDefaultConfiguration().fromData(columnName,
 						get(OPDEF_OPERATION_KEY, yaml));
 			} else if (yaml.containsKey(GetOperation.OPDATA_SOURCE_ID)) {
 				// Shortcut to get
@@ -148,8 +156,32 @@ public class ReorgConfiguration {
 	}
 
 	/**
+	 * Adds an operation to the end of the list of operations to perform.
+	 *
+	 * @param op operation to be inserted
+	 */
+	public void addOperation(AbstractReorgOperation op) {
+		if (op == null)
+			throw new IllegalArgumentException("Added operations cannot be null");
+		operations.add(op);
+	}
+
+	/**
+	 * Adds an operation at the specified position in the list of operations to perform.
+	 *
+	 * @param index index at which the operation is to be inserted
+	 * @param op    operation to be inserted, if bigger than actual operation size, puts it as last in
+	 *              the list.
+	 */
+	public void addOperation(int index, AbstractReorgOperation op) {
+		if (op == null)
+			throw new IllegalArgumentException("Added operations cannot be null");
+		operations.add(Math.min(index, operations.size()), op);
+	}
+
+	/**
 	 * Static builder for the class to be used when importing configuration from a file.
-	 * 
+	 *
 	 * @see #loadFromFile(File)
 	 *
 	 * @param cfgFile yaml configuration file to load

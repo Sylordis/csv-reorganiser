@@ -3,20 +3,16 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
+import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * "Get" is the trivial basic operation which consists of getting the value of another column.
- *
- * Required properties:
- * <dl>
- * <dt>source</dt>
- * <dd>Name of the column to get the value from.</dd>
- * </dl>
  *
  * @author sylordis
  * @since 0.1
  *
  */
+@OperationRequiredProperty(name = "source", field = "srcColumn", description = "Name of the column to get the value from")
 public class GetOperation extends AbstractReorgOperation {
 
 	/**
@@ -27,20 +23,16 @@ public class GetOperation extends AbstractReorgOperation {
 	 * Matching internal field of {@link #OPDATA_SOURCE_ID}.
 	 */
 	public static final String OPDATA_SOURCE_FIELD = "srcColumn";
-	/**
-	 * Fixed configuration for requirement properties names.
-	 */
-	public static final String[] DATA_REQUIRED_PROPS = { OPDATA_SOURCE_ID };
 
 	/**
 	 * Index of the source column.
 	 */
 	private String srcColumn;
 
-	@Override
-	protected void setup() {
-		addProperty(OPDATA_SOURCE_ID, OPDATA_SOURCE_FIELD);
-	}
+	//	@Override
+	//	protected void setup() {
+	//		addProperty(OPDATA_SOURCE_ID, OPDATA_SOURCE_FIELD);
+	//	}
 
 	/**
 	 * Constructs a fully setup get operation.
