@@ -2,8 +2,9 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
+import com.sylordis.tools.csv.reorganiser.model.annotations.Operation;
+import com.sylordis.tools.csv.reorganiser.model.annotations.OperationRequiredProperty;
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
-import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * "Value" (type = value, constant) operation returns a constant value.
@@ -12,6 +13,7 @@ import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProp
  * @since 0.1
  *
  */
+@Operation(name = "Value")
 @OperationRequiredProperty(name = "value", field = "value", description = "Constant value to output")
 public class ValueOperation extends AbstractReorgOperation {
 

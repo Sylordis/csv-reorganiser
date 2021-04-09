@@ -21,11 +21,6 @@ public class FakeOperation extends AbstractReorgOperation {
 	}
 
 	@Override
-	protected void setup() {
-		// Nothing to do here
-	}
-
-	@Override
 	public String apply(CSVRecord record) {
 		return null;
 	}

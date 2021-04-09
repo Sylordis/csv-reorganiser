@@ -1,9 +1,12 @@
-package com.sylordis.tools.csv.reorganiser.utils;
+package com.sylordis.tools.csv.reorganiser.utils.yaml;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,77 @@ import org.junit.jupiter.api.Test;
  *
  */
 class YAMLUtilsTest {
+
+	/**
+	 * Test for {@link YAMLUtils} to check if the class cannot be instantiated.
+	 *
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 *
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 */
+	@Test
+	void testConstructor() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+	InvocationTargetException, NoSuchMethodException, SecurityException {
+		assertThrows(IllegalAccessException.class, () -> YAMLUtils.class.getDeclaredConstructor().newInstance());
+	}
+
+	/**
+	 * Test for {@link YAMLUtils#checkChildType(Map, String, Class)}.
+	 */
+	@Test
+	void testCheckChildClassNode() {
+		Map<String, Object> yaml = new HashMap<>();
+		final String key = "MyKey";
+		yaml.put(key, yaml);
+		assertTrue(YAMLUtils.checkChildType(yaml, key, YAMLType.NODE));
+	}
+
+	/**
+	 * Test for {@link YAMLUtils#checkChildType(Map, String, Class)}.
+	 */
+	@Test
+	void testCheckChildClassList() {
+		Map<String, Object> yaml = new HashMap<>();
+		List<Object> list = new ArrayList<>();
+		final String key = "MyKey";
+		yaml.put(key, list);
+		assertTrue(YAMLUtils.checkChildType(yaml, key, YAMLType.LIST));
+	}
+
+	/**
+	 * Test for {@link YAMLUtils#checkChildType(Map, String, Class)}.
+	 */
+	@Test
+	void testCheckChildClassString() {
+		Map<String, Object> yaml = new HashMap<>();
+		final String key = "MyKey";
+		yaml.put(key, "Hello");
+		assertTrue(YAMLUtils.checkChildType(yaml, key, YAMLType.STRING));
+	}
+
+	/**
+	 * Test for {@link YAMLUtils#checkChildType(Map, String, Class)}.
+	 */
+	@Test
+	void testCheckChildClassNotPresent() {
+		Map<String, Object> yaml = new HashMap<>();
+		assertFalse(YAMLUtils.checkChildType(yaml, "SomeTag", YAMLType.STRING));
+	}
+
+	/**
+	 * Test for {@link YAMLUtils#checkChildType(Map, String, Class)}.
+	 */
+	@Test
+	void testCheckChildClassNotClass() {
+		Map<String, Object> yaml = new HashMap<>();
+		final String key = "NotKey";
+		yaml.put(key, key);
+		assertFalse(YAMLUtils.checkChildType(yaml, key, YAMLType.NODE));
+	}
 
 	/**
 	 * Test for {@link YAMLUtils#get(String, java.util.Map)}.

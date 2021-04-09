@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.sylordis.tools.csv.reorganiser.model.SelfFiller;
+import com.sylordis.tools.csv.reorganiser.model.annotations.OperationRequiredProperty;
 import com.sylordis.tools.csv.reorganiser.model.exceptions.ConfigurationImportException;
 import com.sylordis.tools.csv.reorganiser.model.exceptions.SelfFillingConfigurationException;
 import com.sylordis.tools.csv.reorganiser.model.exceptions.SelfFillingException;

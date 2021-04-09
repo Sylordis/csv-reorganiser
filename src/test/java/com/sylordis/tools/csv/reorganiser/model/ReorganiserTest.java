@@ -30,6 +30,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
@@ -248,12 +250,13 @@ class ReorganiserTest {
 	 */
 	@Test
 	@Tag("FunctionalTest")
+	@DisabledOnOs({ OS.WINDOWS })
 	void testReorganiseWithUnreadableSource(TestInfo info) throws IOException {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
 		operations.add(op);
 		when(cfg.getOperations()).thenReturn(operations);
 		final File sourceFile = File.createTempFile(info.getDisplayName(), null, workingDir);
-		sourceFile.setReadable(false, false);
+		sourceFile.setReadable(false, true);
 		reorg.setSrcFile(sourceFile);
 		assertThrows(IOException.class, reorg::reorganise,
 				"An IO exception should be thrown because the file cannot be read");

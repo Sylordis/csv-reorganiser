@@ -9,12 +9,12 @@ structure:
   operation:
     type: regreplace
     source: gender
-    pattern: "(.).*"
-    replace: "$1"
-# column: login
-# operations:
+    pattern: (.).*
+    replace: $1
+# - column: login ## This is a spoiler
+#   operations:
 #   - type: get
 #     source: last_name
 #   - type: substring
 #     source: first_name
-#     end: 1
+#     end: 11

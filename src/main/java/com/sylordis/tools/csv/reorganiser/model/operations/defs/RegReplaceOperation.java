@@ -2,8 +2,9 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
+import com.sylordis.tools.csv.reorganiser.model.annotations.Operation;
+import com.sylordis.tools.csv.reorganiser.model.annotations.OperationRequiredProperty;
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
-import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * Regular expression Replacement (type = "RegReplace") applies a regular expression replacement to
@@ -13,6 +14,7 @@ import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProp
  * @since 0.1
  *
  */
+@Operation(name = "RegReplace")
 @OperationRequiredProperty(name = "source", field = "srcColumn", description = "Column of the source to take the data from")
 @OperationRequiredProperty(name = "pattern", field = "pattern", description = "Pattern to replace in the value")
 @OperationRequiredProperty(name = "replace", field = "replacement", description = "Replacement for the pattern")

@@ -1,18 +1,15 @@
 package com.sylordis.tools.csv.reorganiser.model.operations;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -21,10 +18,8 @@ import org.junit.jupiter.api.Test;
 import com.sylordis.tools.csv.reorganiser.model.YAMLtags;
 import com.sylordis.tools.csv.reorganiser.model.exceptions.ConfigurationException;
 import com.sylordis.tools.csv.reorganiser.model.exceptions.OperationBuildingException;
-import com.sylordis.tools.csv.reorganiser.model.operations.defs.ValueOperation;
 import com.sylordis.tools.csv.reorganiser.test.defs.FakeOperation;
 import com.sylordis.tools.csv.reorganiser.test.defs.WrongFakeOperation;
-import com.sylordis.tools.csv.reorganiser.test.matchers.MapContainsAllMatcher;
 
 /**
  * Test suite for {@link ReorgOperationBuilder}.
@@ -42,6 +37,10 @@ class ReorgOperationBuilderTest {
 	 * Default object for data.
 	 */
 	private Map<String, Object> data;
+	/**
+	 * Default dictionary for operations.
+	 */
+	private Map<String, Class<? extends AbstractReorgOperation>> operationDictionary;
 
 	/**
 	 * @throws java.lang.Exception
@@ -50,6 +49,7 @@ class ReorgOperationBuilderTest {
 	void setUp() throws Exception {
 		builder = new ReorgOperationBuilder();
 		data = new HashMap<>();
+		operationDictionary = new HashMap<>();
 	}
 
 	/**
@@ -88,9 +88,8 @@ class ReorgOperationBuilderTest {
 	void testFromData() {
 		final String opName = "fake";
 		data.put(YAMLtags.OPDATA_TYPE_KEY, opName);
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		dictionary.put(opName, FakeOperation.class);
-		builder.withCustomConfiguration(dictionary);
+		operationDictionary.put(opName, FakeOperation.class);
+		builder = new ReorgOperationBuilder(operationDictionary);
 		AbstractReorgOperation op = builder.fromData("any", data);
 		assertNotNull(op, "Result operation should not be null");
 		assertEquals(FakeOperation.class, op.getClass());
@@ -139,9 +138,8 @@ class ReorgOperationBuilderTest {
 	void testFromDataNoConstructor() {
 		final String opName = "fake";
 		data.put(YAMLtags.OPDATA_TYPE_KEY, opName);
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		dictionary.put(opName, WrongFakeOperation.class);
-		builder.withCustomConfiguration(dictionary);
+		operationDictionary.put(opName, WrongFakeOperation.class);
+		builder = new ReorgOperationBuilder(operationDictionary);
 		assertThrows(ConfigurationException.class, () -> builder.fromData("any", data));
 	}
 
@@ -158,33 +156,20 @@ class ReorgOperationBuilderTest {
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#getClassFromType(java.util.Map)}.
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#getClassFromType(java.util.Map)}
+	 * to check that a defined operation can be retrieved regardless of the case asking.
 	 *
 	 * @throws OperationBuildingException
 	 */
 	@Test
-	void testGetTypeDefaultConfiguration() throws OperationBuildingException {
-		builder.withDefaultConfiguration();
-		assertEquals(ValueOperation.class, builder.getClassFromType("VALUE"), "Correct type should be returned");
-		assertEquals(ValueOperation.class, builder.getClassFromType("value"),
+	void testGetTypeCasseless() throws OperationBuildingException {
+		Class<? extends AbstractReorgOperation> clazz = FakeOperation.class;
+		operationDictionary.put("Fake", clazz);
+		builder.setOperationDictionary(operationDictionary);
+		assertEquals(clazz, builder.getClassFromType("FAKE"), "Correct type should be returned");
+		assertEquals(clazz, builder.getClassFromType("fake"),
 				"Correct type should be returned (lowercase)");
-		assertEquals(ValueOperation.class, builder.getClassFromType("VaLue"),
-				"Correct type should be returned (mixed case)");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#getClassFromType(java.util.Map)}.
-	 *
-	 * @throws OperationBuildingException
-	 */
-	@Test
-	void testGetTypeReflectedConfiguration() throws OperationBuildingException {
-		builder.withDefaultConfiguration();
-		assertEquals(ValueOperation.class, builder.getClassFromType("VALUE"), "Correct type should be returned");
-		assertEquals(ValueOperation.class, builder.getClassFromType("value"),
-				"Correct type should be returned (lowercase)");
-		assertEquals(ValueOperation.class, builder.getClassFromType("VaLue"),
+		assertEquals(clazz, builder.getClassFromType("FAKE"),
 				"Correct type should be returned (mixed case)");
 	}
 
@@ -220,15 +205,6 @@ class ReorgOperationBuilderTest {
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#getClassFilter()}.
-	 */
-	@Test
-	void testGetClassFilter() {
-		assertNull(builder.getClassFilter(), "Class filter should be null by default");
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#getOperationDictionary()}.
 	 */
 	@Test
@@ -242,175 +218,53 @@ class ReorgOperationBuilderTest {
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setClassFilter(String)}.
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setOperationDictionary(Map)}
+	 * checking that the dictionary is setup but not taken directly as object.
 	 */
 	@Test
-	void testSetClassFilter() {
-		final String filter = "ElNewFiltero";
-		builder.setClassFilter(filter);
-		assertEquals(filter, builder.getClassFilter(),
-				"Class filter should be set to provided value");
+	void testSetOperationsDictionary() {
+		operationDictionary.put("Fake", FakeOperation.class);
+		operationDictionary.put("Wrong", WrongFakeOperation.class);
+		builder.setOperationDictionary(operationDictionary);
+		assertNotSame(operationDictionary, builder.getOperationDictionary());
+		assertEquals(operationDictionary.size(), builder.getOperationDictionary().size());
+		assertTrue(builder.getOperationDictionary().containsKey("fake"));
+		assertEquals(FakeOperation.class, builder.getOperationDictionary().get("fake"));
+		assertTrue(builder.getOperationDictionary().containsKey("wrong"));
+		assertEquals(WrongFakeOperation.class, builder.getOperationDictionary().get("wrong"));
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setClassFilter(String)}
-	 * with a null value provided.
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setOperationDictionary(Map)}
+	 * checking that providing an empty map does not trigger any error.
 	 */
 	@Test
-	void testSetClassFilterNull() {
-		final String filter = "ElNewFiltero";
-		builder.setClassFilter(filter);
-		builder.setClassFilter(null);
-		assertNull(builder.getClassFilter(),
-				"Class filter should be set to provided value (null)");
+	void testSetOperationsDictionaryEmpty() {
+		builder.setOperationDictionary(operationDictionary);
+		assertNotSame(operationDictionary, builder.getOperationDictionary());
+		assertTrue(builder.getOperationDictionary().isEmpty());
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#addCustomConfiguration(Map)}.
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setOperationDictionary(Map)}
+	 * checking that providing a null map does not trigger any error.
 	 */
 	@Test
-	void testAddCustomConfiguration() {
-		final String opName = "faker";
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		dictionary.put(opName, FakeOperation.class);
-		ReorgOperationBuilder builderCompare = new ReorgOperationBuilder().withDefaultConfiguration();
-		builder.withDefaultConfiguration().addCustomConfiguration(dictionary);
-		Map<String, Class<? extends AbstractReorgOperation>> expected = new HashMap<>(
-				builderCompare.getOperationDictionary());
-		expected.putAll(dictionary);
-		assertEquals(ReorgOperationType.values().length + dictionary.size(), builder.getOperationDictionary().size(),
-				"Builder should have more entries than the default configuration");
-		assertThat("Dictionary should contain all entries, previous and added",
-				builder.getOperationDictionary(), new MapContainsAllMatcher<>(expected));
-
+	void testSetOperationsDictionaryNull() {
+		builder.setOperationDictionary(null);
+		assertNotNull(builder.getOperationDictionary());
+		assertTrue(builder.getOperationDictionary().isEmpty());
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#addCustomConfiguration(Map)}
-	 * when passing an empty custom configuration.
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#setOperationDictionary(Map)}
+	 * checking that calling this setter multiple times clears and sets the dictionary.
 	 */
 	@Test
-	void testAddCustomConfigurationEmpty() {
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		ReorgOperationBuilder builderCompare = new ReorgOperationBuilder().withDefaultConfiguration();
-		builder.withDefaultConfiguration().addCustomConfiguration(dictionary);
-		Map<String, Class<? extends AbstractReorgOperation>> expected = new HashMap<>(
-				builderCompare.getOperationDictionary());
-		expected.putAll(dictionary);
-		assertEquals(ReorgOperationType.values().length, builder.getOperationDictionary().size(),
-				"Builder should retain the original configuration");
-		assertThat("Dictionary should contain all default entries", builder.getOperationDictionary(),
-				new MapContainsAllMatcher<>(expected));
+	void testSetOperationsDictionaryMultiple() {
 
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#addCustomConfiguration(Map)}
-	 * when a null object is passed instead of a map.
-	 */
-	@Test
-	void testAddCustomConfigurationNull() {
-		ReorgOperationBuilder builderCompare = new ReorgOperationBuilder().withDefaultConfiguration();
-		builder.withDefaultConfiguration().addCustomConfiguration(null);
-		Map<String, Class<? extends AbstractReorgOperation>> expected = new HashMap<>(
-				builderCompare.getOperationDictionary());
-		assertEquals(ReorgOperationType.values().length, builder.getOperationDictionary().size(),
-				"Builder should retain the original configuration");
-		assertThat("Dictionary should contain all default entries",
-				builder.getOperationDictionary(), new MapContainsAllMatcher<>(expected));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withCustomConfiguration(Map)}
-	 */
-	@Test
-	void testWithCustomConfiguration() {
-		final String opName = "noperation";
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		dictionary.put(opName, FakeOperation.class);
-		ReorgOperationBuilder builderConfigured = builder.withCustomConfiguration(dictionary);
-		assertSame(builder, builderConfigured,
-				"Setting custom configuration with the builder should return the same entity");
-		assertIterableEquals(dictionary.entrySet(), builder.getOperationDictionary().entrySet(),
-				"Dictionary should contain provided custom entries");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withCustomConfiguration(Map)}
-	 * with an empty map provided.
-	 */
-	@Test
-	void testWithCustomConfigurationEmpty() {
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		assertThrows(IllegalArgumentException.class, () -> builder.withCustomConfiguration(dictionary),
-				"Providing an empty map should return in error");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withCustomConfiguration(Map)}
-	 * with a null object provided.
-	 */
-	@Test
-	void testWithCustomConfigurationNull() {
-		assertThrows(IllegalArgumentException.class, () -> builder.withCustomConfiguration(null),
-				"Providing a null map should return in error");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withCustomConfiguration(Map)}
-	 * when a pre-existing configuration is already set. Default configuration is already tested by
-	 * {@link #testWithDefaultConfiguration()}.
-	 */
-	@Test
-	void testWithCustomConfigurationReplace() {
-		builder.withDefaultConfiguration();
-		final String opName = "noperation";
-		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
-		dictionary.put(opName, FakeOperation.class);
-		ReorgOperationBuilder builderConfigured = builder.withCustomConfiguration(dictionary);
-		assertSame(builder, builderConfigured,
-				"Setting custom configuration with the builder should return the same entity");
-		assertIterableEquals(dictionary.entrySet(), builder.getOperationDictionary().entrySet(),
-				"Dictionary should contain provided custom entries only");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withDefaultConfiguration()}
-	 */
-	@Test
-	void testWithDefaultConfiguration() {
-		builder = builder.withDefaultConfiguration();
-		Map<String, Class<? extends AbstractReorgOperation>> expected = ReorgOperationType.getDefaultDictionary();
-		assertThat("Dictionary should contain all default entries", builder.getOperationDictionary(),
-				new MapContainsAllMatcher<>(expected));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withReflectedConfiguration()}
-	 */
-	@Test
-	void testWithReflectedConfiguration() {
-		assertThrows(NotImplementedException.class, () -> builder.withReflectedConfiguration(),
-				"Non implemented features should return in error when used");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.ReorgOperationBuilder#withReflectedConfiguration(String)}
-	 */
-	@Test
-	void testWithReflectedConfigurationString() {
-		assertThrows(NotImplementedException.class, () -> builder.withReflectedConfiguration("filter"),
-				"Non implemented features should return in error when used");
 	}
 }

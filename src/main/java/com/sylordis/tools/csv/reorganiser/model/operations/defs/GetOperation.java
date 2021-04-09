@@ -2,8 +2,9 @@ package com.sylordis.tools.csv.reorganiser.model.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
+import com.sylordis.tools.csv.reorganiser.model.annotations.Operation;
+import com.sylordis.tools.csv.reorganiser.model.annotations.OperationRequiredProperty;
 import com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation;
-import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProperty;
 
 /**
  * "Get" is the trivial basic operation which consists of getting the value of another column.
@@ -12,6 +13,7 @@ import com.sylordis.tools.csv.reorganiser.model.operations.OperationRequiredProp
  * @since 0.1
  *
  */
+@Operation(name = "Get")
 @OperationRequiredProperty(name = "source", field = "srcColumn", description = "Name of the column to get the value from")
 public class GetOperation extends AbstractReorgOperation {
 

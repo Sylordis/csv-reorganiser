@@ -196,6 +196,32 @@ class AbstractReorgOperationTest {
 	 * @throws SelfFillingException
 	 */
 	@Test
+	void testFillIntFromString() throws NoSuchFieldException, SecurityException, SelfFillingException {
+		// This field name value should match the field's name of the concrete implementation below
+		final String fieldName = "intField";
+		final String prop = "DaProp";
+		final int value = 42;
+		final Field field = op.getClass().getDeclaredField(fieldName);
+		final boolean accessible = field.canAccess(op);
+		op.addProperty(prop, fieldName);
+		final Map<String, Object> data = new HashMap<>();
+		data.put(prop, Integer.toString(value));
+		op.fill(data);
+		assertEquals(value, op.getIntField(), "Field should be set according to given value");
+		assertEquals(accessible, field.canAccess(op),
+				"Accessiblity of touched fields should be the same after filling");
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.sylordis.tools.csv.reorganiser.model.operations.AbstractReorgOperation#fill(java.util.Map)}
+	 * when auto-filling an integer.
+	 *
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws SelfFillingException
+	 */
+	@Test
 	void testFillIntFromEmptyString() throws NoSuchFieldException, SecurityException, SelfFillingException {
 		// This field name value should match the field's name of the concrete implementation below
 		final String fieldName = "intField";
