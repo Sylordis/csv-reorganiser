@@ -201,7 +201,7 @@ class ReorganiserTest {
 
 	/*
 	 * ==========================================
-	 * Functional tests
+	 * Integration tests
 	 * ==========================================
 	 */
 
@@ -213,7 +213,7 @@ class ReorganiserTest {
 	 * @throws FileNotFoundException
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithFailedOperation() throws FileNotFoundException, IOException {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
 		when(op.getName()).thenReturn("Failure");
@@ -232,7 +232,7 @@ class ReorganiserTest {
 	 * the source is not reachable.
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithUnreachableSource() {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
 		operations.add(op);
@@ -249,7 +249,7 @@ class ReorganiserTest {
 	 * @throws IOException
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	@DisabledOnOs({ OS.WINDOWS })
 	void testReorganiseWithUnreadableSource(TestInfo info) throws IOException {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
@@ -268,7 +268,7 @@ class ReorganiserTest {
 	 * the target file is not reachable.
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithUnreachableTarget() {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
 		operations.add(op);
@@ -285,7 +285,7 @@ class ReorganiserTest {
 	 * @throws FileNotFoundException
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithUnwritableTarget() throws FileNotFoundException, IOException {
 		List<AbstractReorgOperation> operations = new ArrayList<>();
 		operations.add(op);
@@ -303,7 +303,7 @@ class ReorganiserTest {
 	 * @throws FileNotFoundException
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithEmptyConfiguration() throws FileNotFoundException, IOException {
 		when(cfg.getOperations()).thenReturn(new ArrayList<AbstractReorgOperation>());
 		assertThrows(ConfigurationException.class, reorg::reorganise, "A Configuration exception should be thrown");
@@ -316,7 +316,7 @@ class ReorganiserTest {
 	 * null configuration object is set.
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganiseWithNullConfiguration() {
 		reorg.setCfg(null);
 		assertThrows(ConfigurationException.class, reorg::reorganise, "A Configuration exception should be thrown");
@@ -330,7 +330,7 @@ class ReorganiserTest {
 	 * @throws FileNotFoundException
 	 */
 	@Test
-	@Tag("FunctionalTest")
+	@Tag("Integration")
 	void testReorganise(TestInfo testinfo) throws FileNotFoundException, IOException {
 		// Setup files and samples
 		File sourceBackup = File.createTempFile(testinfo.getDisplayName() + "-srcbkp", null, workingDir);

@@ -22,6 +22,7 @@ It is using the following dependencies (already included as-is in the jar):
 * [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
 * [Apache Commons IO](https://commons.apache.org/proper/commons-io/)
 * [Apache Log4J2](https://logging.apache.org/log4j/2.x/)
+* [Reflections](https://github.com/ronmamo/reflections)
 
 Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
@@ -69,8 +70,9 @@ Check out the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 
 ## Version History
 
-* v0.1
-    * Initial Release
+* v1.0
+    * First official release
+    * Unit-tested (most of it) along with some integration tests
     * 3 Operations: Get, Value and RegReplace.
 
 ## License
@@ -82,4 +84,4 @@ This project is licensed under the Apache License v2 - see the LICENSE file for 
 Project website: <https://github.com/sylordis/csv-reorganiser>
 
 # Known issues
-Check the [wiki/Known issues](https://github.com/Sylordis/csv-reorganiser/wiki/Known-issues).
+Check the [wiki/Known issues](https://github.com/sylordis/csv-reorganiser/wiki/Known-issues).

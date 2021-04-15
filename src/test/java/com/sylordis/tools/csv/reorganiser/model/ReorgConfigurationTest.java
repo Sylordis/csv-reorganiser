@@ -132,7 +132,7 @@ class ReorgConfigurationTest {
 	 * @throws ConfigurationImportException
 	 */
 	@Test
-	@Tag("Functional")
+	@Tag("Integration")
 	void testLoadFromFile() throws ConfigurationImportException, FileNotFoundException, IOException {
 		rcfg.setOperationsDictionary(new DefaultConfigurationSupplier().get());
 		rcfg.loadFromFile(cfgFile);
@@ -167,7 +167,7 @@ class ReorgConfigurationTest {
 	 * @throws ConfigurationImportException
 	 */
 	@Test
-	@Tag("Functional")
+	@Tag("Integration")
 	void testLoadFromFileNoConfiguration() throws ConfigurationImportException, FileNotFoundException, IOException {
 		assertThrows(OperationBuildingException.class, () -> rcfg.loadFromFile(cfgFile));
 	}
@@ -328,7 +328,7 @@ class ReorgConfigurationTest {
 	 * when creating nested operations (Not yet implemented).
 	 */
 	@Test
-	@Tag("Functional")
+	@Tag("Integration")
 	void testCreateOperationNested() {
 		Map<String, Object> data = new HashMap<>();
 		data.put(YAMLtags.OPDEF_COLUMN_KEY, "ColA");
@@ -503,7 +503,7 @@ class ReorgConfigurationTest {
 	 * map when the dictionary was already set previously.
 	 */
 	@Test
-	@Tag("Functional")
+	@Tag("Integration")
 	void testSetOperationsDictionaryReplace() {
 		Map<String, Class<? extends AbstractReorgOperation>> dictionary = new HashMap<>();
 		dictionary.put("SomeFake", FakeOperation.class);
