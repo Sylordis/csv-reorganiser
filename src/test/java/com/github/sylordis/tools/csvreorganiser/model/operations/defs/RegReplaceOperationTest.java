@@ -91,8 +91,8 @@ class RegReplaceOperationTest {
 	void testSetup() {
 		final List<String> keys = new ArrayList<>(bop.getRequiredProperties());
 		assertTrue(!keys.isEmpty(), "List of required properties should not be empty");
-		final List<String> expected = List.of(RegReplaceOperation.OPDATA_ID_SOURCE,
-		        RegReplaceOperation.OPDATA_ID_PATTERN, RegReplaceOperation.OPDATA_ID_REPLACEMENT);
+		final List<String> expected = new ArrayList<>(List.of(RegReplaceOperation.OPDATA_ID_SOURCE,
+				RegReplaceOperation.OPDATA_ID_PATTERN, RegReplaceOperation.OPDATA_ID_REPLACEMENT));
 		Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
 		Collections.sort(expected);
 		assertIterableEquals(expected, keys, "Setup should configure all required properties.");

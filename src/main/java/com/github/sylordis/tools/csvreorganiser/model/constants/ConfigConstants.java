@@ -12,7 +12,7 @@ public final class ConfigConstants {
 	/**
 	 * Name of the package with all operations definitions.
 	 */
-	public final static String OPERATIONS_PACKAGE = "com.sylordis.tools.csvreorganiser.model.operations.defs";
+	public final static String OPERATIONS_PACKAGE = "com.github.sylordis.tools.csvreorganiser.model.operations.defs";
 
 	/**
 	 * Private constructor
