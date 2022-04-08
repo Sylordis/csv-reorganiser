@@ -12,9 +12,9 @@ Stop to the long hours trying to export, reorganise and separate fields values. 
 
 ### Dependencies
 
-Only Java 11+ is required for runtime.
+Only Java 17+ is required for runtime.
 
-This tool was made with/for Java 11 and Apache Maven as dependency manager.
+This tool was made with/for Java 17 and Apache Maven as dependency manager.
 
 It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
@@ -28,12 +28,13 @@ Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
 * [Mockito](https://site.mockito.org/)
 * [Hamcrest 2](http://hamcrest.org/JavaHamcrest)
+* [junit5-system-exit](https://github.com/tginsberg/junit5-system-exit)
 
 Check the `pom.xml` file for dependencies versions.
 
 ### Compilation
 
-Download the code, you should have Java 11+ and Apache Maven to be able to compile the project.
+Download the code, you should have Java 17+ and Apache Maven to be able to compile the project.
 Follow typical Maven goals regarding your intention (`compile`, `package`, `install`, ...).
 
 ### Installing
@@ -41,7 +42,7 @@ Follow typical Maven goals regarding your intention (`compile`, `package`, `inst
 Just download the jar file associated to the release or run `mvn package` (at least) from the repository.
 Jar file should be provided under `target/csv-reorganiser-<VERSION>.jar`
 
-### Executing program
+### Executing software
 
 Run the following command:
 
@@ -50,7 +51,7 @@ java -jar <path-to-jar>/csv-reorganiser-X.X.jar <yaml-cfg> <csv-source> <csv-tar
 ```
 
 With:
-* `yaml-cfg` the YAML configuration file to be used for the reorganisation. Examples are provided in the `examples/` folder.
+* `yaml-cfg` the YAML configuration file to be used for the reorganisation. Examples are provided in the `examples/` folder, documentation provided on the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 * `csv-source` the base CSV file to be reorganised.
 * `csv-target` the target file to be written. If existing, it will be overwritten.
 
@@ -70,10 +71,14 @@ Check out the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 
 ## Version History
 
+* v1.1
+  * Updated Log4J.
+  * Some unit tests were left behind (disabled).
+  * New operation: Concat.
 * v1.0
-    * First official release
-    * Unit-tested (most of it) along with some integration tests
-    * 3 Operations: Get, Value and RegReplace.
+  * First official release.
+  * Unit-tested (most of it) along with some integration tests.
+  * 3 Operations: Get, Value and RegReplace.
 
 ## License
 
