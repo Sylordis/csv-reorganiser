@@ -11,10 +11,8 @@ structure:
     source: gender
     pattern: (.).*
     replace: $1
-# - column: login ## This is a spoiler
-#   operations:
-#   - type: get
-#     source: last_name
-#   - type: substring
-#     source: first_name
-#     end: 11
+- column: login
+  concat:
+    - first_name
+    - .
+    - last_name

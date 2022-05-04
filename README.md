@@ -21,14 +21,13 @@ It is using the following dependencies (already included as-is in the jar):
 * [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/)
 * [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
 * [Apache Commons IO](https://commons.apache.org/proper/commons-io/)
-* [Apache Log4J2](https://logging.apache.org/log4j/2.x/)
+* [Apache Log4J](https://logging.apache.org/log4j/2.x/)
 * [Reflections](https://github.com/ronmamo/reflections)
 
 Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
 * [Mockito](https://site.mockito.org/)
 * [Hamcrest 2](http://hamcrest.org/JavaHamcrest)
-* [junit5-system-exit](https://github.com/tginsberg/junit5-system-exit)
 
 Check the `pom.xml` file for dependencies versions.
 
