@@ -53,7 +53,7 @@ class ConcatOperationTest {
 	void testSetup() {
 		final Collection<String> keys = op.getRequiredProperties();
 		assertTrue(!keys.isEmpty(), "List of required properties should not be empty");
-		assertIterableEquals(List.of(ConcatOperation.OPDATA_FIELD_VALUES), keys,
+		assertIterableEquals(List.of("values"), keys,
 				"Setup should configure all required properties");
 	}
 

@@ -3,7 +3,7 @@ package com.github.sylordis.tools.csvreorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
@@ -14,7 +14,7 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
  *
  */
 @Operation(name = "Get")
-@OperationRequiredProperty(name = "source", field = "srcColumn", description = "Name of the column to get the value from")
+@OperationProperty(name = "source", field = "srcColumn", required = true, description = "Name of the column to get the value from")
 @OperationShortcut(keyword = "source", property = "source")
 public class GetOperation extends AbstractReorgOperation {
 

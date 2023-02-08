@@ -17,7 +17,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.github.sylordis.tools.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.tools.csvreorganiser.model.constants.ConfigConstants;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
@@ -61,8 +61,8 @@ public class DefaultConfigurationSupplier implements ConfigurationSupplier {
 			if (opShortAnn != null) {
 				// Check if definition of the operation was properly done, i.e.: the shortcut name must match one of
 				// the property
-				Optional<OperationRequiredProperty> shortcutProp = Arrays
-						.stream(type.getAnnotationsByType(OperationRequiredProperty.class))
+				Optional<OperationProperty> shortcutProp = Arrays
+						.stream(type.getAnnotationsByType(OperationProperty.class))
 						.filter(a -> a.name().equals(opShortAnn.property())).findFirst();
 				if (shortcutProp.isEmpty()) {
 					throw new ConfigurationException(
@@ -70,7 +70,7 @@ public class DefaultConfigurationSupplier implements ConfigurationSupplier {
 									opShortAnn.keyword(), type.getSimpleName(), opShortAnn.property()));
 				}
 				try {
-					OperationRequiredProperty opProperty = shortcutProp.get();
+					OperationProperty opProperty = shortcutProp.get();
 					// Get operation property field for typing
 					Field opField = type.getDeclaredField(opProperty.field());
 					// Retrieve constructor

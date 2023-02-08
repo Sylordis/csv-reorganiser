@@ -60,7 +60,8 @@ class AbstractReorgOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#AbstractReorgOperation(java.lang.String)}.
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#AbstractReorgOperation(java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -77,7 +78,7 @@ class AbstractReorgOperationTest {
 	@Tag("Constructor")
 	void testAbstractReorgOperationName_Null() {
 		assertThrows(ConfigurationImportException.class, () -> new ReorgOperationImpl(null),
-				"Constructor should throw an error if provided name is null");
+		        "Constructor should throw an error if provided name is null");
 	}
 
 	/**
@@ -89,24 +90,35 @@ class AbstractReorgOperationTest {
 	@Tag("Constructor")
 	void testAbstractReorgOperationName_Empty() {
 		assertThrows(ConfigurationImportException.class, () -> new ReorgOperationImpl(""),
-				"Constructor should throw an error if provided name is empty");
+		        "Constructor should throw an error if provided name is empty");
 	}
 
 	/**
-	 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#addProperty(java.lang.String, java.lang.String)}.
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#addProperty(java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	void testAddProperty() {
 		final String propName = "Light";
 		final String propField = "Dark";
 		op.addProperty(propName, propField);
-		assertFalse(op.getRequiredProperties().isEmpty(),
-				"Properties should not be empty after having set at least one");
+		assertFalse(op.getProperties().isEmpty(), "Properties should not be empty after having set at least one");
 		Collection<String> expected = List.of(propName);
-		assertIterableEquals(expected, op.getRequiredProperties(),
-				"Properties should only contain all properties introduced via addProperty()");
+		assertIterableEquals(expected, op.getProperties().keySet(),
+		        "Properties should only contain all properties introduced via addProperty()");
 		Map<String, String> props = Map.of(propName, propField);
 		assertEquals(props, op.getProperties(), "Properties should match expected");
+	}
+
+	@Test
+	void testAddRequiredProperty() {
+		final String propName = "Matter";
+		op.addRequiredProperty(propName);
+		assertFalse(op.getRequiredProperties().isEmpty(), "Required properties should not be empty after adding one");
+		Collection<String> expected = List.of(propName);
+		assertEquals(expected, op.getRequiredProperties(),
+		        "Properties should only contain all properties introduced via addRequiredProperty()");
+		assertTrue(op.getProperties().isEmpty(), "Properties should not be modified when setting a required property");
 	}
 
 	/**
@@ -129,7 +141,7 @@ class AbstractReorgOperationTest {
 		op.fill(Map.of(prop, value));
 		assertEquals(value, op.getStringField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -173,7 +185,7 @@ class AbstractReorgOperationTest {
 		op.fill(Map.of(prop, value));
 		assertEquals(value, op.getIntField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -197,7 +209,7 @@ class AbstractReorgOperationTest {
 		op.fill(Map.of(prop, value));
 		assertEquals(value, op.accessibleIntField, "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -221,7 +233,7 @@ class AbstractReorgOperationTest {
 		op.fill(Map.of(prop, Integer.toString(value)));
 		assertEquals(value, op.getIntField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -243,10 +255,10 @@ class AbstractReorgOperationTest {
 		final boolean accessible = field.canAccess(op);
 		op.addProperty(prop, fieldName);
 		assertThrows(SelfFillingException.class, () -> op.fill(Map.of(prop, value)),
-				"Giving wrong data value to convert to int should result in an error");
+		        "Giving wrong data value to convert to int should result in an error");
 		assertEquals(0, op.getIntField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -271,10 +283,10 @@ class AbstractReorgOperationTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put(prop, value);
 		assertThrows(SelfFillingException.class, () -> op.fill(map),
-				"Giving wrong data value to convert to int should result in an error");
+		        "Giving wrong data value to convert to int should result in an error");
 		assertEquals(0, op.getIntField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -292,7 +304,7 @@ class AbstractReorgOperationTest {
 		final String value = "Pendragon";
 		op.addProperty(prop, fieldName);
 		assertThrows(SelfFillingException.class, () -> op.fill(Map.of("Gorlois", value)),
-				"Unconfigured mandatory properties setting should throw an error");
+		        "Unconfigured mandatory properties setting should throw an error");
 	}
 
 	/**
@@ -308,7 +320,7 @@ class AbstractReorgOperationTest {
 		final String value = "Myrddin";
 		op.addProperty(prop, fieldName);
 		assertThrows(SelfFillingConfigurationException.class, () -> op.fill(Map.of(prop, value)),
-				"Filling a non-existant field should throw an error");
+		        "Filling a non-existant field should throw an error");
 	}
 
 	/**
@@ -335,7 +347,7 @@ class AbstractReorgOperationTest {
 		op.fill(data);
 		assertEquals(value, op.getStringField(), "Field should be set according to given value");
 		assertEquals(accessible, field.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling");
+		        "Accessiblity of touched fields should be the same after filling");
 	}
 
 	/**
@@ -366,9 +378,9 @@ class AbstractReorgOperationTest {
 		assertEquals(stringValue, op.getStringField(), "Field should be set according to given value (String)");
 		assertEquals(intValue, op.getIntField(), "Field should be set according to given value (int)");
 		assertEquals(stringAccessible, stringField.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling (String)");
+		        "Accessiblity of touched fields should be the same after filling (String)");
 		assertEquals(intAccessible, intField.canAccess(op),
-				"Accessiblity of touched fields should be the same after filling (int)");
+		        "Accessiblity of touched fields should be the same after filling (int)");
 	}
 
 	/**
@@ -393,13 +405,13 @@ class AbstractReorgOperationTest {
 		op.addProperty(stringProp, stringFieldName);
 		op.addProperty(intProp, intFieldName);
 		assertThrows(SelfFillingException.class, () -> op.fill(new HashMap<>()),
-				"Unconfigured mandatory properties setting should throw an error");
+		        "Unconfigured mandatory properties setting should throw an error");
 		assertNull(op.getStringField(), "Field should not be set if encountered an error while setting (String)");
 		assertEquals(0, op.getIntField(), "Field should not be set as error should have happened previously (int)");
 		assertEquals(stringAccessible, stringField.canAccess(op),
-				"Accessiblity of touched fields should be the same after an error has been triggered during filling (String)");
+		        "Accessiblity of touched fields should be the same after an error has been triggered during filling (String)");
 		assertEquals(intAccessible, intField.canAccess(op),
-				"Accessiblity of touched fields should be the same after an error has been triggered during filling (int)");
+		        "Accessiblity of touched fields should be the same after an error has been triggered during filling (int)");
 	}
 
 	/**
@@ -426,14 +438,14 @@ class AbstractReorgOperationTest {
 		op.addProperty(stringProp, stringFieldName);
 		op.addProperty(intProp, intFieldName);
 		assertThrows(SelfFillingException.class, () -> op.fill(Map.of(stringProp, stringValue, intProp, intValue)),
-				"Unconfigured mandatory properties setting should throw an error");
+		        "Unconfigured mandatory properties setting should throw an error");
 		assertEquals(stringValue, op.getStringField(),
-				"Field should be set to provided value since error happens afterwards (String)");
+		        "Field should be set to provided value since error happens afterwards (String)");
 		assertEquals(0, op.getIntField(), "Field should not be set as error should have happened (int)");
 		assertEquals(stringAccessible, stringField.canAccess(op),
-				"Accessiblity of touched fields should be the same after an error has been triggered during filling (String)");
+		        "Accessiblity of touched fields should be the same after an error has been triggered during filling (String)");
 		assertEquals(intAccessible, intField.canAccess(op),
-				"Accessiblity of touched fields should be the same after an error has been triggered during filling (int)");
+		        "Accessiblity of touched fields should be the same after an error has been triggered during filling (int)");
 	}
 
 	/**
@@ -446,7 +458,8 @@ class AbstractReorgOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#getName()}.
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#getName()}.
 	 */
 	@Test
 	void testGetName() {
@@ -454,7 +467,8 @@ class AbstractReorgOperationTest {
 	}
 
 	/**
-	 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#setName(java.lang.String)}.
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation#setName(java.lang.String)}.
 	 */
 	@Test
 	void testSetName() {
@@ -471,7 +485,7 @@ class AbstractReorgOperationTest {
 	@Tag("Null")
 	void testSetName_Null() {
 		assertThrows(ConfigurationImportException.class, () -> op.setName(null),
-				"Setting a null value as name should return in error");
+		        "Setting a null value as name should return in error");
 	}
 
 	/**
@@ -481,7 +495,7 @@ class AbstractReorgOperationTest {
 	@Test
 	void testSetName_Empty() {
 		assertThrows(ConfigurationImportException.class, () -> op.setName(""),
-				"Setting a null value as name should return in error");
+		        "Setting a null value as name should return in error");
 	}
 
 	/**

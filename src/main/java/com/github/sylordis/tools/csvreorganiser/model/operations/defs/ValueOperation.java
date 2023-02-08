@@ -3,7 +3,7 @@ package com.github.sylordis.tools.csvreorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
@@ -14,7 +14,7 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
  *
  */
 @Operation(name = "Value")
-@OperationRequiredProperty(name = "value", field = "value", description = "Constant value to output")
+@OperationProperty(name = "value", field = "value", required = true, description = "Constant value to output")
 @OperationShortcut(keyword = "value", property = "value")
 public class ValueOperation extends AbstractReorgOperation {
 

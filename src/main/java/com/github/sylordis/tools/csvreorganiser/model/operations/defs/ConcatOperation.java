@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
@@ -18,7 +18,7 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
  *
  */
 @Operation(name = "Concat")
-@OperationRequiredProperty(name = "values", field = "values", description = "List of columns or constants strings to take values from")
+@OperationProperty(name = "values", field = "values", required = true, description = "List of columns or constants strings to take values from")
 @OperationShortcut(keyword = "concat", property = "values")
 public class ConcatOperation extends AbstractReorgOperation {
 

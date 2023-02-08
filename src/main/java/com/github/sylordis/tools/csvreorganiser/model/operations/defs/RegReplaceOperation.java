@@ -3,7 +3,7 @@ package com.github.sylordis.tools.csvreorganiser.model.operations.defs;
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
@@ -14,9 +14,9 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
  *
  */
 @Operation(name = "RegReplace")
-@OperationRequiredProperty(name = "source", field = "srcColumn", description = "Column of the source file to take the content from")
-@OperationRequiredProperty(name = "pattern", field = "pattern", description = "Pattern to look for in the content")
-@OperationRequiredProperty(name = "replace", field = "replacement", description = "Replacement for the pattern")
+@OperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
+@OperationProperty(name = "pattern", field = "pattern", required = true, description = "Pattern to look for in the content")
+@OperationProperty(name = "replace", field = "replacement", required = true, description = "Replacement for the pattern")
 public class RegReplaceOperation extends AbstractReorgOperation {
 
 	/**

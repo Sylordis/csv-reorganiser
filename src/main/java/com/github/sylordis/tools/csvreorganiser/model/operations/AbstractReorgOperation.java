@@ -3,7 +3,6 @@ package com.github.sylordis.tools.csvreorganiser.model.operations;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.tools.csvreorganiser.model.SelfFiller;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationRequiredProperty;
+import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.SelfFillingConfigurationException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.SelfFillingException;
@@ -45,6 +44,10 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 	 */
 	private final Map<String, String> properties;
 	/**
+	 * Name of all required properties for this operation.
+	 */
+	private final List<String> requiredProperties;
+	/**
 	 * Class logger.
 	 */
 	private final Logger logger;
@@ -61,27 +64,30 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 		this.name = name;
 		this.children = new ArrayList<>();
 		this.properties = new HashMap<>();
+		this.requiredProperties = new ArrayList<>();
 		setup();
 	}
 
 	/**
 	 * Hidden setup of the operation, setting all properties to be given using
 	 * {@link #addProperty(String, String)}. If not overridden, this method will get all annotations
-	 * {@link OperationRequiredProperty} to automatically fill the properties map.
+	 * {@link OperationProperty} to automatically fill the properties map.
 	 */
 	protected void setup() {
 		logger.debug("Setting up");
-		OperationRequiredProperty[] properties = this.getClass().getAnnotationsByType(OperationRequiredProperty.class);
+		OperationProperty[] properties = this.getClass().getAnnotationsByType(OperationProperty.class);
 		logger.debug("class={} annotations={}", this.getClass(), Arrays.toString(properties));
-		for (OperationRequiredProperty prop : properties) {
+		for (OperationProperty prop : properties) {
 			logger.debug("Setting property {} linking to field {}", prop.name(), prop.field());
 			addProperty(prop.name(), prop.field());
+			if (prop.required())
+				addRequiredProperty(prop.name());
 		}
 		logger.debug("setup complete: {}", this.properties);
 	}
 
 	/**
-	 * Adds a mandatory property to the innate configuration of this operation.
+	 * Adds a property to the innate configuration of this operation.
 	 *
 	 * @param name  Name of the property to collect from output
 	 * @param field Name of the field in the class to fill with this output
@@ -91,13 +97,23 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 		properties.put(name, field);
 	}
 
+	/**
+	 * Flags a property as required for this operation. This does not add it to the list of properties
+	 * and does not check either if the property actually exists.
+	 * 
+	 * @param name Name of the required property
+	 * @see #addProperty(String, String)
+	 */
+	protected void addRequiredProperty(String name) {
+		requiredProperties.add(name);
+	}
+
 	@Override
 	public void fill(Map<String, Object> data) throws SelfFillingException {
 		logger.debug("Filling {}", this);
 		for (Map.Entry<String, String> property : this.properties.entrySet()) {
 			final String key = property.getKey();
-			logger.debug("Filling {} with {} / value={}", property.getValue(), key,
-					data.get(key));
+			logger.debug("Filling {} with {} / value={}", property.getValue(), key, data.get(key));
 			// Check if property exists
 			if (data.containsKey(key)) {
 				boolean madeAccessible = false;
@@ -121,7 +137,7 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 
 				} catch (NumberFormatException e) {
 					throw new SelfFillingException(
-							"Cannot convert given value [" + data.get(key) + "] for '" + key + "' to integer");
+					        "Cannot convert given value [" + data.get(key) + "] for '" + key + "' to integer");
 				} catch (IllegalArgumentException e) {
 					// Error in provided data
 					throw new SelfFillingException(e);
@@ -134,8 +150,7 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 						field.setAccessible(false);
 				}
 			} else
-				throw new SelfFillingException(
-						"Mandatory property '" + key + "' not provided.");
+				throw new SelfFillingException("Mandatory property '" + key + "' not provided.");
 		}
 		logger.debug("Finished filling: {}", this);
 	}
@@ -148,8 +163,7 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 	 * @return an {@link IllegalArgumentException}
 	 */
 	public final IllegalArgumentException createMissingPropertyException(String property) {
-		return new IllegalArgumentException(
-				"'" + property + "' property not provided for column '" + getName() + "'");
+		return new IllegalArgumentException("'" + property + "' property not provided for column '" + getName() + "'");
 	}
 
 	/**
@@ -205,8 +219,8 @@ public abstract class AbstractReorgOperation implements Function<CSVRecord, Stri
 	 *
 	 * @return a list of properties names
 	 */
-	public Collection<String> getRequiredProperties() {
-		return properties.keySet();
+	public List<String> getRequiredProperties() {
+		return requiredProperties;
 	}
 
 	/**

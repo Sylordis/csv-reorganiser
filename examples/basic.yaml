@@ -5,14 +5,20 @@ structure:
   source: id
 - column: something
   value: s
-- column: Gender
-  operation:
-    type: regreplace
-    source: gender
-    pattern: (.).*
-    replace: $1
 - column: login
   concat:
     - first_name
     - .
     - last_name
+- column: Network group
+  operation:
+    type: regreplace
+    source: ip_address
+    pattern: "([0-9]{1,3}\\.[0-9]{1,3})\\..*"
+    replace: $1
+- column: Gender
+  operation:
+    type: substring
+    source: gender
+    start: 0
+    end: 1
