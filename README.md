@@ -12,9 +12,9 @@ Stop to the long hours trying to export, reorganise and separate fields values. 
 
 ### Dependencies
 
-Only Java 17+ is required for runtime.
+Java 19 is required for runtime.
 
-This tool was made with/for Java 17 and Apache Maven as dependency manager.
+This tool was made with/for Java 19 and Apache Maven as dependency manager.
 
 It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
@@ -28,6 +28,9 @@ Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
 * [Mockito](https://site.mockito.org/)
 * [Hamcrest 2](http://hamcrest.org/JavaHamcrest)
+
+Documentation dependencies (by and for):
+* [Javaparser](https://javaparser.org/)
 
 Check the `pom.xml` file for dependencies versions.
 
