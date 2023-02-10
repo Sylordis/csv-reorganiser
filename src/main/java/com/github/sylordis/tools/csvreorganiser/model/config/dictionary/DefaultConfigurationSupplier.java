@@ -47,7 +47,7 @@ public class DefaultConfigurationSupplier implements ConfigurationSupplier {
 	public Map<String, Class<? extends AbstractReorgOperation>> getOperationsDictionary() {
 		Map<String, Class<? extends AbstractReorgOperation>> map = new HashMap<>();
 		Set<Class<? extends AbstractReorgOperation>> types = getOperationsByReflection();
-		types.forEach(e -> map.put(e.getAnnotation(Operation.class).name(), e));
+		types.forEach(t -> map.put(t.getAnnotation(Operation.class).name(), t));
 		return map;
 	}
 
@@ -100,7 +100,7 @@ public class DefaultConfigurationSupplier implements ConfigurationSupplier {
 	 *
 	 * @return a set of all operations
 	 */
-	private Set<Class<? extends AbstractReorgOperation>> getOperationsByReflection() {
+	public Set<Class<? extends AbstractReorgOperation>> getOperationsByReflection() {
 		Reflections reflections = new Reflections(
 				new ConfigurationBuilder().forPackage(ConfigConstants.OPERATIONS_PACKAGE));
 		Set<Class<? extends AbstractReorgOperation>> types = reflections.getSubTypesOf(AbstractReorgOperation.class);

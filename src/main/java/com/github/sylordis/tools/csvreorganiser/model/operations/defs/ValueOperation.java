@@ -8,12 +8,13 @@ import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShort
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
- * "Value" (type = value, constant) operation returns a constant value.
+ * <em>Value</em> operation outputs a static value. This operation does not need any content from
+ * source file in operation to output its content.
  *
  * @author sylordis
  *
  */
-@Operation(name = "Value")
+@Operation(name = "value")
 @OperationProperty(name = "value", field = "value", required = true, description = "Constant value to output")
 @OperationShortcut(keyword = "value", property = "value")
 public class ValueOperation extends AbstractReorgOperation {

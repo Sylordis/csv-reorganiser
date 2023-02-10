@@ -39,6 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
 import com.github.sylordis.tools.csvreorganiser.model.constants.MessagesConstants;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
@@ -358,7 +359,7 @@ class ReorganiserTest {
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
 			fillFileWithSamples(configFile, CONFIG_CONTENT);
 			// Reorganise
-			cfg = ReorgConfiguration.fromFile(configFile);
+			cfg = ReorgConfiguration.fromFile(configFile, new DefaultConfigurationSupplier());
 			reorg.setCfg(cfg);
 			reorg.reorganise();
 			// Checks

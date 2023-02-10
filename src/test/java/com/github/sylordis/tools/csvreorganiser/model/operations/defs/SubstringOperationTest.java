@@ -1,6 +1,11 @@
 package com.github.sylordis.tools.csvreorganiser.model.operations.defs;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -9,7 +14,10 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
 
 class SubstringOperationTest {
 
@@ -39,6 +47,7 @@ class SubstringOperationTest {
 	 * Test method for {@link SubstringOperation#SubstringOperation(String)}.
 	 */
 	@Test
+	@Tag("Constructor")
 	void testSubstringOperation() {
 		assertNotNull(op);
 	}
@@ -47,6 +56,7 @@ class SubstringOperationTest {
 	 * Test method for {@link SubstringOperation#SubstringOperation(String, String, int)}.
 	 */
 	@Test
+	@Tag("Constructor")
 	void testSubstringOperationStringStringInt() {
 		final String src = "SomeSource";
 		final int start = 4;
@@ -62,6 +72,7 @@ class SubstringOperationTest {
 	 * Test method for {@link SubstringOperation#SubstringOperation(String, String, int, int)}.
 	 */
 	@Test
+	@Tag("Constructor")
 	void testSubstringOperationStringStringIntInt() {
 		final String src = "MySource";
 		final int start = 2;
@@ -74,6 +85,15 @@ class SubstringOperationTest {
 		assertEquals(end, op.getEndIndex());
 	}
 
+	/**
+	 * Test method for {@link SubstringOperation#SubstringOperation(String, String, int, int) when end index < start index.
+	 */
+	@Test
+	@Tag("Constructor")
+	void testSubstringOperationStringStringIntInt_CrossedIndexes() throws IOException {
+		assertThrows(ConfigurationImportException.class, () -> new SubstringOperation(OP_NAME, "any", 10, 1));
+	}
+	
 	/**
 	 * Test method for {@link SubstringOperation#apply()} in normal conditions.
 	 */
@@ -145,7 +165,7 @@ class SubstringOperationTest {
 		assertEquals("", op.apply(parser.getRecords().get(0)),
 				"Apply should not fail if the start index is out of bounds");
 	}
-	
+
 	/**
 	 * Test method for {@link SubstringOperation#setup()}.
 	 */

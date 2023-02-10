@@ -8,12 +8,12 @@ import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShort
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
- * "Get" is the trivial basic operation which consists of getting the value of another column.
+ * <em>Get</em> operation simply takes the full content of a column. If the source column does not exist, an error will be raised.
  *
  * @author sylordis
  *
  */
-@Operation(name = "Get")
+@Operation(name = "get")
 @OperationProperty(name = "source", field = "srcColumn", required = true, description = "Name of the column to get the value from")
 @OperationShortcut(keyword = "source", property = "source")
 public class GetOperation extends AbstractReorgOperation {

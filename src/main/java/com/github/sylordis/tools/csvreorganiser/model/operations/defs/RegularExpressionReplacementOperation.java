@@ -7,17 +7,19 @@ import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationPrope
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
- * Regular expression Replacement (type = "RegReplace") applies a regular expression replacement to
- * the value of a column. The base string will be returned if the pattern cannot be found.
+ * <em>Regular expression Replacement</em> operation takes the content of a column from the source
+ * file and performs a regular expression replacement. This regular expression must be have a Java
+ * regex syntax based on Pattern Java class. If the source column does not exist, an error will be
+ * raised. The base string will be returned if the pattern cannot be found.
  *
  * @author sylordis
  *
  */
-@Operation(name = "RegReplace")
+@Operation(name = "regreplace")
 @OperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
 @OperationProperty(name = "pattern", field = "pattern", required = true, description = "Pattern to look for in the content")
 @OperationProperty(name = "replace", field = "replacement", required = true, description = "Replacement for the pattern")
-public class RegReplaceOperation extends AbstractReorgOperation {
+public class RegularExpressionReplacementOperation extends AbstractReorgOperation {
 
 	/**
 	 * Required properties for source specification.
@@ -58,7 +60,7 @@ public class RegReplaceOperation extends AbstractReorgOperation {
 	 *
 	 * @param name
 	 */
-	public RegReplaceOperation(String name, String srcColumn, String pattern, String replacement) {
+	public RegularExpressionReplacementOperation(String name, String srcColumn, String pattern, String replacement) {
 		super(name);
 		this.srcColumn = srcColumn;
 		this.pattern = pattern;
@@ -70,7 +72,7 @@ public class RegReplaceOperation extends AbstractReorgOperation {
 	 *
 	 * @param name
 	 */
-	public RegReplaceOperation(String name) {
+	public RegularExpressionReplacementOperation(String name) {
 		this(name, null, null, null);
 	}
 
@@ -89,10 +91,8 @@ public class RegReplaceOperation extends AbstractReorgOperation {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "[" + getName() + ", " + srcColumn + ": "
-				+ pattern
-				+ " => "
-				+ replacement + "]";
+		return this.getClass().getSimpleName() + "[" + getName() + ", " + srcColumn + ": " + pattern + " => "
+		        + replacement + "]";
 	}
 
 	/**

@@ -38,16 +38,16 @@ class ConcatOperationTest {
 	/**
 	 * Object under test.
 	 */
-	private ConcatOperation op;
+	private ConcatenationOperation op;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		op = new ConcatOperation(OP_NAME);
+		op = new ConcatenationOperation(OP_NAME);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#setup()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#setup()}.
 	 */
 	@Test
 	void testSetup() {
@@ -59,7 +59,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * in normal conditions.
 	 *
 	 * @throws IOException
@@ -74,7 +74,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the provided record is null. This is an edge case which should not happen.
 	 *
 	 * @throws IOException
@@ -87,7 +87,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when a null record is provided but no configuration was made.
 	 *
 	 * @throws IOException
@@ -100,7 +100,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when given values do not exist as fields in the CSV record. They should be output as normal text.
 	 *
 	 * @throws IOException
@@ -114,7 +114,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the operation was not filled.
 	 *
 	 * @throws IOException
@@ -127,19 +127,19 @@ class ConcatOperationTest {
 	}
 
 	/**
-	 * Test method for {@link ConcatOperation#ConcatOperation(String, List)}.
+	 * Test method for {@link ConcatenationOperation#ConcatOperation(String, List)}.
 	 */
 	@Test
 	@Tag("Constructor")
 	void testConcatOperationStringListOfString() {
 		final List<String> values = List.of("treat", "is", "a", "lie");
-		op = new ConcatOperation(OP_NAME, values);
+		op = new ConcatenationOperation(OP_NAME, values);
 		assertEquals(OP_NAME, op.getName());
 		assertEquals(values, op.getValues());
 	}
 
 	/**
-	 * Test method for {@link ConcatOperation#ConcatOperation(String)}.
+	 * Test method for {@link ConcatenationOperation#ConcatOperation(String)}.
 	 *
 	 */
 	@Test
@@ -150,7 +150,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#toString()}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#toString()}
 	 *
 	 */
 	@Test
@@ -160,7 +160,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#getValues()}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#getValues()}
 	 */
 	@Test
 	void testGetValues() {
@@ -169,7 +169,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#setValues(List)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#setValues(List)}.
 	 *
 	 * @param values
 	 */
@@ -191,7 +191,7 @@ class ConcatOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation#setValues(List)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation#setValues(List)}
 	 * when null is provided.
 	 */
 	@Test

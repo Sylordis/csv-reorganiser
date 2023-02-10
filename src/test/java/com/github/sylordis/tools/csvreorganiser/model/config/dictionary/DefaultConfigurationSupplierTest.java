@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.OperationInstantiator;
-import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation;
+import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.defs.GetOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ValueOperation;
 
@@ -73,7 +73,7 @@ class DefaultConfigurationSupplierTest {
 	void testGetShortcutDictionary() {
 		Map<String, OperationInstantiator> m = dcs.getShortcutDictionary();
 		assertNotNull(m);
-		Set<String> expected = Set.of(ConcatOperation.SHORTCUT_KEY, GetOperation.SHORTCUT_KEY,
+		Set<String> expected = Set.of(ConcatenationOperation.SHORTCUT_KEY, GetOperation.SHORTCUT_KEY,
 				ValueOperation.SHORTCUT_KEY);
 		assertEquals(expected, m.keySet());
 	}
@@ -121,13 +121,13 @@ class DefaultConfigurationSupplierTest {
 							}
 						})),
 				//
-				Arguments.of(ConcatOperation.class, ConcatOperation.SHORTCUT_KEY, "Together",
-						Map.of(ConcatOperation.SHORTCUT_KEY, List.of("column", ".")),
+				Arguments.of(ConcatenationOperation.class, ConcatenationOperation.SHORTCUT_KEY, "Together",
+						Map.of(ConcatenationOperation.SHORTCUT_KEY, List.of("column", ".")),
 						Map.of(List.of("column", "."), new Function<AbstractReorgOperation, Object>() {
 
 							@Override
 							public Object apply(AbstractReorgOperation t) {
-								return ((ConcatOperation) t).getValues();
+								return ((ConcatenationOperation) t).getValues();
 							}
 						})));
 	}

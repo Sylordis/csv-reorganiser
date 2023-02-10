@@ -6,8 +6,10 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.sylordis.tools.csvreorganiser.doc.MarkdownDocumentationOutput;
 import com.github.sylordis.tools.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.tools.csvreorganiser.model.Reorganiser;
+import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
 
 /**
@@ -41,44 +43,54 @@ public final class CSVReorganiserCLIMain {
 	 * @see #usage()
 	 */
 	public void reorganise(String[] args) {
+		boolean docMode = false;
 		// Args check
-		if (args == null || args.length < 3)
+		if (args == null || args.length == 0)
 			fatal("Wrong number of arguments.", this::usage);
-		// Files check
-		// We perform all checks and then stop if any error occurred
-		boolean error = false;
-		// Configuration file
-		File cfgFile = new File(args[0]);
-		if (!cfgFile.exists() || cfgFile.isDirectory() || !cfgFile.canRead()) {
-			logger.error("File {} is not an existing readable file.", cfgFile.getName());
-			error = true;
+		else if ("--doc".equals(args[0])) {
+			docMode = true;
 		}
-		// Source file
-		File srcFile = new File(args[1]);
-		if (!srcFile.exists() || srcFile.isDirectory() || !srcFile.canRead()) {
-			logger.error("File {} is not an existing readable file.", srcFile.getName());
-			error = true;
-		}
-		// Target file
-		File targetFile = new File(args[2]);
-		if (targetFile.exists() && (targetFile.isDirectory() || !targetFile.canWrite())) {
-			logger.error("File {} exists and cannot be written to.", targetFile.getName());
-			error = true;
-		}
-		// Error while checking any of the previous file
-		if (error)
-			fatal("Files check was unsuccessful.");
-		// Operations
-		try {
-			ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile);
-			Reorganiser model = new Reorganiser(srcFile, targetFile, cfg);
-			model.reorganise();
-		} catch (IOException e) {
-			logger.fatal("Error during file operation", e);
-			System.exit(1);
-		} catch (ReorganiserRuntimeException e) {
-			logger.fatal(e);
-			System.exit(1);
+		if (docMode) {
+			new MarkdownDocumentationOutput().generate();
+		} else {
+			if (args.length < 3)
+				fatal("Wrong number of arguments.", this::usage);
+			// Files check
+			// We perform all checks and then stop if any error occurred
+			boolean error = false;
+			// Configuration file
+			File cfgFile = new File(args[0]);
+			if (!cfgFile.exists() || cfgFile.isDirectory() || !cfgFile.canRead()) {
+				logger.error("File {} is not an existing readable file.", cfgFile.getName());
+				error = true;
+			}
+			// Source file
+			File srcFile = new File(args[1]);
+			if (!srcFile.exists() || srcFile.isDirectory() || !srcFile.canRead()) {
+				logger.error("File {} is not an existing readable file.", srcFile.getName());
+				error = true;
+			}
+			// Target file
+			File targetFile = new File(args[2]);
+			if (targetFile.exists() && (targetFile.isDirectory() || !targetFile.canWrite())) {
+				logger.error("File {} exists and cannot be written to.", targetFile.getName());
+				error = true;
+			}
+			// Error while checking any of the previous file
+			if (error)
+				fatal("Files check was unsuccessful.");
+			// Operations
+			try {
+				ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile, new DefaultConfigurationSupplier());
+				Reorganiser model = new Reorganiser(srcFile, targetFile, cfg);
+				model.reorganise();
+			} catch (IOException e) {
+				logger.fatal("Error during file operation", e);
+				System.exit(1);
+			} catch (ReorganiserRuntimeException e) {
+				logger.fatal(e);
+				System.exit(1);
+			}
 		}
 	}
 

@@ -24,15 +24,12 @@ import org.apache.logging.log4j.message.Message;
 import org.yaml.snakeyaml.Yaml;
 
 import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.ConfigurationSupplier;
-import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
 import com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.OperationInstantiator;
 import com.github.sylordis.tools.csvreorganiser.model.operations.ReorgOperationBuilder;
-import com.github.sylordis.tools.csvreorganiser.model.operations.defs.GetOperation;
-import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ValueOperation;
 import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLType;
 import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLUtils;
 
@@ -159,9 +156,7 @@ public class ReorgConfiguration {
 			} else {
 				Message msg = logger.getMessageFactory().newMessage(
 						"No proper configuration of operation detected for {}, requires one of: {}",
-						yaml,
-						List.of( /* OPDEF_OPERATIONS_KEY, */ OPDEF_OPERATION_KEY, GetOperation.SHORTCUT_KEY,
-								ValueOperation.SHORTCUT_KEY));
+						yaml, operationsShortcutsDictionary.keySet().toArray());
 				throw new ConfigurationImportException(msg.getFormattedMessage());
 			}
 		} else {
@@ -231,9 +226,9 @@ public class ReorgConfiguration {
 	 * @throws IOException                  if something goes wrong while reading the configuration file
 	 * @throws ConfigurationImportException
 	 */
-	public static ReorgConfiguration fromFile(File cfgFile)
+	public static ReorgConfiguration fromFile(File cfgFile, ConfigurationSupplier cfg)
 			throws FileNotFoundException, IOException, ConfigurationImportException {
-		ReorgConfiguration config = new ReorgConfiguration(new DefaultConfigurationSupplier());
+		ReorgConfiguration config = new ReorgConfiguration(cfg);
 		config.loadFromFile(cfgFile);
 		return config;
 	}

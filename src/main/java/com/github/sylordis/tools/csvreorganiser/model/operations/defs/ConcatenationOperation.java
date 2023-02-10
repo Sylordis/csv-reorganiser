@@ -11,16 +11,18 @@ import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShort
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
- * "Concat" takes sources in multiple columns and constants to concatenate them together.
+ * <em>Concat</em> takes sources in multiple columns and constants to concatenate them together.
+ * Every provided value will be first searched for as a column, then taken as constant if this last
+ * one doesn't exist.
  *
  * @author sylordis
  * @since 1.1
  *
  */
-@Operation(name = "Concat")
-@OperationProperty(name = "values", field = "values", required = true, description = "List of columns or constants strings to take values from")
+@Operation(name = "concat")
+@OperationProperty(name = "values", field = "values", required = true, description = "List of columns to take values from and/or constants strings ")
 @OperationShortcut(keyword = "concat", property = "values")
-public class ConcatOperation extends AbstractReorgOperation {
+public class ConcatenationOperation extends AbstractReorgOperation {
 
 	/**
 	 * Required properties for values specification.
@@ -44,7 +46,7 @@ public class ConcatOperation extends AbstractReorgOperation {
 	 * @param name  Name of the column
 	 * @param value constant value of the column
 	 */
-	public ConcatOperation(String name, List<String> values) {
+	public ConcatenationOperation(String name, List<String> values) {
 		super(name);
 		this.values = new ArrayList<>();
 		this.values = values;
@@ -55,7 +57,7 @@ public class ConcatOperation extends AbstractReorgOperation {
 	 *
 	 * @param name Name of the column
 	 */
-	public ConcatOperation(String name) {
+	public ConcatenationOperation(String name) {
 		this(name, null);
 	}
 

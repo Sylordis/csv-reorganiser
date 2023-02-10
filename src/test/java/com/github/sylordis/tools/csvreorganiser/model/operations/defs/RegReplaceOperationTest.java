@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test suite for {@link RegReplaceOperation} class.
+ * Test suite for {@link RegularExpressionReplacementOperation} class.
  *
  * @author sylordis
  *
@@ -60,19 +60,19 @@ class RegReplaceOperationTest {
 	/**
 	 * Fully constructed operation.
 	 */
-	private RegReplaceOperation fop;
+	private RegularExpressionReplacementOperation fop;
 	/**
 	 * Bare operation,
 	 */
-	private RegReplaceOperation bop;
+	private RegularExpressionReplacementOperation bop;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		fop = new RegReplaceOperation(OP_NAME, SRC_VALUE, PATT_VALUE, REPL_VALUE);
-		bop = new RegReplaceOperation(OP_NAME);
+		fop = new RegularExpressionReplacementOperation(OP_NAME, SRC_VALUE, PATT_VALUE, REPL_VALUE);
+		bop = new RegularExpressionReplacementOperation(OP_NAME);
 	}
 
 	/**
@@ -85,14 +85,14 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#setup()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#setup()}.
 	 */
 	@Test
 	void testSetup() {
 		final List<String> keys = new ArrayList<>(bop.getRequiredProperties());
 		assertTrue(!keys.isEmpty(), "List of required properties should not be empty");
-		final List<String> expected = new ArrayList<>(List.of(RegReplaceOperation.OPDATA_ID_SOURCE,
-				RegReplaceOperation.OPDATA_ID_PATTERN, RegReplaceOperation.OPDATA_ID_REPLACEMENT));
+		final List<String> expected = new ArrayList<>(List.of(RegularExpressionReplacementOperation.OPDATA_ID_SOURCE,
+				RegularExpressionReplacementOperation.OPDATA_ID_PATTERN, RegularExpressionReplacementOperation.OPDATA_ID_REPLACEMENT));
 		Collections.sort(keys, String.CASE_INSENSITIVE_ORDER);
 		Collections.sort(expected);
 		assertIterableEquals(expected, keys, "Setup should configure all required properties.");
@@ -100,7 +100,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * in normal conditions.
 	 *
 	 * @throws IOException
@@ -113,7 +113,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the pattern cannot be matched.
 	 *
 	 * @throws IOException
@@ -129,7 +129,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the pattern cannot be matched.
 	 *
 	 * @throws IOException
@@ -146,7 +146,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * in normal conditions.
 	 *
 	 * @throws IOException
@@ -164,7 +164,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the provided record is null. This is an edge case which should not happen.
 	 */
 	@Test
@@ -176,7 +176,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when not all required properties have been provided.
 	 */
 	@Test
@@ -189,7 +189,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the source column does not exist.
 	 */
 	@Test
@@ -201,7 +201,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when not all required properties have been provided.
 	 */
 	@Test
@@ -214,7 +214,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when not all required properties have been provided.
 	 */
 	@Test
@@ -227,7 +227,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#RegReplaceOperation(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#RegReplaceOperation(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -241,7 +241,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#RegReplaceOperation(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#RegReplaceOperation(java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -271,7 +271,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#getPattern()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#getPattern()}.
 	 */
 	@Test
 	void testGetPattern() {
@@ -280,7 +280,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#setPattern(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#setPattern(java.lang.String)}.
 	 */
 	@Test
 	void testSetPattern() {
@@ -291,7 +291,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#getReplacement()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#getReplacement()}.
 	 */
 	@Test
 	void testGetReplacement() {
@@ -300,7 +300,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#setReplacement(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#setReplacement(java.lang.String)}.
 	 */
 	@Test
 	void testSetReplacement() {
@@ -311,7 +311,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#getSrcColumn()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#getSrcColumn()}.
 	 */
 	@Test
 	void testGetSrcColumn() {
@@ -320,7 +320,7 @@ class RegReplaceOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation#setSrcColumn(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation#setSrcColumn(java.lang.String)}.
 	 */
 	@Test
 	void testSetSrcColumn() {

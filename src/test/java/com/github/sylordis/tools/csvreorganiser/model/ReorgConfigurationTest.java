@@ -38,9 +38,10 @@ import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationEx
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.OperationInstantiator;
-import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatOperation;
+import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ConcatenationOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.defs.GetOperation;
-import com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegReplaceOperation;
+import com.github.sylordis.tools.csvreorganiser.model.operations.defs.RegularExpressionReplacementOperation;
+import com.github.sylordis.tools.csvreorganiser.model.operations.defs.SubstringOperation;
 import com.github.sylordis.tools.csvreorganiser.model.operations.defs.ValueOperation;
 import com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants;
 import com.github.sylordis.tools.csvreorganiser.test.defs.FakeOperation;
@@ -141,7 +142,7 @@ class ReorgConfigurationTest {
 	void testLoadFromFile() throws ConfigurationImportException, FileNotFoundException, IOException {
 		rcfg = new ReorgConfiguration(new DefaultConfigurationSupplier());
 		rcfg.loadFromFile(cfgFile);
-		assertEquals(5, rcfg.getOperations().size());
+		assertEquals(6, rcfg.getOperations().size());
 		AbstractReorgOperation op = rcfg.getOperations().get(0);
 		assertEquals(GetOperation.class, op.getClass());
 		assertEquals("Name", op.getName());
@@ -155,16 +156,22 @@ class ReorgConfigurationTest {
 		assertEquals("something", op.getName());
 		assertEquals("s", ((ValueOperation) op).getValue());
 		op = rcfg.getOperations().get(3);
-		assertEquals(RegReplaceOperation.class, op.getClass());
-		assertEquals("Gender", op.getName());
-		assertEquals("gender", ((RegReplaceOperation) op).getSrcColumn());
-		assertEquals("(.).*", ((RegReplaceOperation) op).getPattern());
-		assertEquals("$1", ((RegReplaceOperation) op).getReplacement());
+		assertEquals(ConcatenationOperation.class, op.getClass());
+		assertEquals("login", op.getName());
+		Collection<String> values = new ArrayList<>(List.of("first_name", ".", "last_name"));
+		assertEquals(values, ((ConcatenationOperation) op).getValues());
 		op = rcfg.getOperations().get(4);
-		assertEquals(ConcatOperation.class, op.getClass());
-		assertEquals("Full name", op.getName());
-		Collection<String> values = new ArrayList<>(List.of("first_name", " ", "last_name"));
-		assertEquals(values, ((ConcatOperation) op).getValues());
+		assertEquals(RegularExpressionReplacementOperation.class, op.getClass());
+		assertEquals("Network group", op.getName());
+		assertEquals("ip_address", ((RegularExpressionReplacementOperation) op).getSrcColumn());
+		assertEquals("([0-9]{1,3}\\.[0-9]{1,3})\\..*", ((RegularExpressionReplacementOperation) op).getPattern());
+		assertEquals("$1", ((RegularExpressionReplacementOperation) op).getReplacement());
+		op = rcfg.getOperations().get(5);
+		assertEquals(SubstringOperation.class, op.getClass());
+		assertEquals("Gender", op.getName());
+		assertEquals("gender", ((SubstringOperation) op).getSrcColumn());
+		assertEquals(0, ((SubstringOperation) op).getStartIndex());
+		assertEquals(1, ((SubstringOperation) op).getEndIndex());
 	}
 
 	/**
@@ -467,7 +474,7 @@ class ReorgConfigurationTest {
 	@Tag("Constructor")
 	void testFromFile() throws ConfigurationImportException, FileNotFoundException, IOException {
 		ReorgConfiguration nrcfg;
-		nrcfg = ReorgConfiguration.fromFile(cfgFile);
+		nrcfg = ReorgConfiguration.fromFile(cfgFile, new DefaultConfigurationSupplier());
 		assertNotNull(nrcfg);
 		assertNotSame(nrcfg, rcfg);
 	}

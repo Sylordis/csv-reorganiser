@@ -4,8 +4,8 @@
            xsi:schemaLocation="https://raw.githubusercontent.com/apache/logging-log4j2/log4j-2.17.2/log4j-core/src/main/resources/Log4j-config.xsd">
 	<Loggers>
 		<Root level="debug">
-		<Logger name="org.reflections" level="error"/>
 <!-- 			<AppenderRef ref="Console" /> -->
 		</Root>
+		<Logger name="org.reflections" level="error"/>
 	</Loggers>
 </Configuration>

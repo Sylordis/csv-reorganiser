@@ -4,21 +4,24 @@ import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
 import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
- * Substring operation does a literal substring on a value. If the end index is too long compared to
+ * <em>Substring</em> operation does a literal substring on a value. If the end index is too long compared to
  * the word or not provided, the substring will be done from the start index up the end of the word.<br/>
  * This operation does not fail and only returns an empty string if:
  * <ul>
  * <li>The source is empty</li>
  * <li>The start index is out of bounds</li>
  * </ul>
+ * It will however if the end index is set and lower than the start index.
  * 
  * @author sylordis
+ * @since 1.2
  *
  */
-@Operation(name = "Substring")
+@Operation(name = "substring")
 @OperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
 @OperationProperty(name = "start", field = "indexStart", required = true, description = "Start index of the substring")
 @OperationProperty(name = "end", field = "indexEnd", description = "End index of the substring, leave not set for until the end of the text")
@@ -33,7 +36,7 @@ public class SubstringOperation extends AbstractReorgOperation {
 	 */
 	public static final String OPDATA_FIELD_START = "start";
 	/**
-	 * Constant to specify that no end index is used.
+	 * Constant to specify that no end index is set.
 	 */
 	public static final int NO_END_INDEX = -1;
 	
@@ -79,6 +82,8 @@ public class SubstringOperation extends AbstractReorgOperation {
 	 */
 	public SubstringOperation(String name, String source, int from, int to) {
 		super(name);
+		if (to > NO_END_INDEX && to < from)
+			throw new ConfigurationImportException("Start index cannot be greater than end index");
 		this.srcColumn = source;
 		this.indexStart = Math.max(0, from);
 		// Prevents putting index inferior to NO_END_INDEX
