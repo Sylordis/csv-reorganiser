@@ -33,9 +33,9 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
 public class Reorganiser {
 
 	/**
-	 * File with base content.
+	 * Files with base content.
 	 */
-	private File srcFile;
+	private List<File> srcFiles;
 	/**
 	 * File to be written to.
 	 */
@@ -51,13 +51,14 @@ public class Reorganiser {
 
 	/**
 	 *
-	 * @param srcFile    File with content to be reorganised
+	 * @param srcFiles   Files with content to be reorganised
 	 * @param targetFile File created or rewritten by the process
 	 * @param cfgFile    Configuration file for the reorganisation
 	 */
-	public Reorganiser(File srcFile, File targetFile, ReorgConfiguration cfg) {
+	public Reorganiser(ReorgConfiguration cfg, File targetFile, List<File> srcFiles) {
 		logger = LogManager.getLogger();
-		this.srcFile = srcFile;
+		this.srcFiles = new ArrayList<>();
+		this.srcFiles.addAll(srcFiles);
 		this.targetFile = targetFile;
 		this.cfg = cfg;
 	}
@@ -76,35 +77,44 @@ public class Reorganiser {
 			throw new ConfigurationException("No configuration was found (null)");
 		} else if (cfg.getOperations().isEmpty()) {
 			throw new ConfigurationException("Configuration operations list is empty");
+		} else if (srcFiles.isEmpty()) {
+			throw new ReorganiserRuntimeException("No source files provided");
 		} else {
-			List<List<String>> recordsOut = new ArrayList<>();
+			validateFiles();
 			// Fill header
 			String[] headerOut = cfg.getOperations().stream().map(AbstractReorgOperation::getName)
-					.toArray(String[]::new);
+			        .toArray(String[]::new);
 			logger.info("Header: {}", Arrays.toString(headerOut));
-			try (Reader srcInput = new FileReader(srcFile);
-					FileWriter out = new FileWriter(targetFile, true);
+			logger.debug("Source files to process: {}", srcFiles);
+			try (FileWriter out = new FileWriter(targetFile, true);
 			        CSVPrinter printer = new CSVPrinter(out, CSVFormat.Builder.create().setHeader(headerOut).build())) {
 				// Generate records file
 				try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile))) {
 					writer.write(MessagesConstants.TARGET_COMMENT.replace("%DATE",
-							DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
+					        DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
 					writer.newLine();
 				}
-				Iterable<CSVRecord> recordsIn = CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true).build()
-						.parse(srcInput);
-				// Apply operations for each record
-				// This solution makes it easier for later processing, but is it scalable?
-				for (CSVRecord record : recordsIn) {
-					List<String> recordOut = new ArrayList<>();
-					for (AbstractReorgOperation op : cfg.getOperations())
-						recordOut.add(op.apply(record));
-					recordsOut.add(recordOut);
+				// For each file
+				for (File srcFile : srcFiles) {
+					List<List<String>> recordsOut = new ArrayList<>();
+					logger.debug("Processing source file {}", srcFile);
+					try (Reader srcInput = new FileReader(srcFile)) {
+						Iterable<CSVRecord> recordsIn = CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true)
+						        .build().parse(srcInput);
+						// Apply operations for each record
+						// This solution makes it easier for later processing, but is it scalable?
+						for (CSVRecord record : recordsIn) {
+							List<String> recordOut = new ArrayList<>();
+							for (AbstractReorgOperation op : cfg.getOperations())
+								recordOut.add(op.apply(record));
+							recordsOut.add(recordOut);
+						}
+						logger.info("{} record(s) generated", recordsOut.size());
+						// Print records to target file
+						for (List<String> tupleRecordOut : recordsOut)
+							printer.printRecord(tupleRecordOut);
+					}
 				}
-				logger.info("{} record(s) generated", recordsOut.size());
-				// Print records to target file
-				for (List<String> tupleRecordOut : recordsOut)
-					printer.printRecord(tupleRecordOut);
 				logger.info("Reorganisation finished: {}", targetFile.getAbsolutePath());
 			} catch (IllegalArgumentException e) {
 				logger.error("Error when processing an operation", e);
@@ -114,17 +124,40 @@ public class Reorganiser {
 	}
 
 	/**
-	 * @return the source file
+	 * Checks if all files are valid. An exception is thrown if at least one file is not found or does
+	 * not satisfy its criteria.
+	 * 
+	 * @return
+	 * @throws FileNotFoundException if at least one file is not valid
 	 */
-	public File getSrcFile() {
-		return srcFile;
+	public void validateFiles() throws FileNotFoundException {
+		List<File> notValid = new ArrayList<>();
+		// Check if all source files are reachable
+		for (File srcFile : srcFiles) {
+			if (!srcFile.canRead()) {
+				notValid.add(srcFile);
+			}
+		}
+		if (!targetFile.canWrite())
+			notValid.add(targetFile);
+		if (!notValid.isEmpty())
+			throw new FileNotFoundException(notValid.toString());
 	}
 
 	/**
-	 * @param srcFile the source file to set
+	 * @return the source files
 	 */
-	public void setSrcFile(File srcFile) {
-		this.srcFile = srcFile;
+	public List<File> getSrcFiles() {
+		return srcFiles;
+	}
+
+	/**
+	 * @param srcFiles the source file to set
+	 */
+	public void setSrcFiles(List<File> srcFiles) {
+		this.srcFiles.clear();
+		if (srcFiles != null)
+			this.srcFiles.addAll(srcFiles);
 	}
 
 	/**

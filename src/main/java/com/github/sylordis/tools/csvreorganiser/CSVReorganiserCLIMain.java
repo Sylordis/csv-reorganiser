@@ -2,6 +2,8 @@ package com.github.sylordis.tools.csvreorganiser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,44 +55,57 @@ public final class CSVReorganiserCLIMain {
 		if (docMode) {
 			new MarkdownDocumentationOutput().generate();
 		} else {
-			if (args.length < 3)
-				fatal("Wrong number of arguments.", this::usage);
-			// Files check
-			// We perform all checks and then stop if any error occurred
-			boolean error = false;
-			// Configuration file
-			File cfgFile = new File(args[0]);
-			if (!cfgFile.exists() || cfgFile.isDirectory() || !cfgFile.canRead()) {
-				logger.error("File {} is not an existing readable file.", cfgFile.getName());
-				error = true;
-			}
-			// Source file
-			File srcFile = new File(args[1]);
+			run(args);
+		}
+	}
+
+	/**
+	 * Default run.
+	 * @param args Command line arguments
+	 */
+	public void run(String[] args) {
+		if (args.length < 3)
+			fatal("Wrong number of arguments.", this::usage);
+		// Files check
+		// We perform all checks and then stop if any error occurred
+		boolean error = false;
+		// Configuration file
+		File cfgFile = new File(args[0]);
+		if (!cfgFile.exists() || cfgFile.isDirectory() || !cfgFile.canRead()) {
+			logger.error("File {} is not an existing readable file.", cfgFile.getName());
+			error = true;
+		}
+		// Source files
+		List<File> srcFiles = new ArrayList<>();
+		for (int i = 1; i < args.length - 1; i++) {
+			File srcFile = new File(args[i]);
 			if (!srcFile.exists() || srcFile.isDirectory() || !srcFile.canRead()) {
 				logger.error("File {} is not an existing readable file.", srcFile.getName());
 				error = true;
+			} else {
+				srcFiles.add(srcFile);
 			}
-			// Target file
-			File targetFile = new File(args[2]);
-			if (targetFile.exists() && (targetFile.isDirectory() || !targetFile.canWrite())) {
-				logger.error("File {} exists and cannot be written to.", targetFile.getName());
-				error = true;
-			}
-			// Error while checking any of the previous file
-			if (error)
-				fatal("Files check was unsuccessful.");
-			// Operations
-			try {
-				ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile, new DefaultConfigurationSupplier());
-				Reorganiser model = new Reorganiser(srcFile, targetFile, cfg);
-				model.reorganise();
-			} catch (IOException e) {
-				logger.fatal("Error during file operation", e);
-				System.exit(1);
-			} catch (ReorganiserRuntimeException e) {
-				logger.fatal(e);
-				System.exit(1);
-			}
+		}
+		// Target file (last argument)
+		File targetFile = new File(args[args.length-1]);
+		if (targetFile.exists() && (targetFile.isDirectory() || !targetFile.canWrite())) {
+			logger.error("File {} exists and cannot be written to.", targetFile.getName());
+			error = true;
+		}
+		// Error while checking any of the previous file
+		if (error)
+			fatal("Files check was unsuccessful.");
+		// Operations
+		try {
+			ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile, new DefaultConfigurationSupplier());
+			Reorganiser model = new Reorganiser(cfg, targetFile, srcFiles);
+			model.reorganise();
+		} catch (IOException e) {
+			logger.fatal("Error during file operation", e);
+			System.exit(1);
+		} catch (ReorganiserRuntimeException e) {
+			logger.fatal(e);
+			System.exit(1);
 		}
 	}
 
@@ -111,7 +126,7 @@ public final class CSVReorganiserCLIMain {
 	 * Prints basic usage.
 	 */
 	private void usage() {
-		logger.info("usage: <cfgfile> <src> <target>");
+		logger.info("usage: <cfgfile> <src..> <target>");
 	}
 
 	/**

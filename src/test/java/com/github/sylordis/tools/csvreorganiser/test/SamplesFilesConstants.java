@@ -18,9 +18,17 @@ public final class SamplesFilesConstants {
 	 */
 	public static final String SOURCE_CONTENT = SAMPLES_DIR + "people.csv";
 	/**
+	 * Path to test source file.
+	 */
+	public static final String SOURCE_CONTENT_2 = SAMPLES_DIR + "people2.csv";
+	/**
 	 * Path to test target file.
 	 */
 	public static final String TARGET_CONTENT = SAMPLES_DIR + "expected.csv";
+	/**
+	 * Path to test target file.
+	 */
+	public static final String TARGET_CONTENT_2 = SAMPLES_DIR + "expected2.csv";
 	/**
 	 * Path to test configuration file.
 	 */

@@ -1,8 +1,6 @@
 package com.github.sylordis.tools.csvreorganiser.model;
 
-import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.CONFIG_CONTENT;
-import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT;
-import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -78,7 +76,7 @@ class ReorganiserTest {
 	void setUp() throws Exception {
 		srcFile = File.createTempFile("srcFile", null, workingDir);
 		targetFile = File.createTempFile("targetFile", null, workingDir);
-		reorg = new Reorganiser(srcFile, targetFile, cfg);
+		reorg = new Reorganiser(cfg, targetFile, List.of(srcFile));
 	}
 
 	@AfterEach
@@ -114,8 +112,8 @@ class ReorganiserTest {
 	 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#getSrcFile()}.
 	 */
 	@Test
-	void testGetSrcFile() {
-		assertEquals(srcFile, reorg.getSrcFile(), "Source file should be equal to the one provided in the constructor");
+	void testGetSrcFiles() {
+		assertEquals(List.of(srcFile), reorg.getSrcFiles(), "Source files should be equal to the ones provided in the constructor");
 	}
 
 	/**
@@ -125,10 +123,26 @@ class ReorganiserTest {
 	 * @throws IOException
 	 */
 	@Test
-	void testSetSrcFile(TestInfo testInfo) throws IOException {
+	void testSetSrcFiles(TestInfo testInfo) throws IOException {
 		File file = File.createTempFile(testInfo.getDisplayName(), null, workingDir);
-		reorg.setSrcFile(file);
-		assertEquals(file, reorg.getSrcFile(), "Source file should be equal to the one set");
+		reorg.setSrcFiles(List.of(file));
+		assertEquals(List.of(file), reorg.getSrcFiles(), "Source file should be equal to the ones set");
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#setSrcFile(File)} when provided multiple files.
+	 *
+	 * @throws IOException
+	 */
+	@Test
+	void testSetSrcFiles_SeveralFiles(TestInfo testInfo) throws IOException {
+		File fileA = new File("my/a");
+		File fileB = new File("my/b");
+		File fileC = new File("my/c");
+		List<File> srcFiles = List.of(fileA, fileB, fileC);
+		reorg.setSrcFiles(srcFiles);
+		assertEquals(srcFiles, reorg.getSrcFiles(), "Source file should be equal to the ones set and in the same order");
 	}
 
 	/**
@@ -138,9 +152,9 @@ class ReorganiserTest {
 	 */
 	@Test
 	@Tag("Null")
-	void testSetSrcFile_Null() {
-		reorg.setSrcFile(null);
-		assertNull(reorg.getSrcFile(), "Source file should be null if set to null");
+	void testSetSrcFiles_Null() {
+		reorg.setSrcFiles(null);
+		assertEquals(new ArrayList<>(), reorg.getSrcFiles(), "Source files should be empty if provided null");
 	}
 
 	/**
@@ -250,7 +264,7 @@ class ReorganiserTest {
 			List<AbstractReorgOperation> operations = new ArrayList<>();
 			operations.add(op);
 			when(cfg.getOperations()).thenReturn(operations);
-			reorg.setSrcFile(new File("I/do/not/exist"));
+			reorg.setSrcFiles(List.of(new File("I/do/not/exist")));
 			assertThrows(FileNotFoundException.class, reorg::reorganise, "A FileNotFound exception should be thrown");
 			assertEquals(0L, targetFile.length(), "File should not be written in if source is unreachable");
 		}
@@ -271,7 +285,7 @@ class ReorganiserTest {
 			when(cfg.getOperations()).thenReturn(operations);
 			final File sourceFile = File.createTempFile(info.getDisplayName(), null, workingDir);
 			sourceFile.setReadable(false, true);
-			reorg.setSrcFile(sourceFile);
+			reorg.setSrcFiles(List.of(sourceFile));
 			assertThrows(IOException.class, reorg::reorganise,
 			        "An IO exception should be thrown because the file cannot be read");
 			assertEquals(0L, targetFile.length(), "File should not be written in if the source is unreadable");
@@ -364,6 +378,54 @@ class ReorganiserTest {
 			reorg.reorganise();
 			// Checks
 			assertTrue(FileUtils.contentEquals(sourceBackup, srcFile), "Source file should not be modified");
+			try (BufferedReader readerExpected = new BufferedReader(new FileReader(expectedFile));
+			        BufferedReader readerTarget = new BufferedReader(new FileReader(targetFile))) {
+				String lineExpected = readerExpected.readLine(), lineTarget = readerTarget.readLine();
+				assertTrue(lineTarget.matches(MessagesConstants.TARGET_COMMENT.replace("%DATE", ".*")),
+				        "First line of target file should be a comment");
+				while ((lineExpected = readerExpected.readLine()) != null
+				        && (lineTarget = readerTarget.readLine()) != null) {
+					assertEquals(lineExpected, lineTarget, "Target and expected files should be equal");
+				}
+			}
+			// Clean up
+			sourceBackup.delete();
+			expectedFile.delete();
+			configFile.delete();
+		}
+
+		/**
+		 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#reorganise()}.
+		 *
+		 * @throws IOException
+		 * @throws FileNotFoundException
+		 */
+		@Test
+		@Tag("Integration")
+		void testReorganise_withMultipleSources(TestInfo testinfo) throws FileNotFoundException, IOException {
+			// Setup files and samples
+			// First source
+			File sourceBackup = File.createTempFile(testinfo.getDisplayName() + "-srcbkp", null, workingDir);
+			fillFileWithSamples(srcFile, SOURCE_CONTENT);
+			fillFileWithSamples(sourceBackup, SOURCE_CONTENT);
+			// Second source
+			File srcFile2 = File.createTempFile("srcFile_add", null, workingDir);
+			File sourceBackup2 = File.createTempFile(testinfo.getDisplayName() + "_2-srcbkp", null, workingDir);
+			fillFileWithSamples(srcFile2, SOURCE_CONTENT_2);
+			fillFileWithSamples(sourceBackup2, SOURCE_CONTENT_2);
+			// Expectation
+			File expectedFile = File.createTempFile(testinfo.getDisplayName() + "-tgt", null, workingDir);
+			fillFileWithSamples(expectedFile, TARGET_CONTENT_2);
+			// Config
+			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
+			fillFileWithSamples(configFile, CONFIG_CONTENT);
+			// Reorganise
+			cfg = ReorgConfiguration.fromFile(configFile, new DefaultConfigurationSupplier());
+			reorg = new Reorganiser(cfg, targetFile, List.of(srcFile, srcFile2));
+			reorg.reorganise();
+			// Checks
+			assertTrue(FileUtils.contentEquals(sourceBackup, srcFile), "Source file should not be modified");
+			assertTrue(FileUtils.contentEquals(sourceBackup2, srcFile2), "Second source file should not be modified");
 			try (BufferedReader readerExpected = new BufferedReader(new FileReader(expectedFile));
 			        BufferedReader readerTarget = new BufferedReader(new FileReader(targetFile))) {
 				String lineExpected = readerExpected.readLine(), lineTarget = readerTarget.readLine();

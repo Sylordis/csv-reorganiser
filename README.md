@@ -49,12 +49,12 @@ Jar file should be provided under `target/csv-reorganiser-<VERSION>.jar`
 Run the following command:
 
 ```
-java -jar <path-to-jar>/csv-reorganiser-X.X.jar <yaml-cfg> <csv-source> <csv-target>
+java -jar <path-to-jar>/csv-reorganiser-X.Y.jar <yaml-cfg> <csv-sources..> <csv-target>
 ```
 
 With:
 * `yaml-cfg` the YAML configuration file to be used for the reorganisation. Examples are provided in the `examples/` folder, documentation provided on the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
-* `csv-source` the base CSV file to be reorganised.
+* `csv-sources` the base CSV files to be reorganised. If multiple ones are provided, they will all be processed sequentially and the results compiled into the same target file. Each source file must have the same structure.
 * `csv-target` the target file to be written. If existing, it will be overwritten.
 
 ### Executing unit tests
@@ -73,10 +73,11 @@ Check out the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 
 ## Version History
 
-* v1.1
+* v1.1 - in progress
   * Updated Log4J.
   * Some unit tests were left behind (disabled).
-  * New operation: Concat.
+  * Multiple source files processing.
+  * New operation: Concat, Substring.
 * v1.0
   * First official release.
   * Unit-tested (most of it) along with some integration tests.
