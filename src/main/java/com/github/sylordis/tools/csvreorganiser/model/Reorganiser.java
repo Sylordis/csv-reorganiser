@@ -138,7 +138,7 @@ public class Reorganiser {
 				notValid.add(srcFile);
 			}
 		}
-		if (!targetFile.canWrite())
+		if (targetFile.exists() && !targetFile.canWrite())
 			notValid.add(targetFile);
 		if (!notValid.isEmpty())
 			throw new FileNotFoundException(notValid.toString());
