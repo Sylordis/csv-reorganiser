@@ -2,7 +2,7 @@ package com.github.sylordis.tools.csvreorganiser.test.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
  * Class for testing not respecting the basic constructor rule.
@@ -10,7 +10,7 @@ import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOp
  * @author sylordis
  *
  */
-public class WrongFakeOperation extends AbstractReorgOperation {
+public class WrongFakeOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Base constructor

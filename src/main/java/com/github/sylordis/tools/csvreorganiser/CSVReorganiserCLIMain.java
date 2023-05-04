@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.github.sylordis.tools.csvreorganiser.doc.MarkdownDocumentationOutput;
 import com.github.sylordis.tools.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.tools.csvreorganiser.model.Reorganiser;
-import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
 
 /**
@@ -66,6 +66,7 @@ public final class CSVReorganiserCLIMain {
 	public void run(String[] args) {
 		if (args.length < 3)
 			fatal("Wrong number of arguments.", this::usage);
+		// TODO args check
 		// Files check
 		// We perform all checks and then stop if any error occurred
 		boolean error = false;
@@ -97,13 +98,16 @@ public final class CSVReorganiserCLIMain {
 			fatal("Files check was unsuccessful.");
 		// Operations
 		try {
-			ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile, new DefaultConfigurationSupplier());
+			ReorgConfiguration cfg = ReorgConfiguration.fromFile(cfgFile);
 			Reorganiser model = new Reorganiser(cfg, targetFile, srcFiles);
 			model.reorganise();
 		} catch (IOException e) {
 			logger.fatal("Error during file operation", e);
 			System.exit(1);
 		} catch (ReorganiserRuntimeException e) {
+			logger.fatal(e);
+			System.exit(1);
+		} catch (EngineException e) {
 			logger.fatal(e);
 			System.exit(1);
 		}

@@ -2,14 +2,14 @@ package com.github.sylordis.tools.csvreorganiser.test.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
- * Class for testing with basic implementation of {@link AbstractReorgOperation}.
+ * Class for testing with basic implementation of {@link ChessAbstractReorgOperation}.
  *
  * @author sylordis
  */
-public class FakeOperation extends AbstractReorgOperation {
+public class FakeOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Base constructor

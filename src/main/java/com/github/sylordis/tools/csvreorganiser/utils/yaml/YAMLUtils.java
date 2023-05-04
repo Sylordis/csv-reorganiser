@@ -99,13 +99,4 @@ public final class YAMLUtils {
 		return (List<Object>) o;
 	}
 
-	/**
-	 * Converts an object to a YAML string value representation in Java.
-	 *
-	 * @param o the object to convert
-	 * @return a string
-	 */
-	public static String toString(Object o) {
-		return (String) o;
-	}
 }

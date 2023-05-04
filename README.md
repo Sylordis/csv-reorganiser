@@ -36,7 +36,7 @@ Check the `pom.xml` file for dependencies versions.
 
 ### Compilation
 
-Download the code, you should have Java 17+ and Apache Maven to be able to compile the project.
+Download the code, you should have Java 19+ and Apache Maven to be able to compile the project.
 Follow typical Maven goals regarding your intention (`compile`, `package`, `install`, ...).
 
 ### Installing
@@ -57,9 +57,22 @@ With:
 * `csv-sources` the base CSV files to be reorganised. If multiple ones are provided, they will all be processed sequentially and the results compiled into the same target file. Each source file must have the same structure.
 * `csv-target` the target file to be written. If existing, it will be overwritten.
 
+#### Engines
+
+There are 2 engines in the CSV reorganiser. For each engine, the configuration file is written in a slight different way.
+The first one (id `1` or `chess`), is using a simple structure and performs only simple operations.
+The second one (id `2` or `hyde`), is an experimental engine using a text based definition of operations, with text filters directly included in the operation definition.
+
+You can change which engine you are using by using the option flag `-engine <engine-id>` or `-e <engine-id>` where `<engine-id>` is the engine name or number.
+You can also specify the engine in the configuration file via the header, using the tag `engine` which behaves the same as the option.
+
+If no engine is specified, `chess` will be assumed.
+
+Check the wiki for more information.
+
 ### Executing unit tests
 
-A simple `mvn test` should suffice. Check the wiki for known issues. This project has been built with the idea of achieving at least 80% of code coverage through unit and functional tests.
+A simple `mvn test` should suffice. This project has been built with the idea of achieving at least 80% of code coverage through unit tests.
 
 If you want to skip unit tests to package or install, run command for installing (see before) with option `-DskipTests`.
 

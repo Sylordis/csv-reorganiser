@@ -10,10 +10,18 @@ package com.github.sylordis.tools.csvreorganiser.model.constants;
 public final class ConfigConstants {
 
 	/**
-	 * Name of the package with all operations definitions.
+	 * Constants for Chess engine.
+	 *
 	 */
-	public final static String OPERATIONS_PACKAGE = "com.github.sylordis.tools.csvreorganiser.model.operations.defs";
+	public final class Chess {
 
+		/**
+		 * Name of the package with all operations definitions.
+		 */
+		public final static String OPERATIONS_PACKAGE = "com.github.sylordis.tools.csvreorganiser.model.chess.operations.defs";
+
+	}
+	
 	/**
 	 * Private constructor
 	 */

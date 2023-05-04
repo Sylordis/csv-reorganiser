@@ -20,9 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.tools.csvreorganiser.model.constants.MessagesConstants;
+import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
  * Model of the reorganiser.
@@ -82,7 +82,7 @@ public class Reorganiser {
 		} else {
 			validateFiles();
 			// Fill header
-			String[] headerOut = cfg.getOperations().stream().map(AbstractReorgOperation::getName)
+			String[] headerOut = cfg.getOperations().stream().map(ReorganiserOperation::getName)
 			        .toArray(String[]::new);
 			logger.info("Header: {}", Arrays.toString(headerOut));
 			logger.debug("Source files to process: {}", srcFiles);
@@ -102,10 +102,9 @@ public class Reorganiser {
 						Iterable<CSVRecord> recordsIn = CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true)
 						        .build().parse(srcInput);
 						// Apply operations for each record
-						// This solution makes it easier for later processing, but is it scalable?
 						for (CSVRecord record : recordsIn) {
 							List<String> recordOut = new ArrayList<>();
-							for (AbstractReorgOperation op : cfg.getOperations())
+							for (ReorganiserOperation op : cfg.getOperations())
 								recordOut.add(op.apply(record));
 							recordsOut.add(recordOut);
 						}

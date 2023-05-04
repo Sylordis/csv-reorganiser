@@ -1,6 +1,10 @@
 package com.github.sylordis.tools.csvreorganiser.model;
 
-import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.*;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.CONFIG_CONTENT;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT_2;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT_2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,11 +41,14 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
+import com.github.sylordis.tools.csvreorganiser.model.chess.ChessEngine;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.tools.csvreorganiser.model.constants.MessagesConstants;
+import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
 
 /**
  * Test suite for {@link Reorganiser} class.
@@ -65,7 +72,7 @@ class ReorganiserTest {
 	 * Mock instance of the operation.
 	 */
 	@Mock
-	private AbstractReorgOperation op;
+	private ChessAbstractReorgOperation op;
 
 	@TempDir
 	File workingDir;
@@ -113,7 +120,8 @@ class ReorganiserTest {
 	 */
 	@Test
 	void testGetSrcFiles() {
-		assertEquals(List.of(srcFile), reorg.getSrcFiles(), "Source files should be equal to the ones provided in the constructor");
+		assertEquals(List.of(srcFile), reorg.getSrcFiles(),
+		        "Source files should be equal to the ones provided in the constructor");
 	}
 
 	/**
@@ -131,7 +139,8 @@ class ReorganiserTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#setSrcFile(File)} when provided multiple files.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#setSrcFile(File)} when provided
+	 * multiple files.
 	 *
 	 * @throws IOException
 	 */
@@ -142,7 +151,8 @@ class ReorganiserTest {
 		File fileC = new File("my/c");
 		List<File> srcFiles = List.of(fileA, fileB, fileC);
 		reorg.setSrcFiles(srcFiles);
-		assertEquals(srcFiles, reorg.getSrcFiles(), "Source file should be equal to the ones set and in the same order");
+		assertEquals(srcFiles, reorg.getSrcFiles(),
+		        "Source file should be equal to the ones set and in the same order");
 	}
 
 	/**
@@ -231,6 +241,7 @@ class ReorganiserTest {
 
 	@DisplayName("Integration tests")
 	@Nested
+	@Tag("Integration")
 	class IntegrationTests {
 		/**
 		 * Test method for {@link com.github.sylordis.tools.csvreorganiser.model.Reorganiser#reorganise()}
@@ -240,9 +251,8 @@ class ReorganiserTest {
 		 * @throws FileNotFoundException
 		 */
 		@Test
-		@Tag("Integration")
 		void testReorganise_WithFailedOperation() throws FileNotFoundException, IOException {
-			List<AbstractReorgOperation> operations = new ArrayList<>();
+			List<ReorganiserOperation> operations = new ArrayList<>();
 			when(op.getName()).thenReturn("Failure");
 			when(op.apply(any(CSVRecord.class))).thenThrow(new IllegalArgumentException("trooper"));
 			operations.add(op);
@@ -259,9 +269,8 @@ class ReorganiserTest {
 		 * when the source is not reachable.
 		 */
 		@Test
-		@Tag("Integration")
 		void testReorganise_WithUnreachableSource() {
-			List<AbstractReorgOperation> operations = new ArrayList<>();
+			List<ReorganiserOperation> operations = new ArrayList<>();
 			operations.add(op);
 			when(cfg.getOperations()).thenReturn(operations);
 			reorg.setSrcFiles(List.of(new File("I/do/not/exist")));
@@ -276,11 +285,10 @@ class ReorganiserTest {
 		 * @throws IOException
 		 */
 		@Test
-		@Tag("Integration")
 		@Tag("FilePermissions")
 		@DisabledOnOs({ OS.WINDOWS })
 		void testReorganise_WithUnreadableSource(TestInfo info) throws IOException {
-			List<AbstractReorgOperation> operations = new ArrayList<>();
+			List<ReorganiserOperation> operations = new ArrayList<>();
 			operations.add(op);
 			when(cfg.getOperations()).thenReturn(operations);
 			final File sourceFile = File.createTempFile(info.getDisplayName(), null, workingDir);
@@ -296,10 +304,9 @@ class ReorganiserTest {
 		 * when the target file is not reachable.
 		 */
 		@Test
-		@Tag("Integration")
 		@Tag("FilePermissions")
 		void testReorganise_WithUnreachableTarget() {
-			List<AbstractReorgOperation> operations = new ArrayList<>();
+			List<ReorganiserOperation> operations = new ArrayList<>();
 			operations.add(op);
 			when(cfg.getOperations()).thenReturn(operations);
 			reorg.setTargetFile(new File("I/do/not/exist"));
@@ -314,10 +321,9 @@ class ReorganiserTest {
 		 * @throws FileNotFoundException
 		 */
 		@Test
-		@Tag("Integration")
 		@Tag("FilePermissions")
 		void testReorganise_WithUnwritableTarget() throws FileNotFoundException, IOException {
-			List<AbstractReorgOperation> operations = new ArrayList<>();
+			List<ReorganiserOperation> operations = new ArrayList<>();
 			operations.add(op);
 			when(cfg.getOperations()).thenReturn(operations);
 			targetFile.setWritable(false);
@@ -334,9 +340,8 @@ class ReorganiserTest {
 		 * @throws FileNotFoundException
 		 */
 		@Test
-		@Tag("Integration")
 		void testReorganise_WithEmptyConfiguration() throws FileNotFoundException, IOException {
-			when(cfg.getOperations()).thenReturn(new ArrayList<AbstractReorgOperation>());
+			when(cfg.getOperations()).thenReturn(new ArrayList<ReorganiserOperation>());
 			assertThrows(ConfigurationException.class, reorg::reorganise, "A Configuration exception should be thrown");
 			assertTrue(reorg.getCfg().getOperations().isEmpty());
 			assertEquals(0L, targetFile.length(), "File should not be written in if no configuration has been done");
@@ -347,7 +352,6 @@ class ReorganiserTest {
 		 * when a null configuration object is set.
 		 */
 		@Test
-		@Tag("Integration")
 		@Tag("Null")
 		void testReorganise_WithNullConfiguration() {
 			reorg.setCfg(null);
@@ -360,10 +364,12 @@ class ReorganiserTest {
 		 *
 		 * @throws IOException
 		 * @throws FileNotFoundException
+		 * @throws EngineException
+		 * @throws ConfigurationImportException
 		 */
 		@Test
-		@Tag("Integration")
-		void testReorganise(TestInfo testinfo) throws FileNotFoundException, IOException {
+		void testReorganise_Chess(TestInfo testinfo)
+		        throws FileNotFoundException, IOException, ConfigurationImportException, EngineException {
 			// Setup files and samples
 			File sourceBackup = File.createTempFile(testinfo.getDisplayName() + "-srcbkp", null, workingDir);
 			fillFileWithSamples(srcFile, SOURCE_CONTENT);
@@ -373,7 +379,7 @@ class ReorganiserTest {
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
 			fillFileWithSamples(configFile, CONFIG_CONTENT);
 			// Reorganise
-			cfg = ReorgConfiguration.fromFile(configFile, new DefaultConfigurationSupplier());
+			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
 			reorg.setCfg(cfg);
 			reorg.reorganise();
 			// Checks
@@ -399,10 +405,12 @@ class ReorganiserTest {
 		 *
 		 * @throws IOException
 		 * @throws FileNotFoundException
+		 * @throws EngineException
+		 * @throws ConfigurationImportException
 		 */
 		@Test
-		@Tag("Integration")
-		void testReorganise_withMultipleSources(TestInfo testinfo) throws FileNotFoundException, IOException {
+		void testReorganise_Chess_withMultipleSources(TestInfo testinfo)
+		        throws FileNotFoundException, IOException, ConfigurationImportException, EngineException {
 			// Setup files and samples
 			// First source
 			File sourceBackup = File.createTempFile(testinfo.getDisplayName() + "-srcbkp", null, workingDir);
@@ -420,7 +428,7 @@ class ReorganiserTest {
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
 			fillFileWithSamples(configFile, CONFIG_CONTENT);
 			// Reorganise
-			cfg = ReorgConfiguration.fromFile(configFile, new DefaultConfigurationSupplier());
+			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
 			reorg = new Reorganiser(cfg, targetFile, List.of(srcFile, srcFile2));
 			reorg.reorganise();
 			// Checks

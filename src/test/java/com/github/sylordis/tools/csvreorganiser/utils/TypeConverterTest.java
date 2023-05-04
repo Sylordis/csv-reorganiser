@@ -72,6 +72,17 @@ class TypeConverterTest {
 	 * {@link com.github.sylordis.tools.csvreorganiser.utils.TypeConverter#to(java.lang.Object, java.lang.Class)}.
 	 */
 	@Test
+	void testTo_IntToString() {
+		final Integer o = 969;
+		final String test = TypeConverter.to(o, String.class);
+		assertEquals("969", test);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.utils.TypeConverter#to(java.lang.Object, java.lang.Class)}.
+	 */
+	@Test
 	void testTo_StringToInt() {
 		final String o = "5";
 		final Integer test = TypeConverter.to(o, Integer.class);
@@ -111,7 +122,6 @@ class TypeConverterTest {
 		assertThrows(NotImplementedException.class, () -> TypeConverter.to(3, Double.class));
 		assertThrows(NotImplementedException.class, () -> TypeConverter.to(4, Float.class));
 		assertThrows(NotImplementedException.class, () -> TypeConverter.to(6, Long.class));
-		assertThrows(NotImplementedException.class, () -> TypeConverter.to(7, String.class));
 		// Long to X
 		assertThrows(NotImplementedException.class, () -> TypeConverter.to(1L, Boolean.class));
 		assertThrows(NotImplementedException.class, () -> TypeConverter.to(2L, Character.class));

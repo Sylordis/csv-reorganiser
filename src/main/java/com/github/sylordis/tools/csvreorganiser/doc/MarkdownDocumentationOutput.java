@@ -11,11 +11,11 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.utils.CodeGenerationUtils;
 import com.github.javaparser.utils.SourceRoot;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.Operation;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationProperty;
-import com.github.sylordis.tools.csvreorganiser.model.annotations.OperationShortcut;
-import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.DefaultConfigurationSupplier;
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
+import com.github.sylordis.tools.csvreorganiser.model.chess.annotations.ChessOperation;
+import com.github.sylordis.tools.csvreorganiser.model.chess.annotations.ChessOperationProperty;
+import com.github.sylordis.tools.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
+import com.github.sylordis.tools.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
  * This class scans the project and outputs a documentation for each operation from the default
@@ -34,10 +34,10 @@ public class MarkdownDocumentationOutput {
 
 	public void generate() {
 		// Have a set ordering classes by simple alphabetical class name ordering
-		Set<Class<? extends AbstractReorgOperation>> dictionary = new TreeSet<>(
+		Set<Class<? extends ChessAbstractReorgOperation>> dictionary = new TreeSet<>(
 		        (c1, c2) -> c1.getSimpleName().compareTo(c2.getSimpleName()));
 		// Get all operations classes
-		DefaultConfigurationSupplier cfgSupplier = new DefaultConfigurationSupplier();
+		ChessDefaultConfigurationSupplier cfgSupplier = new ChessDefaultConfigurationSupplier();
 		dictionary.addAll(cfgSupplier.getOperationsByReflection());
 		// Prepare Java parser
 		SourceRoot sourceRoot = new SourceRoot(
@@ -51,7 +51,7 @@ public class MarkdownDocumentationOutput {
 			// Title
 			out.accept("# " + splitCamelCase(type.getSimpleName().replace("Operation", "")) + "\n");
 			// Config name
-			String opTag = type.getAnnotation(Operation.class).name();
+			String opTag = type.getAnnotation(ChessOperation.class).name();
 			out.accept("**Configuration name:** `" + opTag + "`" + "\n");
 			// Operation description extracted from Javadoc
 			JavadocComment opComment = decl.getJavadocComment().orElse(new JavadocComment());
@@ -59,21 +59,21 @@ public class MarkdownDocumentationOutput {
 			        .replaceAll("(?m)^([ \t]*|@.*)\r?\n", "");
 			out.accept(htmlToMarkdown(opCommentText));
 			// Yaml definition example
-			OperationProperty[] properties = type.getAnnotationsByType(OperationProperty.class);
+			ChessOperationProperty[] properties = type.getAnnotationsByType(ChessOperationProperty.class);
 			out.accept("```yaml");
 			out.accept(String.format("""
 			        column: <column-name>
 			        operation:
 			          type: %s""", opTag));
-			for (OperationProperty prop : properties) {
+			for (ChessOperationProperty prop : properties) {
 				out.accept(propToYaml(type, prop));
 			}
 			out.accept("```\n");
 			// Shortcut yaml definition example
-			if (type.isAnnotationPresent(OperationShortcut.class)) {
+			if (type.isAnnotationPresent(ChessOperationShortcut.class)) {
 				out.accept("Shortcut:");
 				out.accept("```yaml");
-				OperationShortcut shortcutAnnotation = type.getAnnotation(OperationShortcut.class);
+				ChessOperationShortcut shortcutAnnotation = type.getAnnotation(ChessOperationShortcut.class);
 				String shortcut = shortcutAnnotation.keyword();
 				out.accept(String.format("""
 				        column: <column-name>
@@ -84,7 +84,7 @@ public class MarkdownDocumentationOutput {
 			out.accept("| Property | type | required? | description |");
 			out.accept("| --- | --- | --- | --- |");
 			StringBuilder rame = new StringBuilder();
-			for (OperationProperty prop : properties) {
+			for (ChessOperationProperty prop : properties) {
 				rame = new StringBuilder();
 				rame.append("| `").append(prop.name()).append("`");
 				rame.append(" | ").append(getFieldType(type, prop.field()).getSimpleName());
@@ -103,7 +103,7 @@ public class MarkdownDocumentationOutput {
 	 * @param prop
 	 * @return
 	 */
-	public String propToYaml(Class<? extends AbstractReorgOperation> type, OperationProperty prop) {
+	public String propToYaml(Class<? extends ChessAbstractReorgOperation> type, ChessOperationProperty prop) {
 		StringBuilder rame = new StringBuilder();
 		rame.append("  ").append(prop.name()).append(":");
 		rame.append(propValueToYaml(type, prop));
@@ -116,7 +116,7 @@ public class MarkdownDocumentationOutput {
 	 * @param prop
 	 * @return
 	 */
-	public String propValueToYaml(Class<? extends AbstractReorgOperation> type, OperationProperty prop) {
+	public String propValueToYaml(Class<? extends ChessAbstractReorgOperation> type, ChessOperationProperty prop) {
 		return propValueToYaml(type, prop.field(), () -> prop.name());
 	}
 
@@ -126,7 +126,7 @@ public class MarkdownDocumentationOutput {
 	 * @param prop
 	 * @return
 	 */
-	public String propValueToYaml(Class<? extends AbstractReorgOperation> type, String field, Supplier<String> name) {
+	public String propValueToYaml(Class<? extends ChessAbstractReorgOperation> type, String field, Supplier<String> name) {
 		StringBuilder rame = new StringBuilder();
 		Class<?> propType = getFieldType(type, field);
 		if (java.util.List.class.equals(propType)) {
@@ -146,7 +146,7 @@ public class MarkdownDocumentationOutput {
 	 * @param prop The property to check for
 	 * @return
 	 */
-	public Class<?> getFieldType(Class<? extends AbstractReorgOperation> type, String fieldName) {
+	public Class<?> getFieldType(Class<? extends ChessAbstractReorgOperation> type, String fieldName) {
 		Class<?> fieldType = null;
 		try {
 			Field field = type.getDeclaredField(fieldName);

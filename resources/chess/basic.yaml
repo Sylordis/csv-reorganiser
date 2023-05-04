@@ -1,0 +1,24 @@
+structure:
+- column: Name
+  source: first_name
+- column: Identifier
+  source: id
+- column: something
+  value: my value
+- column: login
+  concat:
+    - first_name
+    - .
+    - last_name
+- column: Network group
+  operation:
+    type: regreplace
+    source: ip_address
+    pattern: "([0-9]{1,3}\\.[0-9]{1,3})\\..*"
+    replace: $1
+- column: Gender
+  operation:
+    type: substring
+    source: gender
+    start: 0
+    end: 1

@@ -1,8 +1,5 @@
 package com.github.sylordis.tools.csvreorganiser.model;
 
-import static com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags.OPDEF_COLUMN_KEY;
-import static com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags.OPDEF_OPERATIONS_KEY;
-import static com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags.OPDEF_OPERATION_KEY;
 import static com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags.OPDEF_ROOT_KEY;
 
 import java.io.File;
@@ -11,25 +8,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.Message;
 import org.yaml.snakeyaml.Yaml;
 
-import com.github.sylordis.tools.csvreorganiser.model.config.dictionary.ConfigurationSupplier;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
+import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessOperationBuilder;
 import com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags;
-import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
+import com.github.sylordis.tools.csvreorganiser.model.engines.EngineFactory;
+import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserOperation;
+import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationImportException;
-import com.github.sylordis.tools.csvreorganiser.model.operations.AbstractReorgOperation;
-import com.github.sylordis.tools.csvreorganiser.model.operations.OperationInstantiator;
-import com.github.sylordis.tools.csvreorganiser.model.operations.ReorgOperationBuilder;
+import com.github.sylordis.tools.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLType;
 import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLUtils;
 
@@ -39,7 +32,7 @@ import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLUtils;
  * entry of this list represents a column in the target CSV, in order.
  *
  * This also holds the configuration of all possible operations that can be passed on to other
- * objects, like {@link ReorgOperationBuilder}.
+ * objects, like {@link ChessOperationBuilder}.
  *
  *
  * @author sylordis
@@ -54,34 +47,26 @@ public class ReorgConfiguration {
 	/**
 	 * List of operations to perform for reorganisation. It can be empty, but never null.
 	 */
-	private final List<AbstractReorgOperation> operations;
+	private final List<ReorganiserOperation> operations;
 	/**
-	 * Dictionary of all existing operations.
+	 * Engine to be used for the reorganisation.
 	 */
-	private final Map<String, Class<? extends AbstractReorgOperation>> operationsDictionary;
-	/**
-	 * Dictionary of all existing shortcuts to operations.
-	 */
-	private final Map<String, OperationInstantiator> operationsShortcutsDictionary;
+	private ReorganiserEngine engine;
 
 	/**
-	 * Constructs a new configuration without any operation dictionary.
+	 * Constructs a new configuration without an Engine.
 	 */
 	public ReorgConfiguration() {
 		this.logger = LogManager.getLogger();
-		this.operationsDictionary = new HashMap<>();
-		this.operationsShortcutsDictionary = new HashMap<>();
 		this.operations = new ArrayList<>();
 	}
 
 	/**
-	 *
-	 * @param dictionarySupplier
+	 * Constructs a new configuration with an Engine.
 	 */
-	public ReorgConfiguration(ConfigurationSupplier dictionarySupplier) {
+	public ReorgConfiguration(ReorganiserEngine engine) {
 		this();
-		setOperationsDictionary(dictionarySupplier.getOperationsDictionary());
-		setOperationsShortcutsDictionary(dictionarySupplier.getShortcutDictionary());
+		this.engine = engine;
 	}
 
 	/**
@@ -91,32 +76,45 @@ public class ReorgConfiguration {
 	 * @throws FileNotFoundException        if no file is found
 	 * @throws IOException                  if something goes wrong while reading the configuration file
 	 * @throws ConfigurationImportException if the configuration is wrong or empty
+	 * @throws EngineException
 	 */
-	public void loadFromFile(File cfgFile) throws FileNotFoundException, IOException, ConfigurationImportException {
+	public void loadFromFile(File cfgFile)
+	        throws FileNotFoundException, IOException, ConfigurationImportException, EngineException {
 		operations.clear();
 		Yaml yamlFile = new Yaml();
 		try (FileInputStream yamlStream = new FileInputStream(cfgFile)) {
+			// Set specified engine if provided
+			logger.info("Loading YAML file");
 			Map<String, Object> root = yamlFile.load(yamlStream);
 			if (root == null)
 				throw new ConfigurationImportException("Configuration file is empty");
-			logger.debug("Loading yaml file {}: {}", cfgFile.getAbsolutePath(), root);
+			logger.debug("Loaded yaml file {}: {}", cfgFile.getAbsolutePath(), root);
+			// Header analysis
+			if (root.containsKey(YAMLTags.CFG_HEADER_KEY)) {
+				Map<String, Object> header = YAMLUtils.toNode(root);
+				checkHeaderConfiguration(header);
+			}
+			// Check if engine is present before loading operations
+			if (this.engine == null) {
+				// If not, set default chess engine
+				logger.info("No engine specified, getting default engine");
+				this.engine = EngineFactory.getDefaultEngine();
+			}
 			// Check that structure tag is present at root
 			if (root.containsKey(YAMLTags.OPDEF_ROOT_KEY)) {
-				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY,
-						root.get(OPDEF_ROOT_KEY).getClass(),
-						root.get(OPDEF_ROOT_KEY));
+				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, root.get(OPDEF_ROOT_KEY).getClass(),
+				        root.get(OPDEF_ROOT_KEY));
 				// Check that structure tag contains a usable list
 				if (YAMLUtils.checkChildType(root, OPDEF_ROOT_KEY, YAMLType.LIST)) {
-					YAMLUtils.toList(root.get(OPDEF_ROOT_KEY)).stream().map(o -> createOperation(YAMLUtils.toNode(o)))
-					.forEach(operations::add);
+					YAMLUtils.toList(root.get(OPDEF_ROOT_KEY)).stream()
+					        .map(o -> this.engine.createOperation(YAMLUtils.toNode(o))).forEach(operations::add);
 				} else {
-					throw new ConfigurationImportException(
-							"Error in configuration file: '" + OPDEF_ROOT_KEY
-							+ "' tag should contain a list of operations.");
+					throw new ConfigurationImportException("Error in configuration file: '" + OPDEF_ROOT_KEY
+					        + "' tag should contain a list of operations.");
 				}
 			} else {
 				throw new ConfigurationImportException(
-						"Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found at the root.");
+				        "Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found at the root.");
 			}
 			logger.debug("{}", this);
 			logger.info("Configuration imported.");
@@ -126,69 +124,25 @@ public class ReorgConfiguration {
 	}
 
 	/**
-	 * Transforms a Yaml entry into a usable operation by the software.
-	 *
-	 * @param yaml yaml definition of the operation
-	 * @throws ConfigurationImportException if a yaml configuration object is malformed
-	 * @return an operation
+	 * Checks the configuration specified in the header.
+	 * 
+	 * @param header
+	 * @throws EngineException 
 	 */
-	public AbstractReorgOperation createOperation(Map<String, Object> yaml) {
-		AbstractReorgOperation op = null;
-		logger.debug("yamlToOp[in]: ({}){}", yaml.getClass(), yaml);
-		// Check that column tag is present (all)
-		if (yaml.containsKey(OPDEF_COLUMN_KEY)) {
-			String columnName = (String) yaml.get(OPDEF_COLUMN_KEY);
-			// Checking specification: shortcuts, single operation or nested
-			if (yaml.containsKey(OPDEF_OPERATIONS_KEY)) {
-				// TODO Nested operations
-				throw new NotImplementedException("Nested operations is not implemented yet");
-			} else if (yaml.containsKey(OPDEF_OPERATION_KEY)) {
-				// Single operation
-				logger.debug("Single operation");
-				op = new ReorgOperationBuilder(operationsDictionary).fromData(columnName,
-						YAMLUtils.get(OPDEF_OPERATION_KEY, yaml));
-			} else if (checkIfShortcut(yaml.keySet())) {
-				// Shortcut
-				logger.debug("Shortcut operation: {}", findShortcut(yaml.keySet()));
-				// This cannot fail as we checked before that the key exists
-				op = operationsShortcutsDictionary.get(findShortcut(yaml.keySet())).apply(columnName, yaml);
-				logger.debug("Built: {}", op.getClass().getSimpleName());
-			} else {
-				Message msg = logger.getMessageFactory().newMessage(
-						"No proper configuration of operation detected for {}, requires one of: {}",
-						yaml, operationsShortcutsDictionary.keySet().toArray());
-				throw new ConfigurationImportException(msg.getFormattedMessage());
-			}
-		} else {
-			Message msg = logger.getMessageFactory().newMessage("mandatory '{}' tag not present in {}",
-					OPDEF_COLUMN_KEY,
-					yaml);
-			throw new ConfigurationImportException(msg.getFormattedMessage());
+	public void checkHeaderConfiguration(Map<String, Object> header) throws EngineException {
+		logger.debug("Checking engine configuration and compatibility with header");
+		ReorganiserEngine fileEngine = new EngineFactory().getEngineFromId(YAMLUtils.get(YAMLTags.Header.CFG_ENGINE, header));
+		logger.debug("Local engine is {}, header declared engine is {}",
+		        this.engine != null ? this.engine.getClass().getSimpleName() : null,
+		        fileEngine != null ? fileEngine.getClass().getSimpleName() : null);
+		// Local engine is not specified, set it to file's
+		if (this.engine == null) {
+				this.engine = fileEngine;
+		} else if (fileEngine != null && fileEngine.equals(engine)) {
+			// Local engine is specified, check if they are different
+			throw new EngineException("Configuration file specifies different engine that the one used");
 		}
-		logger.debug("yamlToOp[out]: {}", op);
-		return op;
-	}
-
-	/**
-	 * Finds a shortcut in a set of entries.
-	 *
-	 * @param set set of keys from YAML
-	 * @return the shortcut name if it exists in the shortcuts dictionary
-	 */
-	private String findShortcut(Set<String> set) {
-		Optional<String> entry = set.stream().filter(e -> operationsShortcutsDictionary.containsKey(e)).findFirst();
-		return entry.get();
-	}
-
-	/**
-	 * Checks if a shortcut appears in the given set of YAML properties.
-	 *
-	 * @param set set of keys from YAML
-	 * @return true if one entry of the set is a shortcut from the shortcuts dictionary
-	 */
-	public boolean checkIfShortcut(Set<String> set) {
-		Optional<String> entry = set.stream().filter(e -> operationsShortcutsDictionary.containsKey(e)).findFirst();
-		return entry.isPresent();
+		// If they are the same, nothing to do, just keep it
 	}
 
 	/**
@@ -196,7 +150,7 @@ public class ReorgConfiguration {
 	 *
 	 * @param op operation to be inserted
 	 */
-	public void addOperation(AbstractReorgOperation op) {
+	public void addOperation(ChessAbstractReorgOperation op) {
 		if (op == null)
 			throw new IllegalArgumentException("Added operations cannot be null");
 		operations.add(op);
@@ -209,26 +163,47 @@ public class ReorgConfiguration {
 	 * @param op    operation to be inserted, if bigger than actual operation size, puts it as last in
 	 *              the list.
 	 */
-	public void addOperation(int index, AbstractReorgOperation op) {
+	public void addOperation(int index, ChessAbstractReorgOperation op) {
 		if (op == null)
 			throw new IllegalArgumentException("Added operations cannot be null");
 		operations.add(Math.min(index, operations.size()), op);
 	}
 
 	/**
-	 * Static builder for the class to be used when importing configuration from a file.
+	 * Static builder for the class to be used when importing configuration from a file. A new
+	 * configuration will be created without an engine.
 	 *
 	 * @see #loadFromFile(File)
 	 *
-	 * @param cfgFile yaml configuration file to load
+	 * @param cfgFile YAML configuration file to load
 	 * @return A new configuration
 	 * @throws FileNotFoundException        if no file is found
 	 * @throws IOException                  if something goes wrong while reading the configuration file
 	 * @throws ConfigurationImportException
 	 */
-	public static ReorgConfiguration fromFile(File cfgFile, ConfigurationSupplier cfg)
-			throws FileNotFoundException, IOException, ConfigurationImportException {
-		ReorgConfiguration config = new ReorgConfiguration(cfg);
+	public static ReorgConfiguration fromFile(File cfgFile)
+	        throws FileNotFoundException, IOException, ConfigurationImportException, EngineException {
+		ReorgConfiguration config = new ReorgConfiguration();
+		config.loadFromFile(cfgFile);
+		return config;
+	}
+
+	/**
+	 * Static builder for the class specifying an engine.
+	 * 
+	 * @see #loadFromFile(File)
+	 * 
+	 * @param cfgFile YAML configuration file to load
+	 * @param engine
+	 * @return A new configuration
+	 * @throws FileNotFoundException        if no file is found
+	 * @throws IOException                  if something goes wrong while reading the configuration file
+	 * @throws ConfigurationImportException
+	 * @throws EngineException if no engine is set once the file is loaded
+	 */
+	public static ReorgConfiguration fromFile(File cfgFile, ReorganiserEngine engine)
+	        throws FileNotFoundException, IOException, ConfigurationImportException, EngineException {
+		ReorgConfiguration config = new ReorgConfiguration(engine);
 		config.loadFromFile(cfgFile);
 		return config;
 	}
@@ -239,54 +214,31 @@ public class ReorgConfiguration {
 	 *
 	 * @return an unmodifiable list of operations
 	 */
-	public List<AbstractReorgOperation> getOperations() {
+	public List<ReorganiserOperation> getOperations() {
 		return Collections.unmodifiableList(operations);
 	}
 
 	/**
-	 * Sets dictionary of all existing operations.
-	 *
-	 * @param operationDictionary a map of all operations indexed by their names
-	 * @throws ConfigurationException when supplying a null map
+	 * @return the engine
 	 */
-	public void setOperationsDictionary(Map<String, Class<? extends AbstractReorgOperation>> operationDictionary) {
-		this.operationsDictionary.clear();
-		if (operationDictionary != null)
-			this.operationsDictionary.putAll(operationDictionary);
-		else
-			throw new ConfigurationException("Can't supply null operations dictionary");
+	public ReorganiserEngine getEngine() {
+		return engine;
 	}
 
 	/**
-	 * Get the dictionary of all possible operations.
-	 *
-	 * @return the operationsDictionary
+	 * Checks that an engine is present in the configuration.
+	 * 
+	 * @return true if an engine is set, false otherwise.
 	 */
-	public Map<String, Class<? extends AbstractReorgOperation>> getOperationsDictionary() {
-		return operationsDictionary;
+	public boolean hasEngine() {
+		return null != null;
 	}
 
 	/**
-	 * Sets dictionary of all shortcuts to operations.
-	 *
-	 * @param operationsShortcutsDictionary map of all shortcuts to operations indexed by their names
-	 * @throws ConfigurationException when supplying a null map
+	 * @param engine the engine to set
 	 */
-	public void setOperationsShortcutsDictionary(Map<String, OperationInstantiator> operationsShortcutsDictionary) {
-		this.operationsShortcutsDictionary.clear();
-		if (operationsShortcutsDictionary != null)
-			this.operationsShortcutsDictionary.putAll(operationsShortcutsDictionary);
-		else
-			throw new ConfigurationException("Can't supply null operations shortcuts dictionary");
-	}
-
-	/**
-	 * Get the dictionary of all possible shortcuts.
-	 *
-	 * @return the operationsDictionary
-	 */
-	public Map<String, OperationInstantiator> getOperationsShortcutsDictionary() {
-		return operationsShortcutsDictionary;
+	public void setEngine(ReorganiserEngine engine) {
+		this.engine = engine;
 	}
 
 }
