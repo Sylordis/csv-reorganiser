@@ -8,6 +8,7 @@ import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationIm
  * Defines engine classes that are supposed to manipulate a given type of operations.
  * 
  * @author sylordis
+ *
  */
 public interface ReorganiserEngine {
 

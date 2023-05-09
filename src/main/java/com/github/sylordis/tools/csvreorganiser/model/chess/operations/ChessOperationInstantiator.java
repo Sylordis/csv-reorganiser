@@ -8,7 +8,6 @@ import java.util.function.BiFunction;
  * pretty much a type definition for what it extends.
  *
  * @author sylordis
- * @since 1.1
  *
  */
 public interface ChessOperationInstantiator extends BiFunction<String, Map<String, Object>, ChessAbstractReorgOperation> {

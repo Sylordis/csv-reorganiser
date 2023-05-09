@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  * Mandatory annotation class for repeatable {@link ChessOperationProperty} encapsulation.
  *
  * @author sylordis
- * @since 0.2
  *
  */
 @Retention(RUNTIME)

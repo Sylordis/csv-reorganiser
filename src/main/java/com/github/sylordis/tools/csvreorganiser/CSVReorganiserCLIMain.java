@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.sylordis.tools.csvreorganiser.doc.MarkdownDocumentationOutput;
+import com.github.sylordis.tools.csvreorganiser.doc.MarkdownDocumentationOutputChess;
 import com.github.sylordis.tools.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.tools.csvreorganiser.model.Reorganiser;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.EngineException;
@@ -53,7 +53,7 @@ public final class CSVReorganiserCLIMain {
 			docMode = true;
 		}
 		if (docMode) {
-			new MarkdownDocumentationOutput().generate();
+			new MarkdownDocumentationOutputChess().generate();
 		} else {
 			run(args);
 		}

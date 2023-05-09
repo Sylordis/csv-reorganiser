@@ -18,7 +18,6 @@ import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationIm
  * It will however if the end index is set and lower than the start index.
  * 
  * @author sylordis
- * @since 1.2
  *
  */
 @ChessOperation(name = "substring")

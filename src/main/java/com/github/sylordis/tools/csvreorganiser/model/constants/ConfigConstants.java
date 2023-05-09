@@ -4,7 +4,6 @@ package com.github.sylordis.tools.csvreorganiser.model.constants;
  * This class contains all constants related to configuration.
  *
  * @author sylordis
- * @since 1.1
  *
  */
 public final class ConfigConstants {

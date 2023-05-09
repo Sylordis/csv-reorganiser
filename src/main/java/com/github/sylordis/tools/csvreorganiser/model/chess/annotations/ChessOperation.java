@@ -12,7 +12,6 @@ import java.lang.annotation.Target;
  * {@link ChessOperationShortcut}.
  *
  * @author sylordis
- * @since 1.0
  *
  */
 @Retention(RUNTIME)

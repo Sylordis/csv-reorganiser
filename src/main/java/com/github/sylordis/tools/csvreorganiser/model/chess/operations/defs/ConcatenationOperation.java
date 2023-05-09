@@ -16,7 +16,6 @@ import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbst
  * one doesn't exist.
  *
  * @author sylordis
- * @since 1.1
  *
  */
 @ChessOperation(name = "concat")

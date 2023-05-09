@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
  * Denotes an operation to have a configuration shortcut
  *
  * @author sylordis
- * @since 1.1
  *
  */
 @Documented

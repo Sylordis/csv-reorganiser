@@ -4,7 +4,6 @@ package com.github.sylordis.tools.csvreorganiser.model.exceptions;
  * Engine exceptions are raised when the something is wrong with the engine.
  * 
  * @author sylordis
- * @since 1.1
  *
  */
 public class EngineException extends Exception {

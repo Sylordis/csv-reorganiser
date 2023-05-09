@@ -13,7 +13,6 @@ import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationEx
  * Factory to provide Engines.
  * 
  * @author sylordis
- * @since 1.1
  *
  */
 public class EngineFactory {

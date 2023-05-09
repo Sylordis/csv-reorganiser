@@ -44,7 +44,7 @@ import com.github.sylordis.tools.csvreorganiser.utils.yaml.YAMLUtils;
  * charge of describing via other annotations their structure and parameters.
  * 
  * @author sylordis
- * @since 1.1
+
  *
  */
 public class ChessEngine implements ReorganiserEngine {

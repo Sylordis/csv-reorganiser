@@ -16,16 +16,17 @@ import com.github.sylordis.tools.csvreorganiser.model.chess.annotations.ChessOpe
 import com.github.sylordis.tools.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
 import com.github.sylordis.tools.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
+import com.github.sylordis.tools.csvreorganiser.utils.MarkupLanguageUtils;
 
 /**
  * This class scans the project and outputs a documentation for each operation from the default
  * configuration.
  * 
  * @author sylordis
- * @since 1.2
+
  *
  */
-public class MarkdownDocumentationOutput {
+public class MarkdownDocumentationOutputChess {
 
 	/**
 	 * Basic output.
@@ -49,7 +50,7 @@ public class MarkdownDocumentationOutput {
 			        "com.github.sylordis.tools.csvreorganiser.model.operations.defs", type.getSimpleName() + ".java");
 			ClassOrInterfaceDeclaration decl = compilationUnit.getClassByName(type.getSimpleName()).get();
 			// Title
-			out.accept("# " + splitCamelCase(type.getSimpleName().replace("Operation", "")) + "\n");
+			out.accept("# " + MarkupLanguageUtils.splitCamelCase(type.getSimpleName().replace("Operation", "")) + "\n");
 			// Config name
 			String opTag = type.getAnnotation(ChessOperation.class).name();
 			out.accept("**Configuration name:** `" + opTag + "`" + "\n");
@@ -57,7 +58,7 @@ public class MarkdownDocumentationOutput {
 			JavadocComment opComment = decl.getJavadocComment().orElse(new JavadocComment());
 			String opCommentText = opComment.getContent().replaceAll("\n[ \t]+\\* ?", "\n")
 			        .replaceAll("(?m)^([ \t]*|@.*)\r?\n", "");
-			out.accept(htmlToMarkdown(opCommentText));
+			out.accept(MarkupLanguageUtils.htmlToMarkdown(opCommentText));
 			// Yaml definition example
 			ChessOperationProperty[] properties = type.getAnnotationsByType(ChessOperationProperty.class);
 			out.accept("```yaml");
@@ -157,25 +158,4 @@ public class MarkdownDocumentationOutput {
 		return fieldType;
 	}
 
-	/**
-	 * Transforms html syntax into markdown syntax.
-	 * 
-	 * @param s text to transform
-	 * @return
-	 */
-	public String htmlToMarkdown(String s) {
-		return s.replaceAll("<em>([^<]*)</em>", "*$1*").replaceAll("</?ul>\r?\n", "").replaceAll("<li>(.*)</li>",
-		        "* $1");
-	}
-
-	public String splitCamelCase(String s) {
-		   return s.replaceAll(
-		      String.format("%s|%s|%s",
-		         "(?<=[A-Z])(?=[A-Z][a-z])",
-		         "(?<=[^A-Z])(?=[A-Z])",
-		         "(?<=[A-Za-z])(?=[^A-Za-z])"
-		      ),
-		      " "
-		   );
-		}
 }

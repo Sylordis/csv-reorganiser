@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
  * annotations and fill everything by itself without having to override the setup() method.
  *
  * @author sylordis
- * @since 0.2
  *
  */
 @Retention(RUNTIME)

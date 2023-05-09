@@ -7,7 +7,7 @@ import org.apache.commons.lang3.NotImplementedException;
  * checking/conversion instead.
  *
  * @author sylordis
- * @since 1.1
+
  *
  */
 @SuppressWarnings("unchecked")
