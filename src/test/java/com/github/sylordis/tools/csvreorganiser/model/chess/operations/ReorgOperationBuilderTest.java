@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Test;
 import com.github.sylordis.tools.csvreorganiser.model.constants.YAMLTags;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.OperationBuildingException;
-import com.github.sylordis.tools.csvreorganiser.test.defs.FakeOperation;
-import com.github.sylordis.tools.csvreorganiser.test.defs.WrongFakeOperation;
+import com.github.sylordis.tools.csvreorganiser.test.chess.defs.FakeOperation;
+import com.github.sylordis.tools.csvreorganiser.test.chess.defs.WrongFakeOperation;
 
 /**
  * Test suite for {@link ChessOperationBuilder}.

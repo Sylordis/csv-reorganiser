@@ -1,4 +1,4 @@
-package com.github.sylordis.tools.csvreorganiser.model.hyde;
+package com.github.sylordis.tools.csvreorganiser.model.hyde.operations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
+import com.github.sylordis.tools.csvreorganiser.model.hyde.HydeFilter;
 
 /**
  * A Hyde operation is represented by a tree, the root operation holding the name while the other
@@ -48,7 +49,7 @@ public class HydeOperation implements ReorganiserOperation {
 	 * @param name
 	 */
 	public HydeOperation(String name) {
-		this(name, null, (List<HydeFilter>) null);
+		this(name, null, null);
 	}
 
 	/**
@@ -59,11 +60,8 @@ public class HydeOperation implements ReorganiserOperation {
 	 * @param source  Name of source column where to take its value from
 	 * @param filters Filters to apply to the value
 	 */
-	public HydeOperation(String name, String source, HydeFilter... filters) {
-		this(name);
-		this.source = source;
-		if (filters != null)
-			setFilters(List.of(filters));
+	public HydeOperation(String name, String source) {
+		this(name, source, null);
 	}
 
 	/**

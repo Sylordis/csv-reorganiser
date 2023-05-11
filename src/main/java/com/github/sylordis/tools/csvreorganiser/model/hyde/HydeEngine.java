@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.tools.csvreorganiser.model.engines.ReorganiserOperation;
+import com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation;
 
 /**
  * The Hyde engine uses a more simple declaration than the Chess Engine, where each operation is
@@ -28,8 +29,9 @@ public class HydeEngine implements ReorganiserEngine {
 	@Override
 	public ReorganiserOperation createOperation(Map<String, Object> node) {
 		logger.debug("yamlToOp[in]: ({}){}", node.getClass(), node);
+		// Root node
 		HydeOperation op = new HydeOperation();
-
+		
 		// TODO Auto-generated method stub
 		return op;
 	}

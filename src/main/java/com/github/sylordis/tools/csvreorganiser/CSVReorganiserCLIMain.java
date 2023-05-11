@@ -5,12 +5,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.tools.csvreorganiser.doc.MarkdownDocumentationOutputChess;
 import com.github.sylordis.tools.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.tools.csvreorganiser.model.Reorganiser;
+import com.github.sylordis.tools.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
 
@@ -26,16 +34,11 @@ public final class CSVReorganiserCLIMain {
 	/**
 	 * Class logger.
 	 */
-	private final Logger logger;
-
+	private final Logger logger = LogManager.getLogger();
 	/**
-	 * Class constructor.
-	 *
-	 * @param args
+	 * Options for command line.
 	 */
-	public CSVReorganiserCLIMain() {
-		logger = LogManager.getLogger();
-	}
+	private Options options = new Options();
 
 	/**
 	 * Runs the activity of taking the input, error checking it and running the Reorganiser model to
@@ -45,25 +48,6 @@ public final class CSVReorganiserCLIMain {
 	 * @see #usage()
 	 */
 	public void reorganise(String[] args) {
-		boolean docMode = false;
-		// Args check
-		if (args == null || args.length == 0)
-			fatal("Wrong number of arguments.", this::usage);
-		else if ("--doc".equals(args[0])) {
-			docMode = true;
-		}
-		if (docMode) {
-			new MarkdownDocumentationOutputChess().generate();
-		} else {
-			run(args);
-		}
-	}
-
-	/**
-	 * Default run.
-	 * @param args Command line arguments
-	 */
-	public void run(String[] args) {
 		if (args.length < 3)
 			fatal("Wrong number of arguments.", this::usage);
 		// TODO args check
@@ -88,7 +72,7 @@ public final class CSVReorganiserCLIMain {
 			}
 		}
 		// Target file (last argument)
-		File targetFile = new File(args[args.length-1]);
+		File targetFile = new File(args[args.length - 1]);
 		if (targetFile.exists() && (targetFile.isDirectory() || !targetFile.canWrite())) {
 			logger.error("File {} exists and cannot be written to.", targetFile.getName());
 			error = true;
@@ -114,6 +98,42 @@ public final class CSVReorganiserCLIMain {
 	}
 
 	/**
+	 * Default run.
+	 * 
+	 * @param args Command line arguments
+	 */
+	public void run(String[] args) {
+		this.options = new Options();
+		Option optionDoc = new Option("d", "doc", false, "Generates the documentation without running the software.");
+		Option optionEngine = new Option("e", "engine", true, "Specifies the engine.");
+		Option optionHelp = new Option("h", "help", false, "Displays this help message.");
+		options.addOption(optionDoc);
+		options.addOption(optionEngine);
+		options.addOption(optionHelp);
+		CommandLineParser cliParser = new DefaultParser();
+		try {
+			CommandLine cli = cliParser.parse(options, args);
+			if (cli.hasOption(optionHelp)) {
+				usage();
+			} else if (cli.hasOption(optionDoc)) {
+				generateDocumentation();
+			} else {
+				// TODO Args check
+//				reorganise(args);
+			}
+		} catch (ParseException e) {
+			logger.error(e);
+		}
+	}
+
+	/**
+	 * Generates code documentation.
+	 */
+	private void generateDocumentation() {
+		new MarkdownDocumentationOutputChess().generate(new ChessDefaultConfigurationSupplier());
+	}
+
+	/**
 	 * Logs an error message with level fatal and exits the program in error.
 	 *
 	 * @param message   Fatal error message.
@@ -130,6 +150,16 @@ public final class CSVReorganiserCLIMain {
 	 * Prints basic usage.
 	 */
 	private void usage() {
+		HelpFormatter help = new HelpFormatter();
+		help.printHelp("software <cfgfile> <src...> <target>", """
+		        with:
+		        cfgfile
+		        	Path to configuration file for reorganisation.
+		        src
+		        	Source files, paths to files to be reorganised and aggregated. Those files should have the same columns available.
+		        target
+		        	Target file, path to file to be written with the results.
+		        """, options, null, true);
 		logger.info("usage: <cfgfile> <src..> <target>");
 	}
 
@@ -139,7 +169,7 @@ public final class CSVReorganiserCLIMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new CSVReorganiserCLIMain().reorganise(args);
+		new CSVReorganiserCLIMain().run(args);
 	}
 
 }

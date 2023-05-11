@@ -1,4 +1,4 @@
-package com.github.sylordis.tools.csvreorganiser.model.hyde;
+package com.github.sylordis.tools.csvreorganiser.model.hyde.operations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,7 +14,6 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.github.sylordis.tools.csvreorganiser.model.exceptions.ConfigurationException;
+import com.github.sylordis.tools.csvreorganiser.model.hyde.HydeFilter;
 
 /**
  * @author sylordis
@@ -58,15 +58,8 @@ class HydeOperationTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterEach
-	void tearDown() throws Exception {
-	}
-
-	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#HydeOperation()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#HydeOperation()}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -83,7 +76,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#HydeOperation(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#HydeOperation(java.lang.String)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -101,7 +94,26 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#HydeOperation(java.lang.String, java.util.function.Function)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#HydeOperation(java.lang.String)}.
+	 */
+	@Test
+	@Tag("Constructor")
+	void testHydeOperationStringString() {
+		final String name = "Welcome Ms";
+		final String source = "folly";
+		op = new HydeOperation(name, source);
+		assertNotNull(op);
+		assertEquals(name, op.getName());
+		assertEquals(source, op.getSource());
+		assertNotNull(op.getFilters());
+		assertFalse(op.hasFilters());
+		assertNotNull(op.getChildren());
+		assertFalse(op.hasChildren());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#HydeOperation(java.lang.String, java.util.function.Function)}.
 	 */
 	@Test
 	@Tag("Constructor")
@@ -119,7 +131,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
 	 */
 	@Test
 	void testApply_noSourceOrChildren() {
@@ -128,7 +140,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
 	 * 
 	 * @throws IOException
 	 */
@@ -141,7 +153,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
 	 * 
 	 * @throws IOException
 	 */
@@ -162,7 +174,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the operation under test has children.
 	 * 
 	 * @throws IOException
@@ -180,7 +192,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the operation under test has filters set but no children.
 	 * 
 	 * @throws IOException
@@ -196,7 +208,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}
 	 * when the operation under test has filters set but no children.
 	 * 
 	 * @throws IOException
@@ -213,7 +225,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#apply(org.apache.commons.csv.CSVRecord)}.
 	 * 
 	 * @throws IOException
 	 */
@@ -222,15 +234,16 @@ class HydeOperationTest {
 	void testApply_withChildrenFilters() throws IOException {
 		CSVParser parser = CSVParser.parse("Musketeers,ATHOS,1", format);
 		HydeOperation opc1 = new HydeOperation(OP_NAME + "/opc1", CSV_HEADERS[2],
-		        t -> Integer.toString(Integer.valueOf(t) * 5));
-		HydeOperation opc2 = new HydeOperation(OP_NAME + "/opc2", CSV_HEADERS[1], t -> t.toLowerCase(), t -> " " + t);
+		        List.of(t -> Integer.toString(Integer.valueOf(t) * 5)));
+		HydeOperation opc2 = new HydeOperation(OP_NAME + "/opc2", CSV_HEADERS[1],
+		        List.of(t -> t.toLowerCase(), t -> " " + t));
 		op.setChildren(List.of(opc1, opc2));
 		assertEquals("5 athos", op.apply(parser.getRecords().get(0)));
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#getName()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#getName()}.
 	 */
 	@Test
 	void testGetName() {
@@ -239,7 +252,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#addChild(com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#addChild(com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation)}.
 	 */
 	@Test
 	void testAddChild() {
@@ -252,7 +265,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#addChild(com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#addChild(com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation)}.
 	 */
 	@Test
 	void testAddChild_conserveOrder() {
@@ -270,7 +283,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#getChildren()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#getChildren()}.
 	 */
 	@Test
 	void testGetChildren() {
@@ -279,7 +292,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setChildren(java.util.List)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setChildren(java.util.List)}.
 	 */
 	@Test
 	void testSetChildren() {
@@ -293,7 +306,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setChildren(java.util.List)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setChildren(java.util.List)}.
 	 */
 	@Test
 	void testSetChildren_replace() {
@@ -308,7 +321,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#hasChildren()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#hasChildren()}.
 	 */
 	@Test
 	void testHasChildren() {
@@ -317,7 +330,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setName(java.lang.String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setName(java.lang.String)}.
 	 */
 	@ParameterizedTest
 	@Tag("Blank")
@@ -332,7 +345,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#getSource()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#getSource()}.
 	 */
 	@Test
 	void testGetSource() {
@@ -341,7 +354,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setSource(String)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setSource(String)}.
 	 */
 	@ParameterizedTest
 	@Tag("Blank")
@@ -355,8 +368,8 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setSource(String)} if
-	 * argument is null.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setSource(String)}
+	 * if argument is null.
 	 */
 	@ParameterizedTest
 	@Tag("Null")
@@ -368,7 +381,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#getFilters()}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#getFilters()}.
 	 */
 	@Test
 	void testGetFilters() {
@@ -378,7 +391,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#addFilter(HydeOperation)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#addFilter(HydeOperation)}.
 	 */
 	@Test
 	void testAddFilter() {
@@ -392,7 +405,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#addFilter(HydeOperation)}
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#addFilter(HydeOperation)}
 	 * if the provided filter is null.
 	 */
 	@Test
@@ -404,7 +417,7 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setFilters(List)}.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setFilters(List)}.
 	 */
 	@Test
 	void testSetFilters() {
@@ -415,8 +428,8 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setFilters(List)} to
-	 * check that setting multiple filters at once conserve the order.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setFilters(List)}
+	 * to check that setting multiple filters at once conserve the order.
 	 */
 	@Test
 	void testSetFilters_multi() {
@@ -427,8 +440,8 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setFilters(List)} to
-	 * check that this method replaces any previous set filters.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setFilters(List)}
+	 * to check that this method replaces any previous set filters.
 	 */
 	@Test
 	void testSetFilters_replace() {
@@ -441,8 +454,8 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setFilters(List)} if
-	 * argument is null.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setFilters(List)}
+	 * if argument is null.
 	 */
 	@Test
 	@Tag("Null")
@@ -453,8 +466,8 @@ class HydeOperationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.HydeOperation#setFilters(List)} if
-	 * argument is null and filters were already present.
+	 * {@link com.github.sylordis.tools.csvreorganiser.model.hyde.operations.HydeOperation#setFilters(List)}
+	 * if argument is null and filters were already present.
 	 */
 	@Test
 	@Tag("Null")

@@ -96,7 +96,7 @@ public class ChessDefaultConfigurationSupplier implements ChessConfigurationSupp
 	}
 
 	/**
-	 * Retrieves all operations by reflection:
+	 * Retrieves all operations by reflection.
 	 *
 	 * @return a set of all operations
 	 */
