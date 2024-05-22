@@ -30,7 +30,12 @@ public final class SamplesFilesConstants {
 	 */
 	public static final String TARGET_CONTENT_2 = SAMPLES_DIR + "expected2.csv";
 	/**
-	 * Path to test configuration file.
+	 * Path to test configuration file for Chess engine.
 	 */
-	public static final String CONFIG_CONTENT = SAMPLES_DIR + "config.yaml";
+	public static final String CONFIG_CONTENT_CHESS = SAMPLES_DIR + "config-chess.yaml";
+	/**
+	 * Path to test configuration file for Hyde engine.
+	 */
+	public static final String CONFIG_CONTENT_HYDE = SAMPLES_DIR + "config-hyde.yaml";
+
 }

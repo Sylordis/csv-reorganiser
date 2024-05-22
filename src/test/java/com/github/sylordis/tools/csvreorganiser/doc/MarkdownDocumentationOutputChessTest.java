@@ -23,7 +23,6 @@ import com.github.sylordis.tools.csvreorganiser.model.chess.operations.defs.GetO
 import com.github.sylordis.tools.csvreorganiser.model.chess.operations.defs.RegularExpressionReplacementOperation;
 import com.github.sylordis.tools.csvreorganiser.model.chess.operations.defs.ValueOperation;
 import com.github.sylordis.tools.csvreorganiser.test.chess.defs.FakeOperation;
-import com.github.sylordis.tools.csvreorganiser.test.chess.defs.WrongFakeOperation;
 
 /**
  * @author sylordis

@@ -185,13 +185,42 @@ class SubstringOperationTest {
 		assertNull(op.getSrcColumn(), "Bare operation should not have required fields set");
 	}
 
+	/**
+	 * Test method for {@link SubstringOperation#setSrcColumn()}.
+	 */
+	@Test
+	void testSetSrcColumn() {
+		final String column = "Serenade";
+		op.setSrcColumn(column);
+		assertEquals(column, op.getSrcColumn());
+	}
+
 	@Test
 	void testGetStartIndex() {
-		assertEquals(-1, op.getStartIndex(), "Bare operation should not have required fields set");
+		assertEquals(SubstringOperation.NO_START_INDEX, op.getStartIndex(), "Bare operation should not have required fields set");
+	}
+
+	@Test
+	void testSetStartIndex() {
+		final int index = 723;
+		op.setStartIndex(index);
+		assertEquals(index, op.getStartIndex());
 	}
 
 	@Test
 	void testGetEndIndex() {
 		assertEquals(SubstringOperation.NO_END_INDEX, op.getEndIndex(), "Bare operation should not have required fields set");
+	}
+
+	@Test
+	void testSetEndIndex() {
+		final int index = 928;
+		op.setEndIndex(index);
+		assertEquals(index, op.getEndIndex());
+	}
+
+	@Test
+	void testToString() {
+		assertNotNull(op.toString());
 	}
 }

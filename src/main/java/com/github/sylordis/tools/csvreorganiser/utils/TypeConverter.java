@@ -28,17 +28,16 @@ public final class TypeConverter {
 		if (o == null || o.getClass().equals(type) || type.isAssignableFrom(o.getClass())) {
 			// Same type, extended or null
 			desired = (T) o;
-		} else if (Integer.class.equals(o.getClass())) {
+		} else if (o instanceof Integer i) {
 			// Convert from Integers...
 			// ... to String
 			if (String.class.equals(type))
-				desired = (T) Integer.toString((Integer) o);
-		} else if (String.class.equals(o.getClass())) {
+				desired = (T) Integer.toString(i);
+		} else if (o instanceof String s) {
 			// Convert from String...
-			String os = (String) o;
 			// ... to Integer
 			if (Integer.class.equals(type))
-				desired = (T) Integer.valueOf(os);
+				desired = (T) Integer.valueOf(s);
 		}
 		if (o != null && desired == null)
 			throw new NotImplementedException(

@@ -230,9 +230,9 @@ class CSVReorganiserCLIMainTest {
 	@Tag("Integration")
 	void testReorganise() throws IOException {
 		File cfg = createFile();
-		fillFileWithSamples(cfg, SamplesFilesConstants.CONFIG_CONTENT);
+		fillFileWithSamples(cfg, SamplesFilesConstants.CONFIG_CONTENT_CHESS);
 		File cfgExpected = createFile();
-		fillFileWithSamples(cfgExpected, SamplesFilesConstants.CONFIG_CONTENT);
+		fillFileWithSamples(cfgExpected, SamplesFilesConstants.CONFIG_CONTENT_CHESS);
 		File src = createFile();
 		fillFileWithSamples(src, SamplesFilesConstants.SOURCE_CONTENT);
 		File srcExpected = createFile();

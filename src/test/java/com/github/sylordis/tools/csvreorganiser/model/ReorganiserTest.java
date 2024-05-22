@@ -1,6 +1,6 @@
 package com.github.sylordis.tools.csvreorganiser.model;
 
-import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.CONFIG_CONTENT;
+import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.CONFIG_CONTENT_CHESS;
 import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT;
 import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT_2;
 import static com.github.sylordis.tools.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT;
@@ -377,7 +377,7 @@ class ReorganiserTest {
 			File expectedFile = File.createTempFile(testinfo.getDisplayName() + "-tgt", null, workingDir);
 			fillFileWithSamples(expectedFile, TARGET_CONTENT);
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
-			fillFileWithSamples(configFile, CONFIG_CONTENT);
+			fillFileWithSamples(configFile, CONFIG_CONTENT_CHESS);
 			// Reorganise
 			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
 			reorg.setCfg(cfg);
@@ -426,7 +426,7 @@ class ReorganiserTest {
 			fillFileWithSamples(expectedFile, TARGET_CONTENT_2);
 			// Config
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
-			fillFileWithSamples(configFile, CONFIG_CONTENT);
+			fillFileWithSamples(configFile, CONFIG_CONTENT_CHESS);
 			// Reorganise
 			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
 			reorg = new Reorganiser(cfg, targetFile, List.of(srcFile, srcFile2));

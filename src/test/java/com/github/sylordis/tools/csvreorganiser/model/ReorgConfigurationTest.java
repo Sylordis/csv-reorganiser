@@ -81,7 +81,7 @@ class ReorgConfigurationTest {
 	void setUp() throws Exception {
 		rcfg = new ReorgConfiguration();
 		cfgFile = File.createTempFile("ReorgConfigurationTest-cfg", "yaml", workingDir);
-		fillFileWithSamples(cfgFile, SamplesFilesConstants.CONFIG_CONTENT);
+		fillFileWithSamples(cfgFile, SamplesFilesConstants.CONFIG_CONTENT_CHESS);
 	}
 
 	/**

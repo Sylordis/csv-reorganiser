@@ -12,9 +12,9 @@ Stop to the long hours trying to export, reorganise and separate fields values. 
 
 ### Dependencies
 
-Java 19 is required for runtime.
+Java 21 is required for runtime.
 
-This tool was made with/for Java 19 and Apache Maven as dependency manager.
+This tool was made with/for Java 21 and Apache Maven as dependency manager.
 
 It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
@@ -36,7 +36,7 @@ Check the `pom.xml` file for dependencies versions.
 
 ### Compilation
 
-Download the code, you should have Java 19+ and Apache Maven to be able to compile the project.
+Download the code, you should have Java 21+ and Apache Maven to be able to compile the project.
 Follow typical Maven goals regarding your intention (`compile`, `package`, `install`, ...).
 
 ### Installing
@@ -60,8 +60,8 @@ With:
 #### Engines
 
 There are 2 engines in the CSV reorganiser. For each engine, the configuration file is written in a slight different way.
-The first one (id `1` or `chess`), is using a simple structure and performs only simple operations.
-The second one (id `2` or `hyde`), is an experimental engine using a text based definition of operations, with text filters directly included in the operation definition.
+* The first one (id `1` or `chess`), is using a simple structure and performs only simple operations.
+* The second one (id `2` or `hyde`), is an experimental engine using a text based definition of operations, with text filters directly included in the operation definition (still in implementation).
 
 You can change which engine you are using by using the option flag `-engine <engine-id>` or `-e <engine-id>` where `<engine-id>` is the engine name or number.
 You can also specify the engine in the configuration file via the header, using the tag `engine` which behaves the same as the option.
@@ -86,11 +86,11 @@ Check out the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 
 ## Version History
 
-* v1.1 - in progress
-  * Updated Log4J.
+* v1.1 - in progress (but usable with `chess` engine)
   * Some unit tests were left behind (disabled).
   * Multiple source files processing.
   * New operation: Concat, Substring.
+  * Preparation for Hyde.
 * v1.0
   * First official release.
   * Unit-tested (most of it) along with some integration tests.

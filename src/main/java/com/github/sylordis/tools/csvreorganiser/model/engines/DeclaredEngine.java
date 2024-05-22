@@ -4,6 +4,7 @@ import com.github.sylordis.tools.csvreorganiser.model.chess.ChessEngine;
 import com.github.sylordis.tools.csvreorganiser.model.hyde.HydeEngine;
 
 /**
+ * Enumeration of all engines.
  * 
  * @author sylordis
  *

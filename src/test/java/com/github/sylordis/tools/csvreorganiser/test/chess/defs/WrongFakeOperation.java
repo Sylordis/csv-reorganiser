@@ -1,7 +1,5 @@
 package com.github.sylordis.tools.csvreorganiser.test.chess.defs;
 
-import java.util.List;
-
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.tools.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;

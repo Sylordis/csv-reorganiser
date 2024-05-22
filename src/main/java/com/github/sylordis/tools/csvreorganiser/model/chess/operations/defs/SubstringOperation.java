@@ -38,6 +38,10 @@ public class SubstringOperation extends ChessAbstractReorgOperation {
 	 * Constant to specify that no end index is set.
 	 */
 	public static final int NO_END_INDEX = -1;
+	/**
+	 * Constant to specify that no start index is set.
+	 */
+	public static final int NO_START_INDEX = 0;
 	
 	/**
 	 * Index of the source column.
@@ -57,9 +61,7 @@ public class SubstringOperation extends ChessAbstractReorgOperation {
 	 * @param name  Name of the column
 	 */
 	public SubstringOperation(String name) {
-		super(name);
-		this.indexStart = -1;
-		this.indexEnd = NO_END_INDEX;
+		this(name, null, NO_START_INDEX);
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class SubstringOperation extends ChessAbstractReorgOperation {
 
 	@Override
 	public String toString() {
-		return String.format("%s [%s, start=%i, end=%i]", this.getClass().getSimpleName(), getName(), indexStart, indexEnd);
+		return String.format("%s [%s, start=%d, end=%d]", this.getClass().getSimpleName(), getName(), indexStart, indexEnd);
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class SubstringOperation extends ChessAbstractReorgOperation {
 	/**
 	 * @param start the start index to set
 	 */
-	public void setIndexStart(int start) {
+	public void setStartIndex(int start) {
 		this.indexStart = start;
 	}
 
