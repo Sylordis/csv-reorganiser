@@ -2,6 +2,7 @@ package com.github.sylordis.csvreorganiser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.io.IoBuilder;
 
 import com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess;
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
@@ -118,7 +121,7 @@ public final class CSVReorganiserCLIMain {
 			} else if (cli.hasOption(optionDoc)) {
 				generateDocumentation();
 			} else if (cli.getArgs().length < 3) {
-				fatal("Not enough arguments");
+				fatal("Not enough arguments", this::usage);
 			} else {
 //				reorganise(args);
 			}
@@ -152,18 +155,17 @@ public final class CSVReorganiserCLIMain {
 	 */
 	private void usage() {
 		HelpFormatter help = new HelpFormatter();
-		help.printHelp("software <cfgfile> <src...> <target>", """
+		help.printHelp("software <cfgfile> <src..> <target>", """
 		        with:
-		        cfgfile
-		          Path to configuration file for reorganisation.
-		        src
-		          Source files, paths to files to be reorganised and aggregated.
-		          Those files should have the same columns available.
-		        target
-		          Target file, path to file to be written with the results.
+		          cfgfile
+		            Path to configuration file for reorganisation.
+		          src
+		            Source files, paths to files to be reorganised and aggregated.
+		            Those files should have the same columns available.
+		          target
+		            Target file, path to file to be written with the results.
 		        
 		        """, options, null, true);
-		logger.info("usage: <cfgfile> <src..> <target>");
 	}
 
 	/**

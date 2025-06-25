@@ -14,7 +14,7 @@ Stop to the long hours trying to export, reorganise and separate fields values. 
 
 Java 21 is required for runtime.
 
-This tool was made with/for Java 21 and Apache Maven as dependency manager.
+This tool was made with/for Java 21 and Gradle as dependency manager.
 
 It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
@@ -32,30 +32,35 @@ Testing dependencies:
 Documentation dependencies (by and for):
 * [Javaparser](https://javaparser.org/)
 
-Check the `pom.xml` file for dependencies versions.
+To check for dependencies versions, check the following files:
+
+- `[build.gradle](csv-reorganiser-app/build.gradle)`
+- `[libs.versions.toml](gradle/libs.versions.toml)`
 
 ### Compilation
 
-Download the code, you should have Java 21+ and Apache Maven to be able to compile the project.
-Follow typical Maven goals regarding your intention (`compile`, `package`, `install`, ...).
+Download the code, you should have Java 21+ and Gradle 9+ to be able to compile the project.
+Follow typical Gradle java application goals regarding your intention (`build`, `test`, `shadowJar`).
 
 ### Installing
 
-Just download the jar file associated to the release or run `mvn package` (at least) from the repository.
-Jar file should be provided under `target/csv-reorganiser-<VERSION>.jar`
+Just download the jar file associated to the release or run `gradle shadowJar` (at least) from the repository.
+Jar file should be provided under `csv-reorganiser-app/build/libs/csv-reorganiser-app-all.jar`
 
 ### Executing software
 
 Run the following command:
 
 ```
-java -jar <path-to-jar>/csv-reorganiser-X.Y.jar <yaml-cfg> <csv-sources..> <csv-target>
+java -jar <path-to-jar>/csv-reorganiser-app-all.jar [options] <yaml-cfg> <csv-sources..> <csv-target>
 ```
 
 With:
 * `yaml-cfg` the YAML configuration file to be used for the reorganisation. Examples are provided in the `examples/` folder, documentation provided on the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 * `csv-sources` the base CSV files to be reorganised. If multiple ones are provided, they will all be processed sequentially and the results compiled into the same target file. Each source file must have the same structure.
 * `csv-target` the target file to be written. If existing, it will be overwritten.
+
+Run with `--help` for full documentation and options.
 
 #### Engines
 
@@ -72,9 +77,9 @@ Check the wiki for more information.
 
 ### Executing unit tests
 
-A simple `mvn test` should suffice. This project has been built with the idea of achieving at least 80% of code coverage through unit tests.
+A simple `gradle test` should suffice. This project has been built with the idea of achieving at least 80% of code coverage through unit tests.
 
-If you want to skip unit tests to package or install, run command for installing (see before) with option `-DskipTests`.
+If you want to skip unit tests to build, run command for installing (see before) with option `gradle build -x test`.
 
 ## Help
 
