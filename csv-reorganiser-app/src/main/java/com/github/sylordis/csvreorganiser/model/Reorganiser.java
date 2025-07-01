@@ -7,8 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,11 +85,11 @@ public class Reorganiser {
 			logger.info("Header: {}", Arrays.toString(headerOut));
 			logger.debug("Source files to process: {}", srcFiles);
 			try (FileWriter out = new FileWriter(targetFile, true);
-			        CSVPrinter printer = new CSVPrinter(out, CSVFormat.Builder.create().setHeader(headerOut).build())) {
+			        CSVPrinter printer = new CSVPrinter(out, CSVFormat.Builder.create().setHeader(headerOut).get())) {
 				// Generate records file
 				try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile))) {
-					writer.write(MessagesConstants.TARGET_COMMENT.replace("%DATE",
-					        DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())));
+					logger.debug("Writing header");
+					writer.write(MessagesConstants.getTargetComment("engine"));
 					writer.newLine();
 				}
 				// For each file
@@ -100,7 +98,7 @@ public class Reorganiser {
 					logger.debug("Processing source file {}", srcFile);
 					try (Reader srcInput = new FileReader(srcFile)) {
 						Iterable<CSVRecord> recordsIn = CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true)
-						        .build().parse(srcInput);
+						        .get().parse(srcInput);
 						// Apply operations for each record
 						for (CSVRecord record : recordsIn) {
 							List<String> recordOut = new ArrayList<>();

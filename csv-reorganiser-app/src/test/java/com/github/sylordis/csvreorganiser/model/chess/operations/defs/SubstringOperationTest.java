@@ -28,7 +28,7 @@ class SubstringOperationTest {
 	/**
 	 * CSV format to be used in tests.
 	 */
-	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).build();
+	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).get();
 	/**
 	 * Typical name for the operation
 	 */

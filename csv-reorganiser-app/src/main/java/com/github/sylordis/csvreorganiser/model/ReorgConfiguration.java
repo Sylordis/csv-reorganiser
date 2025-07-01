@@ -85,13 +85,16 @@ public class ReorgConfiguration {
 		try (FileInputStream yamlStream = new FileInputStream(cfgFile)) {
 			// Set specified engine if provided
 			logger.info("Loading YAML file");
-			Map<String, Object> root = yamlFile.load(yamlStream);
-			if (root == null)
+			Map<String, Object> fileRoot = yamlFile.load(yamlStream);
+			logger.debug("Loaded YAML root");
+			if (fileRoot == null)
 				throw new ConfigurationImportException("Configuration file is empty");
-			logger.debug("Loaded yaml file {}: {}", cfgFile.getAbsolutePath(), root);
+			logger.debug("Loaded yaml file {}:\n{}", cfgFile.getAbsolutePath(), fileRoot);
+			Map<String, Object> root = YAMLUtils.get(OPDEF_ROOT_KEY, fileRoot);
 			// Header analysis
-			if (root.containsKey(YAMLTags.CFG_HEADER_KEY)) {
-				Map<String, Object> header = YAMLUtils.toNode(root);
+			if (fileRoot.containsKey(YAMLTags.CFG_HEADER_KEY)) {
+				logger.debug("Analysing header: {]", YAMLUtils.toNode(fileRoot.get(YAMLTags.CFG_HEADER_KEY)));
+				Map<String, Object> header = YAMLUtils.toNode(fileRoot.get(YAMLTags.CFG_HEADER_KEY));
 				checkHeaderConfiguration(header);
 			}
 			// Check if engine is present before loading operations
@@ -101,11 +104,11 @@ public class ReorgConfiguration {
 				this.engine = EngineFactory.getDefaultEngine();
 			}
 			// Check that structure tag is present at root
-			if (root.containsKey(YAMLTags.OPDEF_ROOT_KEY)) {
-				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, root.get(OPDEF_ROOT_KEY).getClass(),
-				        root.get(OPDEF_ROOT_KEY));
+			if (fileRoot.containsKey(YAMLTags.OPDEF_ROOT_KEY)) {
+				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, fileRoot.get(OPDEF_ROOT_KEY).getClass(),
+						fileRoot.get(OPDEF_ROOT_KEY));
 				// Check that structure tag contains a usable list
-				if (YAMLUtils.checkChildType(root, OPDEF_ROOT_KEY, YAMLType.LIST)) {
+				if (YAMLUtils.checkChildType(fileRoot, OPDEF_ROOT_KEY, YAMLType.LIST)) {
 					YAMLUtils.toList(root.get(OPDEF_ROOT_KEY)).stream()
 					        .map(o -> this.engine.createOperation(YAMLUtils.toNode(o))).forEach(operations::add);
 				} else {
@@ -130,7 +133,7 @@ public class ReorgConfiguration {
 	 * @throws EngineException 
 	 */
 	public void checkHeaderConfiguration(Map<String, Object> header) throws EngineException {
-		logger.debug("Checking engine configuration and compatibility with header");
+		logger.debug("Checking engine configuration and compatibility with header {}", header);
 		ReorganiserEngine fileEngine = new EngineFactory().getEngineFromId(YAMLUtils.get(YAMLTags.Header.CFG_ENGINE, header));
 		logger.debug("Local engine is {}, header declared engine is {}",
 		        this.engine != null ? this.engine.getClass().getSimpleName() : null,

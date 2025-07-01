@@ -37,8 +37,10 @@ public class EngineFactory {
 	 * @throws IllegalArgumentException 
 	 */
 	public ReorganiserEngine getEngineFromId(Object id) {
+		logger.debug("Getting Engine from ID: {}", id);
 		DeclaredEngine engineType = DeclaredEngine.getEngineTypeFromId(id);
 		ReorganiserEngine engine = null;
+		logger.debug("Getting engine from ID: {}", id);
 		if (engineType != null) {
 			try {
 				Class<? extends ReorganiserEngine> engineDeclaredType = engineType.getEngineType();

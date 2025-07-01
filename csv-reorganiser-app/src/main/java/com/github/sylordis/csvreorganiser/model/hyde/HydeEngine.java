@@ -30,7 +30,7 @@ public class HydeEngine implements ReorganiserEngine {
 	public ReorganiserOperation createOperation(Map<String, Object> node) {
 		logger.debug("yamlToOp[in]: ({}){}", node.getClass(), node);
 		// Root node
-		HydeOperation op = new HydeOperation();
+		HydeOperation op = new HydeOperation("root");
 		
 		// TODO Auto-generated method stub
 		return op;

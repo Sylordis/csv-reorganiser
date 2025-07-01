@@ -5,16 +5,16 @@
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS} %-5level - %msg%rEx{short}%n" />
+				pattern="%d{HH:mm:ss.SSS} %-5level - %msg%rEx%n" />
 		</Console>
 		<Console name="ConsoleDebug" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS} %-5level %logger{1} - %msg%n" />
+				pattern="%d{HH:mm:ss.SSS} %-5level %logger{1}:%L - %msg%n" />
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Root level="info">
-			<AppenderRef ref="Console" />
+		<Root level="debug">
+			<AppenderRef ref="ConsoleDebug" />
 		</Root>
 		<Logger name="org.reflections" level="error"/>
 	</Loggers>

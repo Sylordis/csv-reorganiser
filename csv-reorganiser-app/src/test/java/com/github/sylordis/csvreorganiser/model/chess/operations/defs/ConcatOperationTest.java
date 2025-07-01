@@ -30,7 +30,7 @@ class ConcatOperationTest {
 	/**
 	 * CSV format to be used in tests.
 	 */
-	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).build();
+	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).get();
 	/**
 	 * Default name of the operation.
 	 */

@@ -2,7 +2,6 @@ package com.github.sylordis.csvreorganiser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +12,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.io.IoBuilder;
 
 import com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess;
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
@@ -51,9 +48,9 @@ public final class CSVReorganiserCLIMain {
 	 * @see #usage()
 	 */
 	public void reorganise(String[] args) {
+		// Args check
 		if (args.length < 3)
 			fatal("Wrong number of arguments.", this::usage);
-		// TODO args check
 		// Files check
 		// We perform all checks and then stop if any error occurred
 		boolean error = false;
@@ -120,10 +117,8 @@ public final class CSVReorganiserCLIMain {
 				usage();
 			} else if (cli.hasOption(optionDoc)) {
 				generateDocumentation();
-			} else if (cli.getArgs().length < 3) {
-				fatal("Not enough arguments", this::usage);
 			} else {
-//				reorganise(args);
+				reorganise(args);
 			}
 		} catch (ParseException e) {
 			logger.error(e);

@@ -60,7 +60,10 @@ public final class YAMLTags {
 	 * Main tag for the header definition.
 	 */
 	public static final String CFG_HEADER_KEY = "header";
-
+	/**
+	 * Main tag for the root definition.
+	 */
+	public static final String CFG_ROOT = "reorg";
 	/**
 	 * Private constructor to avoid instantiation.
 	 */

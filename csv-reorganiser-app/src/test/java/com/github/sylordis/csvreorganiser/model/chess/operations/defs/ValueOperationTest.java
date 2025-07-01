@@ -42,7 +42,7 @@ class ValueOperationTest {
 	/**
 	 * CSV format to be used in tests.
 	 */
-	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).build();
+	private final CSVFormat format = CSVFormat.Builder.create().setHeader(CSV_HEADERS).get();
 	/**
 	 * CSV parser to be used to provide data in tests.
 	 */
