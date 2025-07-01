@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.sylordis.csvreorganiser.model.chess.ChessEngine;
+import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
@@ -143,7 +144,7 @@ class ReorgConfigurationTest {
 	@Test
 	@Tag("Integration")
 	void testLoadFromFile() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
-		rcfg = new ReorgConfiguration(ChessEngine.createDefaultEngine());
+		rcfg = new ReorgConfiguration(new ChessEngine());
 		rcfg.loadFromFile(cfgFile);
 		assertEquals(6, rcfg.getOperations().size());
 		ChessAbstractReorgOperation op = (ChessAbstractReorgOperation) rcfg.getOperations().get(0);
@@ -189,12 +190,7 @@ class ReorgConfigurationTest {
 	@Test
 	@Tag("Integration")
 	void testLoadFromFile_Chess_NoShortcut() throws ConfigurationImportException, FileNotFoundException, IOException {
-		ChessEngine engine = new ChessEngine() {
-			@Override
-			public Map<String, ChessOperationInstantiator> getOperationsShortcutsDictionary() {
-				return new HashMap<>();
-			}
-		};
+		ChessEngine engine = new ChessEngine(new DummyOperationSupplier());
 		rcfg.setEngine(engine);
 		engine.setOperationsDictionary(new ChessDefaultConfigurationSupplier().getOperationsDictionary());
 		assertThrows(ConfigurationImportException.class, () -> rcfg.loadFromFile(cfgFile));
@@ -280,7 +276,11 @@ class ReorgConfigurationTest {
 	 */
 	@Test
 	void testLoadFromFile_NoOperations() throws IOException, EngineException {
-		File cfg = createFileWith(YAMLTags.OPDEF_ROOT_KEY + ": []");
+		String content = """
+%s:
+   %s: []
+		        """;
+		File cfg = createFileWith(String.format(content, YAMLTags.CFG_ROOT, YAMLTags.OPDEF_ROOT_KEY));
 		rcfg.setEngine(new DummyEngine());
 		rcfg.loadFromFile(cfg);
 		assertTrue(rcfg.getOperations().isEmpty());
@@ -296,7 +296,12 @@ class ReorgConfigurationTest {
 	 */
 	@Test
 	void testLoadFromFile_NoListUnderRoot() throws IOException {
-		File cfg = createFileWith(YAMLTags.OPDEF_ROOT_KEY + ":\n" + "  hello: there");
+		String content = """
+%s:
+   %s:
+      hello: there
+		        """;
+		File cfg = createFileWith(String.format(content, YAMLTags.CFG_ROOT, YAMLTags.OPDEF_ROOT_KEY));
 		rcfg.setEngine(new DummyEngine());
 		assertThrows(ConfigurationImportException.class, () -> rcfg.loadFromFile(cfg));
 		cfg.delete();
@@ -406,7 +411,7 @@ class ReorgConfigurationTest {
 	@Tag("Constructor")
 	void testFromFile() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
 		ReorgConfiguration nrcfg;
-		nrcfg = ReorgConfiguration.fromFile(cfgFile, ChessEngine.createDefaultEngine());
+		nrcfg = ReorgConfiguration.fromFile(cfgFile, new ChessEngine());
 		assertNotNull(nrcfg);
 		assertNotSame(nrcfg, rcfg);
 	}
@@ -449,5 +454,19 @@ class ReorgConfigurationTest {
 			return null;
 		}
 
+	}
+	
+	public final class DummyOperationSupplier implements ChessConfigurationSupplier {
+
+		@Override
+		public Map<String, Class<? extends ChessAbstractReorgOperation>> getOperationsDictionary() {
+			return new HashMap<>();
+		}
+
+		@Override
+		public Map<String, ChessOperationInstantiator> getShortcutDictionary() {
+			return new HashMap<>();
+		}
+		
 	}
 }

@@ -38,9 +38,9 @@ public class EngineFactory {
 	 */
 	public ReorganiserEngine getEngineFromId(Object id) {
 		logger.debug("Getting Engine from ID: {}", id);
-		DeclaredEngine engineType = DeclaredEngine.getEngineTypeFromId(id);
 		ReorganiserEngine engine = null;
-		logger.debug("Getting engine from ID: {}", id);
+		DeclaredEngine engineType = DeclaredEngine.getEngineTypeFromId(id);
+		logger.debug("Engine type: {}", engineType);
 		if (engineType != null) {
 			try {
 				Class<? extends ReorganiserEngine> engineDeclaredType = engineType.getEngineType();
@@ -61,7 +61,7 @@ public class EngineFactory {
 	 * @return
 	 */
 	public static ReorganiserEngine getDefaultEngine() {
-		return ChessEngine.createDefaultEngine();
+		return new ChessEngine();
 	}
 
 }

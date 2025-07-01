@@ -9,12 +9,12 @@
 		</Console>
 		<Console name="ConsoleDebug" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{HH:mm:ss.SSS} %-5level %logger{1}:%L - %msg%n" />
+				pattern="%d{HH:mm:ss.SSS} %-5level %logger{1}:%L - %msg%rEx%n" />
 		</Console>
 	</Appenders>
 	<Loggers>
 		<Root level="debug">
-			<AppenderRef ref="ConsoleDebug" />
+			<AppenderRef ref="Console" />
 		</Root>
 		<Logger name="org.reflections" level="error"/>
 	</Loggers>

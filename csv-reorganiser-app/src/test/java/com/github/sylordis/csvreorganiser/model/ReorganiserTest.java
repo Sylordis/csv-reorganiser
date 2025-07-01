@@ -5,6 +5,8 @@ import static com.github.sylordis.csvreorganiser.test.SamplesFilesConstants.SOUR
 import static com.github.sylordis.csvreorganiser.test.SamplesFilesConstants.SOURCE_CONTENT_2;
 import static com.github.sylordis.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT;
 import static com.github.sylordis.csvreorganiser.test.SamplesFilesConstants.TARGET_CONTENT_2;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -125,8 +127,7 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)}.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)}.
 	 *
 	 * @throws IOException
 	 */
@@ -138,9 +139,8 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)} when provided
-	 * multiple files.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)}
+	 * when provided multiple files.
 	 *
 	 * @throws IOException
 	 */
@@ -156,9 +156,8 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)} when provided
-	 * file is null.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setSrcFile(File)}
+	 * when provided file is null.
 	 */
 	@Test
 	@Tag("Null")
@@ -168,8 +167,7 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#getTargetFile()}.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#getTargetFile()}.
 	 */
 	@Test
 	void testGetTargetFile() {
@@ -178,8 +176,7 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setTargetFile(File)}.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setTargetFile(File)}.
 	 *
 	 * @throws IOException
 	 */
@@ -191,9 +188,8 @@ class ReorganiserTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setTargetFile(File)} when
-	 * provided file is null.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setTargetFile(File)}
+	 * when provided file is null.
 	 */
 	@Test
 	@Tag("Null")
@@ -224,8 +220,8 @@ class ReorganiserTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setCfg(ReorgConfiguration)}
-	 * when provided configuration is null.
+	 * {@link com.github.sylordis.csvreorganiser.model.Reorganiser#setCfg(ReorgConfiguration)} when
+	 * provided configuration is null.
 	 */
 	@Test
 	@Tag("Null")
@@ -244,8 +240,8 @@ class ReorganiserTest {
 	@Tag("Integration")
 	class IntegrationTests {
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when an operation fails to process.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when an
+		 * operation fails to process.
 		 *
 		 * @throws IOException
 		 * @throws FileNotFoundException
@@ -265,8 +261,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when the source is not reachable.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when
+		 * the source is not reachable.
 		 */
 		@Test
 		void testReorganise_WithUnreachableSource() {
@@ -279,8 +275,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when the source is not readable.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when
+		 * the source is not readable.
 		 *
 		 * @throws IOException
 		 */
@@ -300,8 +296,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when the target file is not reachable.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when
+		 * the target file is not reachable.
 		 */
 		@Test
 		@Tag("FilePermissions")
@@ -314,8 +310,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when the target file is not reachable.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when
+		 * the target file is not reachable.
 		 *
 		 * @throws IOException
 		 * @throws FileNotFoundException
@@ -332,8 +328,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when the configuration is not null but empty. An error should be triggered as copying the file is
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when
+		 * the configuration is not null but empty. An error should be triggered as copying the file is
 		 * useless.
 		 *
 		 * @throws IOException
@@ -348,8 +344,8 @@ class ReorganiserTest {
 		}
 
 		/**
-		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()}
-		 * when a null configuration object is set.
+		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when a
+		 * null configuration object is set.
 		 */
 		@Test
 		@Tag("Null")
@@ -379,7 +375,7 @@ class ReorganiserTest {
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
 			fillFileWithSamples(configFile, CONFIG_CONTENT_CHESS);
 			// Reorganise
-			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
+			cfg = ReorgConfiguration.fromFile(configFile, new ChessEngine());
 			reorg.setCfg(cfg);
 			reorg.reorganise();
 			// Checks
@@ -387,8 +383,8 @@ class ReorganiserTest {
 			try (BufferedReader readerExpected = new BufferedReader(new FileReader(expectedFile));
 			        BufferedReader readerTarget = new BufferedReader(new FileReader(targetFile))) {
 				String lineExpected = readerExpected.readLine(), lineTarget = readerTarget.readLine();
-				assertTrue(lineTarget.matches(MessagesConstants.TARGET_COMMENT.replace("%DATE", ".*")),
-				        "First line of target file should be a comment");
+				assertThat("First line of target file should be a comment", lineTarget,
+				        startsWith(MessagesConstants.TARGET_COMMENT.substring(0, 10)));
 				while ((lineExpected = readerExpected.readLine()) != null
 				        && (lineTarget = readerTarget.readLine()) != null) {
 					assertEquals(lineExpected, lineTarget, "Target and expected files should be equal");
@@ -428,7 +424,7 @@ class ReorganiserTest {
 			File configFile = File.createTempFile(testinfo.getDisplayName() + "-cfg", "yaml", workingDir);
 			fillFileWithSamples(configFile, CONFIG_CONTENT_CHESS);
 			// Reorganise
-			cfg = ReorgConfiguration.fromFile(configFile, ChessEngine.createDefaultEngine());
+			cfg = ReorgConfiguration.fromFile(configFile, new ChessEngine());
 			reorg = new Reorganiser(cfg, targetFile, List.of(srcFile, srcFile2));
 			reorg.reorganise();
 			// Checks
@@ -437,8 +433,8 @@ class ReorganiserTest {
 			try (BufferedReader readerExpected = new BufferedReader(new FileReader(expectedFile));
 			        BufferedReader readerTarget = new BufferedReader(new FileReader(targetFile))) {
 				String lineExpected = readerExpected.readLine(), lineTarget = readerTarget.readLine();
-				assertTrue(lineTarget.matches(MessagesConstants.TARGET_COMMENT.replace("%DATE", ".*")),
-				        "First line of target file should be a comment");
+				assertThat("First line of target file should be a comment", lineTarget,
+				        startsWith(MessagesConstants.TARGET_COMMENT.substring(0, 10)));
 				while ((lineExpected = readerExpected.readLine()) != null
 				        && (lineTarget = readerTarget.readLine()) != null) {
 					assertEquals(lineExpected, lineTarget, "Target and expected files should be equal");

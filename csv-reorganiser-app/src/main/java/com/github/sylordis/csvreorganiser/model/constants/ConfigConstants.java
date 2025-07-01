@@ -20,7 +20,7 @@ public final class ConfigConstants {
 		public final static String OPERATIONS_PACKAGE = "com.github.sylordis.csvreorganiser.model.chess.operations.defs";
 
 	}
-	
+
 	/**
 	 * Private constructor
 	 */

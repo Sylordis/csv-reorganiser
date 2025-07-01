@@ -118,4 +118,8 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
+# Others
+*pom.xml
+target/
+
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,visualstudiocode,gradle

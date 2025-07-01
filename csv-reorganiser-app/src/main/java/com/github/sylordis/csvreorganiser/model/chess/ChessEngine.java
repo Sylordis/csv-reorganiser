@@ -25,11 +25,10 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportEx
 import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
 
 /**
- * The Chess engine functions on clear syntax of simple operations, based on pre-approved
- * operations from a dictionary. Operations declarations can be simplified via the setting of
- * "shortcuts" which allow a single keyword to define a value, instead of specifying all parameters.
- * Shortcut operations can only be applied to operations that need only one parameter to be
- * provided.<br/>
+ * The Chess engine functions on clear syntax of simple operations, based on pre-approved operations
+ * from a dictionary. Operations declarations can be simplified via the setting of "shortcuts" which
+ * allow a single keyword to define a value, instead of specifying all parameters. Shortcut
+ * operations can only be applied to operations that need only one parameter to be provided.<br/>
  * <br/>
  * 
  * Chess Engine can be extended or even replaced by introducing new operations and a new dictionary.
@@ -44,8 +43,8 @@ import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
  * charge of describing via other annotations their structure and parameters.
  * 
  * @author sylordis
-
  *
+ * 
  */
 public class ChessEngine implements ReorganiserEngine {
 
@@ -63,31 +62,22 @@ public class ChessEngine implements ReorganiserEngine {
 	private final Map<String, ChessOperationInstantiator> operationsShortcutsDictionary;
 
 	/**
-	 * Constructs a chess engine without a dictionary supplier.
+	 * Constructs a chess engine without a default configuration supplier.
 	 */
 	public ChessEngine() {
-		this.operationsDictionary = new HashMap<>();
-		this.operationsShortcutsDictionary = new HashMap<>();
+		this(new ChessDefaultConfigurationSupplier());
 	}
 
 	/**
-	 * Constructs a chess engine with a given dictionary supplier.
+	 * Constructs a chess engine with a custom dictionary supplier.
 	 * 
 	 * @param dictionarySupplier
 	 */
 	public ChessEngine(ChessConfigurationSupplier dictionarySupplier) {
-		this();
+		this.operationsDictionary = new HashMap<>();
+		this.operationsShortcutsDictionary = new HashMap<>();
 		setOperationsDictionary(dictionarySupplier.getOperationsDictionary());
 		setOperationsShortcutsDictionary(dictionarySupplier.getShortcutDictionary());
-	}
-
-	/**
-	 * Constructs a Chess engine with default configuration supplier.
-	 * 
-	 * @return a chess engine
-	 */
-	public static ChessEngine createDefaultEngine() {
-		return new ChessEngine(new ChessDefaultConfigurationSupplier());
 	}
 
 	/**

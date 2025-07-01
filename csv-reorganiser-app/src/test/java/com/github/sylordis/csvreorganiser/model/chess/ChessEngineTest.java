@@ -170,7 +170,7 @@ class ChessEngineTest {
 	@Test
 	void testGetOperationsDictionary() {
 		assertNotNull(engine.getOperationsDictionary());
-		assertTrue(engine.getOperationsDictionary().isEmpty());
+		assertFalse(engine.getOperationsDictionary().isEmpty());
 	}
 
 	/**
@@ -179,7 +179,7 @@ class ChessEngineTest {
 	@Test
 	void testGetOperationsShortcutsDictionary() {
 		assertNotNull(engine.getOperationsShortcutsDictionary());
-		assertTrue(engine.getOperationsShortcutsDictionary().isEmpty());
+		assertFalse(engine.getOperationsShortcutsDictionary().isEmpty());
 	}
 
 	/**

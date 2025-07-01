@@ -6,12 +6,13 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.utils.CodeGenerationUtils;
 import com.github.javaparser.utils.SourceRoot;
-import com.github.sylordis.csvreorganiser.model.chess.ChessEngine;
 import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
 import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
 import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
@@ -19,6 +20,7 @@ import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessCon
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
 import com.github.sylordis.csvreorganiser.utils.MarkupLanguageUtils;
+import com.github.sylordis.csvreorganiser.utils.PathsUtils;
 
 /**
  * This class scans the project and outputs a documentation for each operation from the default
@@ -38,12 +40,18 @@ public class MarkdownDocumentationOutputChess {
 	 * Source root for java code parser.
 	 */
 	private final SourceRoot sourceRoot = new SourceRoot(
-	        CodeGenerationUtils.classLoaderRoot(ChessEngine.class).normalize());
+	        PathsUtils.gradleModuleRoot(getClass()).resolve("src/main/java/"));
+
+	/**
+	 * Class logger.
+	 */
+	private final Logger logger = LogManager.getLogger();
 
 	/**
 	 * Generates the documentation for the Chess engine.
 	 */
 	public void generate(ChessConfigurationSupplier cfgSupplier) {
+		logger.debug("Generating chess documentation (source root: {})", sourceRoot);
 		// Have a set ordering classes by simple alphabetical class name ordering
 		Set<Class<? extends ChessAbstractReorgOperation>> dictionary = new TreeSet<>(
 		        (c1, c2) -> c1.getSimpleName().compareTo(c2.getSimpleName()));
@@ -62,6 +70,7 @@ public class MarkdownDocumentationOutputChess {
 	 * @param type
 	 */
 	public void generateOperationDocumentation(Class<? extends ChessAbstractReorgOperation> type) {
+		logger.debug("Generating operation documentation for {}", type);
 		// Get the actual class
 		CompilationUnit compilationUnit = sourceRoot.parse(ConfigConstants.Chess.OPERATIONS_PACKAGE,
 		        type.getSimpleName() + ".java");
@@ -187,5 +196,7 @@ public class MarkdownDocumentationOutputChess {
 	public void setOutputConsumer(Consumer<String> out) {
 		this.out = out;
 	}
+	
+
 
 }

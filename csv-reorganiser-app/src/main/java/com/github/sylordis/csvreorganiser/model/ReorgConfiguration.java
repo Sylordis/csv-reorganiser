@@ -86,15 +86,17 @@ public class ReorgConfiguration {
 			// Set specified engine if provided
 			logger.info("Loading YAML file");
 			Map<String, Object> fileRoot = yamlFile.load(yamlStream);
-			logger.debug("Loaded YAML root");
 			if (fileRoot == null)
 				throw new ConfigurationImportException("Configuration file is empty");
+			if (!fileRoot.containsKey(YAMLTags.CFG_ROOT))
+				throw new ConfigurationImportException("Error in configuration file: no '" + YAMLTags.CFG_ROOT + "' tag was found as root.");
+			Map<String,Object> cfgRoot = YAMLUtils.toNode(fileRoot.get(YAMLTags.CFG_ROOT));
+			logger.debug("Loaded YAML root");
 			logger.debug("Loaded yaml file {}:\n{}", cfgFile.getAbsolutePath(), fileRoot);
-			Map<String, Object> root = YAMLUtils.get(OPDEF_ROOT_KEY, fileRoot);
 			// Header analysis
-			if (fileRoot.containsKey(YAMLTags.CFG_HEADER_KEY)) {
-				logger.debug("Analysing header: {]", YAMLUtils.toNode(fileRoot.get(YAMLTags.CFG_HEADER_KEY)));
-				Map<String, Object> header = YAMLUtils.toNode(fileRoot.get(YAMLTags.CFG_HEADER_KEY));
+			if (cfgRoot.containsKey(YAMLTags.CFG_HEADER_KEY)) {
+				Map<String, Object> header = YAMLUtils.toNode(cfgRoot.get(YAMLTags.CFG_HEADER_KEY));
+				logger.debug("Analysing header: {}", header);
 				checkHeaderConfiguration(header);
 			}
 			// Check if engine is present before loading operations
@@ -104,21 +106,17 @@ public class ReorgConfiguration {
 				this.engine = EngineFactory.getDefaultEngine();
 			}
 			// Check that structure tag is present at root
-			if (fileRoot.containsKey(YAMLTags.OPDEF_ROOT_KEY)) {
-				logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, fileRoot.get(OPDEF_ROOT_KEY).getClass(),
-						fileRoot.get(OPDEF_ROOT_KEY));
-				// Check that structure tag contains a usable list
-				if (YAMLUtils.checkChildType(fileRoot, OPDEF_ROOT_KEY, YAMLType.LIST)) {
-					YAMLUtils.toList(root.get(OPDEF_ROOT_KEY)).stream()
-					        .map(o -> this.engine.createOperation(YAMLUtils.toNode(o))).forEach(operations::add);
-				} else {
-					throw new ConfigurationImportException("Error in configuration file: '" + OPDEF_ROOT_KEY
-					        + "' tag should contain a list of operations.");
-				}
-			} else {
+			if (!cfgRoot.containsKey(YAMLTags.OPDEF_ROOT_KEY))
 				throw new ConfigurationImportException(
-				        "Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found at the root.");
-			}
+				        "Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found in the configuration.");
+			logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, cfgRoot.get(OPDEF_ROOT_KEY).getClass(),
+					cfgRoot.get(OPDEF_ROOT_KEY));
+			// Check that structure tag contains a usable list
+			if (!YAMLUtils.checkChildType(cfgRoot, OPDEF_ROOT_KEY, YAMLType.LIST))
+				throw new ConfigurationImportException("Error in configuration file: '" + OPDEF_ROOT_KEY
+				        + "' tag should contain a list of operations.");
+			YAMLUtils.toList(cfgRoot.get(OPDEF_ROOT_KEY)).stream()
+			        .map(o -> this.engine.createOperation(YAMLUtils.toNode(o))).forEach(operations::add);
 			logger.debug("{}", this);
 			logger.info("Configuration imported.");
 		} catch (ClassCastException e) {
@@ -134,8 +132,10 @@ public class ReorgConfiguration {
 	 */
 	public void checkHeaderConfiguration(Map<String, Object> header) throws EngineException {
 		logger.debug("Checking engine configuration and compatibility with header {}", header);
-		ReorganiserEngine fileEngine = new EngineFactory().getEngineFromId(YAMLUtils.get(YAMLTags.Header.CFG_ENGINE, header));
-		logger.debug("Local engine is {}, header declared engine is {}",
+		String engineId = YAMLUtils.strValue(YAMLTags.Header.CFG_ENGINE, header);
+		logger.debug("EngineId = '{}'", engineId);
+		ReorganiserEngine fileEngine = new EngineFactory().getEngineFromId(engineId);
+		logger.debug("Local engine is {}, header declared engine is '{}'",
 		        this.engine != null ? this.engine.getClass().getSimpleName() : null,
 		        fileEngine != null ? fileEngine.getClass().getSimpleName() : null);
 		// Local engine is not specified, set it to file's
