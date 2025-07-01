@@ -1,8 +1,7 @@
 package com.github.sylordis.csvreorganiser.model.engines;
 
+import java.util.List;
 import java.util.Map;
-
-import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
 
 /**
  * Defines engine classes that are supposed to manipulate a given type of operations.
@@ -13,12 +12,10 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportEx
 public interface ReorganiserEngine {
 
 	/**
-	 * Transforms a Yaml entry into a usable operation by the software.
-	 *
-	 * @param yaml yaml definition of the operation
-	 * @throws ConfigurationImportException if a yaml configuration object is malformed
-	 * @return an operation
+	 * Transforms a Yaml structure into a list of operations that can be called by the model.
+	 * 
+	 * @param node
+	 * @return
 	 */
-	ReorganiserOperation createOperation(Map<String,Object> node);
-	
+	List<ReorganiserOperation> createOperations(Map<String, Object> root);
 }

@@ -23,7 +23,6 @@ import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.csvreorganiser.model.exceptions.EngineException;
-import com.github.sylordis.csvreorganiser.utils.yaml.YAMLType;
 import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
 
 /**
@@ -111,12 +110,7 @@ public class ReorgConfiguration {
 				        "Error in configuration file: no '" + OPDEF_ROOT_KEY + "' tag was found in the configuration.");
 			logger.debug("Checking '{}' tag: ({}){}", OPDEF_ROOT_KEY, cfgRoot.get(OPDEF_ROOT_KEY).getClass(),
 					cfgRoot.get(OPDEF_ROOT_KEY));
-			// Check that structure tag contains a usable list
-			if (!YAMLUtils.checkChildType(cfgRoot, OPDEF_ROOT_KEY, YAMLType.LIST))
-				throw new ConfigurationImportException("Error in configuration file: '" + OPDEF_ROOT_KEY
-				        + "' tag should contain a list of operations.");
-			YAMLUtils.toList(cfgRoot.get(OPDEF_ROOT_KEY)).stream()
-			        .map(o -> this.engine.createOperation(YAMLUtils.toNode(o))).forEach(operations::add);
+			this.operations.addAll(engine.createOperations(cfgRoot));
 			logger.debug("{}", this);
 			logger.info("Configuration imported.");
 		} catch (ClassCastException e) {

@@ -1,7 +1,9 @@
 package com.github.sylordis.csvreorganiser.model.hyde;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
-public interface HydeOperationPart extends Supplier<String> {
+import org.apache.commons.csv.CSVRecord;
+
+public interface HydeOperationPart extends Function<CSVRecord, String> {
 
 }

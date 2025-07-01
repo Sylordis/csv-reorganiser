@@ -1,9 +1,12 @@
 package com.github.sylordis.csvreorganiser.model.chess;
 
+import static com.github.sylordis.csvreorganiser.model.constants.YAMLTags.OPDEF_ROOT_KEY;
 import static com.github.sylordis.csvreorganiser.model.constants.YAMLTags.Chess.OPDEF_COLUMN_KEY;
 import static com.github.sylordis.csvreorganiser.model.constants.YAMLTags.Chess.OPDEF_OPERATION_KEY;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,8 +23,10 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationB
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants.Chess;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserEngine;
+import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
+import com.github.sylordis.csvreorganiser.utils.yaml.YAMLType;
 import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
 
 /**
@@ -80,13 +85,6 @@ public class ChessEngine implements ReorganiserEngine {
 		setOperationsShortcutsDictionary(dictionarySupplier.getShortcutDictionary());
 	}
 
-	/**
-	 * Transforms a Yaml entry into a usable operation by the software.
-	 *
-	 * @param yaml yaml definition of the operation
-	 * @throws ConfigurationImportException if a yaml configuration object is malformed
-	 * @return an operation
-	 */
 	public ChessAbstractReorgOperation createOperation(Map<String, Object> yaml) {
 		ChessAbstractReorgOperation op = null;
 		logger.debug("yamlToOp[in]: ({}){}", yaml.getClass(), yaml);
@@ -118,6 +116,18 @@ public class ChessEngine implements ReorganiserEngine {
 		}
 		logger.debug("yamlToOp[out]: {}", op);
 		return op;
+	}
+
+	@Override
+	public List<ReorganiserOperation> createOperations(Map<String, Object> root) {
+		List<ReorganiserOperation> list = new ArrayList<>();
+		// Check that structure tag contains a usable list
+		if (!YAMLUtils.checkChildType(root, OPDEF_ROOT_KEY, YAMLType.LIST))
+			throw new ConfigurationImportException(
+			        "Error in configuration file: '" + OPDEF_ROOT_KEY + "' tag should contain a list of operations.");
+		YAMLUtils.toList(root.get(OPDEF_ROOT_KEY)).stream().map(o -> createOperation(YAMLUtils.toNode(o)))
+		        .forEach(list::add);
+		return list;
 	}
 
 	/**

@@ -22,6 +22,28 @@ public final class ConfigConstants {
 	}
 
 	/**
+	 * Constants for Hyde engine.
+	 */
+	public final class Hyde {
+		/**
+		 * Pattern for template opening.
+		 */
+		public final static String TEMPLATE_START = "{{";
+		/**
+		 * Pattern for template closing.
+		 */
+		public final static String TEMPLATE_END = "}}";
+		/**
+		 * Symbol for modifier delimiter.
+		 */
+		public final static String TEMPLATE_MODIFIER_DELIMITER = "|";
+		/**
+		 * Symbol for modifier parameter delimiter..
+		 */
+		public final static String TEMPLATE_MODIFIER_PARAM_DELIMITER = ":";
+	}
+
+	/**
 	 * Private constructor
 	 */
 	private ConfigConstants() {

@@ -1,4 +1,4 @@
-package com.github.sylordis.csvreorganiser.model.hyde.operations;
+package com.github.sylordis.csvreorganiser.model.hyde;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.csv.CSVRecord;
 
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
-import com.github.sylordis.csvreorganiser.model.hyde.HydeOperationPart;
 
 /**
  * A Hyde operation is represented by a tree, the root operation holding the name while the other
@@ -40,7 +39,7 @@ public class HydeOperation implements ReorganiserOperation {
 	@Override
 	public String apply(CSVRecord t) {
 		String result = null;
-		result = String.join("", this.children.stream().map(c -> c.get()).toArray(String[]::new));
+		result = String.join("", this.children.stream().map(c -> c.apply(t)).toArray(String[]::new));
 		return result;
 	}
 

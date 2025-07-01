@@ -89,7 +89,7 @@ public class Reorganiser {
 				// Generate records file
 				try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile))) {
 					logger.debug("Writing header");
-					writer.write(MessagesConstants.getTargetComment("engine"));
+					writer.write(MessagesConstants.getTargetComment(this.cfg.getEngine().getClass().getSimpleName()));
 					writer.newLine();
 				}
 				// For each file

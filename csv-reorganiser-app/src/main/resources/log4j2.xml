@@ -14,7 +14,7 @@
 	</Appenders>
 	<Loggers>
 		<Root level="debug">
-			<AppenderRef ref="Console" />
+			<AppenderRef ref="ConsoleDebug" />
 		</Root>
 		<Logger name="org.reflections" level="error"/>
 	</Loggers>

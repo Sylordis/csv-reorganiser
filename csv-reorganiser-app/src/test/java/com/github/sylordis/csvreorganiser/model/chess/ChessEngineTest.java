@@ -17,6 +17,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
@@ -90,6 +91,24 @@ class ChessEngineTest {
 		ChessAbstractReorgOperation op = engine.createOperation(data);
 		assertNotNull(op);
 		assertTrue(op instanceof FakeOperation, "created operation should be a FakeOperation according to dictionary");
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#createOperations(java.util.Map)}.
+	 * if root does not contain a list for values.
+	 *
+	 * @throws IOException
+	 */
+	@Test
+	void testCreateOperations_NoListUnderRoot() throws IOException {
+		String content = """
+%s:
+   %s:
+      hello: there
+		        """;
+		Map<String,Object> yaml = new Yaml().load(String.format(content, YAMLTags.CFG_ROOT, YAMLTags.OPDEF_ROOT_KEY));
+		assertThrows(ConfigurationImportException.class, () -> engine.createOperations(yaml));
 	}
 
 	/**

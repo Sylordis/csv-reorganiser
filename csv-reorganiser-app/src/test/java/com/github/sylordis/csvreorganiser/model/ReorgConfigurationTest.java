@@ -289,26 +289,6 @@ class ReorgConfigurationTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#loadFromFile(java.io.File)}
-	 * if root does not contain a list for values.
-	 *
-	 * @throws IOException
-	 */
-	@Test
-	void testLoadFromFile_NoListUnderRoot() throws IOException {
-		String content = """
-%s:
-   %s:
-      hello: there
-		        """;
-		File cfg = createFileWith(String.format(content, YAMLTags.CFG_ROOT, YAMLTags.OPDEF_ROOT_KEY));
-		rcfg.setEngine(new DummyEngine());
-		assertThrows(ConfigurationImportException.class, () -> rcfg.loadFromFile(cfg));
-		cfg.delete();
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#addOperation(com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation)}.
 	 */
 	@Test
@@ -432,9 +412,13 @@ class ReorgConfigurationTest {
 	 */
 	public final class DummyEngine implements ReorganiserEngine {
 
-		@Override
 		public ReorganiserOperation createOperation(Map<String, Object> node) {
 			return new DummyOperation();
+		}
+
+		@Override
+		public List<ReorganiserOperation> createOperations(Map<String, Object> node) {
+			return new ArrayList<>();
 		}
 
 	}
