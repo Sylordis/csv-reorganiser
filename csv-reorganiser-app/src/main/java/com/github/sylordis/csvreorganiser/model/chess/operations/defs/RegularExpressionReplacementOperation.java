@@ -2,8 +2,8 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -15,10 +15,10 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ChessOperation(name = "regreplace")
-@ChessOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
-@ChessOperationProperty(name = "pattern", field = "pattern", required = true, description = "Pattern to look for in the content")
-@ChessOperationProperty(name = "replace", field = "replacement", required = true, description = "Replacement for the pattern")
+@ReorgOperation(name = "regreplace")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
+@ReorgOperationProperty(name = "pattern", field = "pattern", required = true, description = "Pattern to look for in the content")
+@ReorgOperationProperty(name = "replace", field = "replacement", required = true, description = "Replacement for the pattern")
 public class RegularExpressionReplacementOperation extends ChessAbstractReorgOperation {
 
 	/**

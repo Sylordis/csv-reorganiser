@@ -1,4 +1,4 @@
-package com.github.sylordis.csvreorganiser.model.chess.config.dictionary;
+package com.github.sylordis.csvreorganiser.model.chess.config;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -8,17 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
@@ -28,9 +25,9 @@ import com.github.sylordis.csvreorganiser.utils.TypeConverter;
 /**
  * Default configuration supplier for {@link ReorgConfiguration}, building a dictionary out of all
  * operations contained in {@link com.github.sylordis.csvreorganiser.model.chess.operations.defs},
- * extending {@link ChessAbstractReorgOperation} and possessing the {@link ChessOperation} annotation.
+ * extending {@link ChessAbstractReorgOperation} and possessing the {@link ReorgOperation} annotation.
  * Shortcuts are created from {@link ChessAbstractReorgOperation} that satisfy previous condition and are
- * also annotated with {@link ChessOperationShortcut}.
+ * also annotated with {@link ReorgOperationShortcut}.
  *
  * @author sylordis
  * @Since 1.0
@@ -44,25 +41,17 @@ public class ChessDefaultConfigurationSupplier implements ChessConfigurationSupp
 	private final Logger logger = LogManager.getLogger();
 
 	@Override
-	public Map<String, Class<? extends ChessAbstractReorgOperation>> getOperationsDictionary() {
-		Map<String, Class<? extends ChessAbstractReorgOperation>> map = new HashMap<>();
-		Set<Class<? extends ChessAbstractReorgOperation>> types = getOperationsByReflection();
-		types.forEach(t -> map.put(t.getAnnotation(ChessOperation.class).name(), t));
-		return map;
-	}
-
-	@Override
 	public Map<String, ChessOperationInstantiator> getShortcutDictionary() {
 		Map<String, ChessOperationInstantiator> shortcuts = new HashMap<>();
 		logger.trace("Building shortcuts dictionary");
-		Set<Class<? extends ChessAbstractReorgOperation>> types = getOperationsByReflection();
+		Set<Class<? extends ChessAbstractReorgOperation>> types = getConfigurationByReflection(ConfigConstants.Chess.OPERATIONS_PACKAGE, ChessAbstractReorgOperation.class);
 		for (Class<? extends ChessAbstractReorgOperation> type : types) {
-			ChessOperationShortcut opShortAnn = type.getAnnotation(ChessOperationShortcut.class);
+			ReorgOperationShortcut opShortAnn = type.getAnnotation(ReorgOperationShortcut.class);
 			if (opShortAnn != null) {
 				// Check if definition of the operation was properly done, i.e.: the shortcut name must match one of
 				// the property
-				Optional<ChessOperationProperty> shortcutProp = Arrays
-						.stream(type.getAnnotationsByType(ChessOperationProperty.class))
+				Optional<ReorgOperationProperty> shortcutProp = Arrays
+						.stream(type.getAnnotationsByType(ReorgOperationProperty.class))
 						.filter(a -> a.name().equals(opShortAnn.property())).findFirst();
 				if (shortcutProp.isEmpty()) {
 					throw new ConfigurationException(
@@ -70,7 +59,7 @@ public class ChessDefaultConfigurationSupplier implements ChessConfigurationSupp
 									opShortAnn.keyword(), type.getSimpleName(), opShortAnn.property()));
 				}
 				try {
-					ChessOperationProperty opProperty = shortcutProp.get();
+					ReorgOperationProperty opProperty = shortcutProp.get();
 					// Get operation property field for typing
 					Field opField = type.getDeclaredField(opProperty.field());
 					// Retrieve constructor
@@ -95,15 +84,13 @@ public class ChessDefaultConfigurationSupplier implements ChessConfigurationSupp
 		return shortcuts;
 	}
 
-	/**
-	 * Retrieves all operations by reflection.
-	 *
-	 * @return a set of all operations
-	 */
-	public Set<Class<? extends ChessAbstractReorgOperation>> getOperationsByReflection() {
-		Reflections reflections = new Reflections(
-				new ConfigurationBuilder().forPackage(ConfigConstants.Chess.OPERATIONS_PACKAGE));
-		Set<Class<? extends ChessAbstractReorgOperation>> types = reflections.getSubTypesOf(ChessAbstractReorgOperation.class);
-		return types.stream().filter(t -> t.isAnnotationPresent(ChessOperation.class)).collect(Collectors.toSet());
+	@Override
+	public String getBasePackage() {
+		return ConfigConstants.Chess.OPERATIONS_PACKAGE;
+	}
+
+	@Override
+	public Class<ChessAbstractReorgOperation> getBaseType() {
+		return ChessAbstractReorgOperation.class;
 	}
 }

@@ -2,8 +2,8 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
 
@@ -20,10 +20,10 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportEx
  * @author sylordis
  *
  */
-@ChessOperation(name = "substring")
-@ChessOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
-@ChessOperationProperty(name = "start", field = "indexStart", required = true, description = "Start index of the substring")
-@ChessOperationProperty(name = "end", field = "indexEnd", description = "End index of the substring, leave not set for until the end of the text")
+@ReorgOperation(name = "substring")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
+@ReorgOperationProperty(name = "start", field = "indexStart", required = true, description = "Start index of the substring")
+@ReorgOperationProperty(name = "end", field = "indexEnd", description = "End index of the substring, leave not set for until the end of the text")
 public class SubstringOperation extends ChessAbstractReorgOperation {
 
 	/**

@@ -6,6 +6,6 @@ import java.util.function.UnaryOperator;
  * @author sylordis
  *
  */
-public interface HydeModifier extends UnaryOperator<String> {
+public interface HydeFilter extends UnaryOperator<String> {
 
 }

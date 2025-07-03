@@ -1,10 +1,11 @@
-package com.github.sylordis.csvreorganiser.model.chess.config.dictionary;
+package com.github.sylordis.csvreorganiser.model.chess.config;
 
 import java.util.Map;
 
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
+import com.github.sylordis.csvreorganiser.model.engines.ConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationException;
 
 /**
@@ -13,15 +14,7 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationExceptio
  * @author sylordis
  *
  */
-public interface ChessConfigurationSupplier {
-
-	/**
-	 * Provides the dictionary of operations. This method should be only called when setting or
-	 * replacing the dictionary is needed.
-	 *
-	 * @return
-	 */
-	Map<String, Class<? extends ChessAbstractReorgOperation>> getOperationsDictionary();
+public interface ChessConfigurationSupplier extends ConfigurationSupplier<ChessAbstractReorgOperation> {
 
 	/**
 	 * Provides the dictionary of shortcuts for operations along with a way to instantiate such

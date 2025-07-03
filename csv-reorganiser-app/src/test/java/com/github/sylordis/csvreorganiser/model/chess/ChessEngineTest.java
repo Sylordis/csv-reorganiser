@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.constants.YAMLTags;
@@ -53,7 +53,7 @@ class ChessEngineTest {
 	}
 
 	/**
-	 * Test method for {@link com.github.sylordis.csvreorganiser.model.chess.ChessEngine#ChessEngine(com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier)}.
+	 * Test method for {@link com.github.sylordis.csvreorganiser.model.chess.ChessEngine#ChessEngine(com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier)}.
 	 */
 	@Test
 	void testChessEngineChessConfigurationSupplier() {
@@ -65,8 +65,18 @@ class ChessEngineTest {
 			}
 			
 			@Override
-			public Map<String, Class<? extends ChessAbstractReorgOperation>> getOperationsDictionary() {
+			public Map<String, Class<? extends ChessAbstractReorgOperation>> getConfigurationDictionary() {
 				return new HashMap<String, Class<? extends ChessAbstractReorgOperation>>();
+			}
+
+			@Override
+			public String getBasePackage() {
+				return null;
+			}
+
+			@Override
+			public Class<ChessAbstractReorgOperation> getBaseType() {
+				return null;
 			}
 		}));
 		assertEquals(new HashMap<String, ChessOperationInstantiator>(), engine.getOperationsShortcutsDictionary());

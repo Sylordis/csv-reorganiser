@@ -32,8 +32,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.sylordis.csvreorganiser.model.chess.ChessEngine;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ConcatenationOperation;
@@ -192,7 +192,7 @@ class ReorgConfigurationTest {
 	void testLoadFromFile_Chess_NoShortcut() throws ConfigurationImportException, FileNotFoundException, IOException {
 		ChessEngine engine = new ChessEngine(new DummyOperationSupplier());
 		rcfg.setEngine(engine);
-		engine.setOperationsDictionary(new ChessDefaultConfigurationSupplier().getOperationsDictionary());
+		engine.setOperationsDictionary(new ChessDefaultConfigurationSupplier().getConfigurationDictionary());
 		assertThrows(ConfigurationImportException.class, () -> rcfg.loadFromFile(cfgFile));
 	}
 
@@ -443,13 +443,23 @@ class ReorgConfigurationTest {
 	public final class DummyOperationSupplier implements ChessConfigurationSupplier {
 
 		@Override
-		public Map<String, Class<? extends ChessAbstractReorgOperation>> getOperationsDictionary() {
+		public Map<String, Class<? extends ChessAbstractReorgOperation>> getConfigurationDictionary() {
 			return new HashMap<>();
 		}
 
 		@Override
 		public Map<String, ChessOperationInstantiator> getShortcutDictionary() {
 			return new HashMap<>();
+		}
+
+		@Override
+		public String getBasePackage() {
+			return null;
+		}
+
+		@Override
+		public Class<ChessAbstractReorgOperation> getBaseType() {
+			return null;
 		}
 		
 	}

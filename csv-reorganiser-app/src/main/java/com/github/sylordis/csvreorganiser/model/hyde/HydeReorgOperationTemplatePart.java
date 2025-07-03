@@ -5,35 +5,35 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
 
-public class HydeOperationTemplatePart implements HydeOperationPart {
+public class HydeReorgOperationTemplatePart implements HydeReorgOperationPart {
 	
-	private List<HydeModifier> modifiers;
+	private List<HydeFilter> filters;
 	private String field;
 
-	public HydeOperationTemplatePart() {
-		modifiers = new ArrayList<>();
+	public HydeReorgOperationTemplatePart() {
+		filters = new ArrayList<>();
 	}
 
 	@Override
 	public String apply(CSVRecord t) {
 		String content = t.get(field);
-		for (HydeModifier modifier : modifiers)
-			content = modifier.apply(content); 
+		for (HydeFilter filter : filters)
+			content = filter.apply(content); 
 		return content;
 	}
 	
 	/**
-	 * @return the modifiers
+	 * @return the filters
 	 */
-	public List<HydeModifier> getModifiers() {
-		return modifiers;
+	public List<HydeFilter> getFilters() {
+		return filters;
 	}
 
 	/**
-	 * @param modifiers the modifiers to set
+	 * @param filters the filters to set
 	 */
-	public void setModifiers(List<HydeModifier> modifiers) {
-		this.modifiers = modifiers;
+	public void setFilters(List<HydeFilter> filters) {
+		this.filters = filters;
 	}
 
 	/**

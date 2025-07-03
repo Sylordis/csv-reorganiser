@@ -14,7 +14,7 @@ import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
  * @author sylordis
  *
  */
-public class HydeOperation implements ReorganiserOperation {
+public class HydeReorgOperation implements ReorganiserOperation {
 
 	/**
 	 * Name of the operation, which will also be the CSV header. Only the root operation should have a
@@ -24,14 +24,14 @@ public class HydeOperation implements ReorganiserOperation {
 	/**
 	 * Children of the operation. This list should never be null.
 	 */
-	private List<HydeOperationPart> children;
+	private List<HydeReorgOperationPart> children;
 
 	/**
 	 * Constructs a Hyde operation with just a name to itself.
 	 * 
 	 * @param name
 	 */
-	public HydeOperation(String name) {
+	public HydeReorgOperation(String name) {
 		this.name = name;
 		this.children = new ArrayList<>();
 	}
@@ -53,21 +53,21 @@ public class HydeOperation implements ReorganiserOperation {
 	 * 
 	 * @param e Operation to add
 	 */
-	public void addChild(HydeOperationPart e) {
+	public void addChild(HydeReorgOperationPart e) {
 		this.children.add(e);
 	}
 
 	/**
 	 * @return the children
 	 */
-	public List<HydeOperationPart> getChildren() {
+	public List<HydeReorgOperationPart> getChildren() {
 		return children;
 	}
 
 	/**
 	 * @param children the children to set
 	 */
-	public void setChildren(List<HydeOperationPart> children) {
+	public void setChildren(List<HydeReorgOperationPart> children) {
 		this.children.clear();
 		this.children.addAll(children);
 	}

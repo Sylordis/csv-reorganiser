@@ -1,6 +1,5 @@
 package com.github.sylordis.csvreorganiser.model.chess.operations;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,10 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.csvreorganiser.model.SelfFiller;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
-import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingConfigurationException;
 import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
 
 /**
@@ -71,13 +69,13 @@ public abstract class ChessAbstractReorgOperation implements ReorganiserOperatio
 	/**
 	 * Hidden setup of the operation, setting all properties to be given using
 	 * {@link #addProperty(String, String)}. If not overridden, this method will get all annotations
-	 * {@link ChessOperationProperty} to automatically fill the properties map.
+	 * {@link ReorgOperationProperty} to automatically fill the properties map.
 	 */
 	protected void setup() {
 		logger.debug("Setting up");
-		ChessOperationProperty[] properties = this.getClass().getAnnotationsByType(ChessOperationProperty.class);
+		ReorgOperationProperty[] properties = this.getClass().getAnnotationsByType(ReorgOperationProperty.class);
 		logger.debug("class={} annotations={}", this.getClass(), Arrays.toString(properties));
-		for (ChessOperationProperty prop : properties) {
+		for (ReorgOperationProperty prop : properties) {
 			logger.debug("Setting property {} linking to field {}", prop.name(), prop.field());
 			addProperty(prop.name(), prop.field());
 			if (prop.required())
@@ -116,38 +114,11 @@ public abstract class ChessAbstractReorgOperation implements ReorganiserOperatio
 			logger.debug("Filling {} with {} / value={}", property.getValue(), key, data.get(key));
 			// Check if property exists
 			if (data.containsKey(key)) {
-				boolean madeAccessible = false;
-				Field field = null;
 				try {
-					field = this.getClass().getDeclaredField(property.getValue());
-					// Accessibility check
-					if (!field.canAccess(this)) {
-						madeAccessible = true;
-						field.setAccessible(true);
-					}
-					// Field type check
-					if (Integer.TYPE.equals(field.getType())) {
-						// Data type check
-						if (data.get(key) != null && Integer.class.equals(data.get(key).getClass()))
-							field.set(this, data.get(key));
-						else
-							field.set(this, Integer.valueOf((String) data.get(key)));
-					} else
-						field.set(this, data.get(key));
-
+					setField(property.getValue(), data.get(key));
 				} catch (NumberFormatException e) {
 					throw new SelfFillingException(
 					        "Cannot convert given value [" + data.get(key) + "] for '" + key + "' to integer");
-				} catch (IllegalArgumentException e) {
-					// Error in provided data
-					throw new SelfFillingException(e);
-				} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
-					// If this is thrown, then the Operation configuration has not been done properly by the developer
-					throw new SelfFillingConfigurationException(e);
-				} finally {
-					// If was made accessible, return it to non accessible
-					if (field != null && madeAccessible)
-						field.setAccessible(false);
 				}
 			} else
 				throw new SelfFillingException("Mandatory property '" + key + "' not provided.");

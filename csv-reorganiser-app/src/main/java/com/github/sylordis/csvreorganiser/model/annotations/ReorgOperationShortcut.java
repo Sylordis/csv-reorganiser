@@ -1,4 +1,4 @@
-package com.github.sylordis.csvreorganiser.model.chess.annotations;
+package com.github.sylordis.csvreorganiser.model.annotations;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface ChessOperationShortcut {
+public @interface ReorgOperationShortcut {
 
 	/**
 	 * YAML keyword for this shortcut

@@ -15,13 +15,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ConcatenationOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.GetOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.RegularExpressionReplacementOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ValueOperation;
+import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
+import com.github.sylordis.csvreorganiser.model.engines.ConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.test.chess.defs.FakeOperation;
 
 /**
@@ -56,8 +59,8 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#generate()}.
-	 * Sorry for this lazy test but it's too big to match against. Since this method just calls
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#generate()}. Sorry
+	 * for this lazy test but it's too big to match against. Since this method just calls
 	 * {@link MarkdownDocumentationOutputChess#generateOperationDocumentation(Class)} for each chess
 	 * operation, we just check that this method was called once per operation.
 	 */
@@ -66,9 +69,11 @@ class MarkdownDocumentationOutputChessTest {
 	void testGenerate() {
 		// Mock configuration supplier, otherwise test operations classes will show up for some reason
 		ChessConfigurationSupplier cfgSupplier = mock(ChessDefaultConfigurationSupplier.class);
-		when(((ChessDefaultConfigurationSupplier) cfgSupplier).getOperationsByReflection()).thenReturn(
-		        Set.of(ConcatenationOperation.class, GetOperation.class, RegularExpressionReplacementOperation.class));
-		when(cfgSupplier.getOperationsDictionary()).thenCallRealMethod();
+		when(((ConfigurationSupplier<ChessAbstractReorgOperation>) cfgSupplier).getConfigurationByReflection(
+				ConfigConstants.Chess.OPERATIONS_PACKAGE, ChessAbstractReorgOperation.class))
+				.thenReturn(Set.of(ConcatenationOperation.class, GetOperation.class,
+						RegularExpressionReplacementOperation.class));
+		when(cfgSupplier.getConfigurationDictionary()).thenCallRealMethod();
 		// Test
 		mdoc.generate(cfgSupplier);
 		final String doc = mdocOutput.toString();
@@ -89,55 +94,55 @@ class MarkdownDocumentationOutputChessTest {
 		mdoc.generateOperationDocumentation(GetOperation.class);
 		// \s is to conserve the whitespaces.
 		assertEquals(
-		        """
-		                # Get
+				"""
+						# Get
 
-		                **Configuration name:** `get`
+						**Configuration name:** `get`
 
-		                *Get* operation simply takes the full content of a column. If the source column does not exist, an error will be raised.
-		                \s
-		                ```yaml
-		                column: <column-name>
-		                operation:
-		                  type: get
-		                  source: <source>
-		                ```
+						*Get* operation simply takes the full content of a column. If the source column does not exist, an error will be raised.
+						\s
+						```yaml
+						column: <column-name>
+						operation:
+						  type: get
+						  source: <source>
+						```
 
-		                Shortcut:
-		                ```yaml
-		                column: <column-name>
-		                source: <source>
-		                ```
+						Shortcut:
+						```yaml
+						column: <column-name>
+						source: <source>
+						```
 
-		                | Property | type | required? | description |
-		                | --- | --- | --- | --- |
-		                | `source` | String | y | Name of the column to get the value from |
+						| Property | type | required? | description |
+						| --- | --- | --- | --- |
+						| `source` | String | y | Name of the column to get the value from |
 
-		                """,
-		        mdocOutput.toString());
+						""",
+				mdocOutput.toString());
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty)}.
 	 */
 	@Test
 	@Tag("Integration")
 	void testPropToYaml() {
 		String yaml = mdoc.propToYaml(GetOperation.class,
-		        GetOperation.class.getDeclaredAnnotation(ChessOperationProperty.class));
+				GetOperation.class.getDeclaredAnnotation(ReorgOperationProperty.class));
 		assertEquals("  source: <source>", yaml);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propValueToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propValueToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty)}.
 	 */
 	@Test
 	@Tag("Integration")
 	void testPropValueToYamlClassOfQextendsChessAbstractReorgOperationChessOperationProperty() {
 		String yaml = mdoc.propValueToYaml(ValueOperation.class,
-		        ValueOperation.class.getDeclaredAnnotation(ChessOperationProperty.class));
+				ValueOperation.class.getDeclaredAnnotation(ReorgOperationProperty.class));
 		assertEquals(" <value>", yaml);
 	}
 

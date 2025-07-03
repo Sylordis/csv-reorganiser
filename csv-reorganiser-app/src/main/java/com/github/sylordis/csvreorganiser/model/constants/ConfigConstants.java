@@ -41,6 +41,10 @@ public final class ConfigConstants {
 		 * Symbol for modifier parameter delimiter..
 		 */
 		public final static String TEMPLATE_MODIFIER_PARAM_DELIMITER = ":";
+		/**
+		 * Name of the package with all operations definitions.
+		 */
+		public final static String OPERATIONS_PACKAGE = "com.github.sylordis.csvreorganiser.model.hyde.filters";
 	}
 
 	/**

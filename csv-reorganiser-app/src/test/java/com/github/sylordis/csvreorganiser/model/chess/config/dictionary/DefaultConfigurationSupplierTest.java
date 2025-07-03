@@ -18,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ConcatenationOperation;
@@ -48,7 +49,7 @@ class DefaultConfigurationSupplierTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier#DefaultConfigurationSupplier()}
+	 * {@link com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier#DefaultConfigurationSupplier()}
 	 * to check that the constructor does create the object properly.
 	 */
 	@Test
@@ -59,11 +60,11 @@ class DefaultConfigurationSupplierTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier#getOperationsDictionary()}.
+	 * {@link com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier#getConfigurationDictionary()}.
 	 */
 	@Test
 	void testGetOperationsDictionary() {
-		Map<String, Class<? extends ChessAbstractReorgOperation>> m = dcs.getOperationsDictionary();
+		Map<String, Class<? extends ChessAbstractReorgOperation>> m = dcs.getConfigurationDictionary();
 		assertNotNull(m);
 		assertFalse(m.isEmpty());
 	}

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -18,9 +18,9 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ChessOperation(name = "concat")
-@ChessOperationProperty(name = "values", field = "values", required = true, description = "List of columns to take values from and/or constants strings ")
-@ChessOperationShortcut(keyword = "concat", property = "values")
+@ReorgOperation(name = "concat")
+@ReorgOperationProperty(name = "values", field = "values", required = true, description = "List of columns to take values from and/or constants strings ")
+@ReorgOperationShortcut(keyword = "concat", property = "values")
 public class ConcatenationOperation extends ChessAbstractReorgOperation {
 
 	/**
@@ -30,7 +30,7 @@ public class ConcatenationOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Required properties for value specification in shortcut should match
-	 * {@link ChessOperationShortcut#keyword()}.
+	 * {@link ReorgOperationShortcut#keyword()}.
 	 */
 	public static final String SHORTCUT_KEY = "concat";
 

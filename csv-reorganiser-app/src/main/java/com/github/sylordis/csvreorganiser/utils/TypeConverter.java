@@ -18,7 +18,7 @@ public final class TypeConverter {
 	 * classes. Use wisely.
 	 *
 	 * @param <T>  Wanted type for the object after conversion
-	 * @param o    Object to convert type
+	 * @param o    Object to convert type of
 	 * @param type Type to convert the object to
 	 * @return The object converted
 	 * @throws NotImplementedException if such conversion is not implemented yet. Good luck.
@@ -33,6 +33,8 @@ public final class TypeConverter {
 			// ... to String
 			if (String.class.equals(type))
 				desired = (T) Integer.toString(i);
+			else if (Integer.TYPE.equals(type))
+				desired = (T) o;
 		} else if (o instanceof String s) {
 			// Convert from String...
 			// ... to Integer

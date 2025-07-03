@@ -2,9 +2,9 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -14,9 +14,9 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ChessOperation(name = "value")
-@ChessOperationProperty(name = "value", field = "value", required = true, description = "Constant value to output")
-@ChessOperationShortcut(keyword = "value", property = "value")
+@ReorgOperation(name = "value")
+@ReorgOperationProperty(name = "value", field = "value", required = true, description = "Constant value to output")
+@ReorgOperationShortcut(keyword = "value", property = "value")
 public class ValueOperation extends ChessAbstractReorgOperation {
 
 	/**
@@ -26,7 +26,7 @@ public class ValueOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Required properties for value specification in shortcut should match
-	 * {@link ChessOperationShortcut#keyword()}.
+	 * {@link ReorgOperationShortcut#keyword()}.
 	 */
 	public static final String SHORTCUT_KEY = OPDATA_FIELD_VALUE;
 

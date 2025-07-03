@@ -4,6 +4,6 @@ import java.util.function.Function;
 
 import org.apache.commons.csv.CSVRecord;
 
-public interface HydeOperationPart extends Function<CSVRecord, String> {
+public interface HydeReorgOperationPart extends Function<CSVRecord, String> {
 
 }

@@ -15,9 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.Message;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessConfigurationSupplier;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationBuilder;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
@@ -42,7 +42,7 @@ import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
  * <ul>
  * <li>Class is located into or under the package
  * ConfigConstants#{@link Chess#OPERATIONS_PACKAGE}.</li>
- * <li>Class is annotated with {@link ChessOperation}.</li>
+ * <li>Class is annotated with {@link ReorgOperation}.</li>
  * </ul>
  * Operations will be collected via reflection if they meet these criteria. Each operation is in
  * charge of describing via other annotations their structure and parameters.
@@ -67,7 +67,7 @@ public class ChessEngine implements ReorganiserEngine {
 	private final Map<String, ChessOperationInstantiator> operationsShortcutsDictionary;
 
 	/**
-	 * Constructs a chess engine without a default configuration supplier.
+	 * Constructs a chess engine with a default configuration supplier.
 	 */
 	public ChessEngine() {
 		this(new ChessDefaultConfigurationSupplier());
@@ -81,8 +81,9 @@ public class ChessEngine implements ReorganiserEngine {
 	public ChessEngine(ChessConfigurationSupplier dictionarySupplier) {
 		this.operationsDictionary = new HashMap<>();
 		this.operationsShortcutsDictionary = new HashMap<>();
-		setOperationsDictionary(dictionarySupplier.getOperationsDictionary());
+		setOperationsDictionary(dictionarySupplier.getConfigurationDictionary());
 		setOperationsShortcutsDictionary(dictionarySupplier.getShortcutDictionary());
+		logger.debug("Dictionary: {}", this.operationsDictionary.keySet());
 	}
 
 	public ChessAbstractReorgOperation createOperation(Map<String, Object> yaml) {

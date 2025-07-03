@@ -3,6 +3,7 @@ package com.github.sylordis.csvreorganiser.model.hyde;
 import static com.github.sylordis.csvreorganiser.model.constants.YAMLTags.OPDEF_ROOT_KEY;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +14,10 @@ import org.apache.logging.log4j.Logger;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
+import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
+import com.github.sylordis.csvreorganiser.model.hyde.config.HydeConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.hyde.config.HydeDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
 
 /**
@@ -34,6 +38,29 @@ public class HydeEngine implements ReorganiserEngine {
 	private final Logger logger = LogManager.getLogger();
 
 	/**
+	 * Dictionary of all existing operations.
+	 */
+	private final Map<String, Class<? extends HydeAbstractFilter>> filtersDictionary;
+
+	/**
+	 * Constructs a hyde engine with a default configuration supplier.
+	 */
+	public HydeEngine() {
+		this(new HydeDefaultConfigurationSupplier());
+	}
+
+	/**
+	 * Constructs a hyde engine with a custom dictionary supplier.
+	 * 
+	 * @param dictionarySupplier supplier for all filters
+	 */
+	public HydeEngine(HydeConfigurationSupplier dictionarySupplier) {
+		this.filtersDictionary = new HashMap<>();
+		setFiltersDictionary(dictionarySupplier.getConfigurationDictionary());
+		logger.debug("Dictionary: {}", this.filtersDictionary.keySet());
+	}
+
+	/**
 	 * Creates an operation from the content string.
 	 * 
 	 * @param name    Name of the operation
@@ -42,7 +69,7 @@ public class HydeEngine implements ReorganiserEngine {
 	 */
 	public ReorganiserOperation createOperation(String name, String content) {
 		logger.debug("yamlToOp[in]: name='{}' content='{}'", name, content);
-		HydeOperation op = new HydeOperation(name);
+		HydeReorgOperation op = new HydeReorgOperation(name);
 		int index = 0;
 		int nextTemplateStart = -1;
 		int nextTemplateEnd = -1;
@@ -77,50 +104,72 @@ public class HydeEngine implements ReorganiserEngine {
 		return op;
 	}
 
-	public HydeOperationPart createPartFromTemplate(String content) {
-		String template = content.substring(ConfigConstants.Hyde.TEMPLATE_START.length(),
-		        content.length() - ConfigConstants.Hyde.TEMPLATE_END.length());
-		List<HydeModifier> modifiers = new ArrayList<>();
-		String field = "TODO"; // TODO
-		// TODO Parse for modifiers and field name
+	/**
+	 * Creates a {@link HydeReorgOperationPart} from a given template string.
+	 * 
+	 * @param template
+	 * @return
+	 */
+	public HydeReorgOperationPart createPartFromTemplate(String template) {
+		String templateCfg = template.substring(ConfigConstants.Hyde.TEMPLATE_START.length(),
+				template.length() - ConfigConstants.Hyde.TEMPLATE_END.length());
+		List<HydeFilter> filters = new ArrayList<>();
 		String modifDelim = ConfigConstants.Hyde.TEMPLATE_MODIFIER_DELIMITER;
-		if (template.contains(modifDelim)) {
-			int nextModifierStart = template.indexOf(modifDelim);
-			field = template.substring(0, nextModifierStart);
-			int index = 0;
-			int nextModifierEnd = -1;
-			while (index < template.length()) {
-				nextModifierStart = template.indexOf(modifDelim, index);
-				if (nextModifierStart > 0) {
-					nextModifierStart += modifDelim.length();
-					nextModifierEnd = template.indexOf(modifDelim, nextModifierStart + modifDelim.length());
-					if (nextModifierEnd == -1)
-						nextModifierEnd = template.length();
-					String modifier = template.substring(nextModifierStart, nextModifierEnd);
-					logger.debug("Modifier: [{}:{}]='{}'", nextModifierStart, nextModifierEnd, modifier);
-					// TODO
-					index = nextModifierEnd + 1;
-				} else {
-					index = template.length();
-				}
-			}
-		} else
-			field = template;
-		logger.debug("Template: field='{}', modifiers={}", field, modifiers.size());
-		HydeOperationTemplatePart part = new HydeOperationTemplatePart();
+		String[] parts = templateCfg.split("\\Q" + modifDelim + "\\E");
+		String field = parts[0];
+		for (int i = 1; i < parts.length; i++) {
+			logger.debug("Filter: {}", parts[i]);
+			String[] modifParts = parts[i]
+					.split("\\Q" + ConfigConstants.Hyde.TEMPLATE_MODIFIER_PARAM_DELIMITER + "\\E");
+			filters.add(createModifier(modifParts));
+		}
+		logger.debug("Template: field='{}', modifiers={}", field, filters.size());
+		HydeReorgOperationTemplatePart part = new HydeReorgOperationTemplatePart();
 		part.setField(field);
-		part.setModifiers(modifiers);
+		part.setFilters(filters);
 		return part;
 	}
 
-	public HydeOperationPart createConstantPart(String content) {
+	public HydeFilter createModifier(String[] modifParts) {
+		// TODO Auto-generated method stub
+		return s -> s + "%";
+	}
+
+	/**
+	 * Creates a {@link HydeReorgOperationPart} that outputs a constant.
+	 * 
+	 * @param content
+	 * @return
+	 */
+	public HydeReorgOperationPart createConstantPart(String content) {
 		return t -> content;
 	}
 
 	@Override
 	public List<ReorganiserOperation> createOperations(Map<String, Object> root) {
 		return YAMLUtils.get(OPDEF_ROOT_KEY, root).entrySet().stream()
-		        .map(e -> createOperation(e.getKey(), (String) e.getValue())).collect(Collectors.toList());
+				.map(e -> createOperation(e.getKey(), (String) e.getValue())).collect(Collectors.toList());
+	}
+
+	/**
+	 * @return the filterDictionary
+	 */
+	public Map<String, Class<? extends HydeAbstractFilter>> getFiltersDictionary() {
+		return filtersDictionary;
+	}
+
+	/**
+	 * Sets dictionary of all existing filters.
+	 *
+	 * @param dictionary a map of all filters indexed by their names
+	 * @throws ConfigurationException when supplying a null map
+	 */
+	public void setFiltersDictionary(Map<String, Class<? extends HydeAbstractFilter>> dictionary) {
+		this.filtersDictionary.clear();
+		if (dictionary != null)
+			this.filtersDictionary.putAll(dictionary);
+		else
+			throw new ConfigurationException("Can't supply null filters dictionary");
 	}
 
 }

@@ -2,9 +2,9 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperation;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationProperty;
-import com.github.sylordis.csvreorganiser.model.chess.annotations.ChessOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -13,19 +13,14 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ChessOperation(name = "get")
-@ChessOperationProperty(name = "source", field = "srcColumn", required = true, description = "Name of the column to get the value from")
-@ChessOperationShortcut(keyword = "source", property = "source")
+@ReorgOperation(name = "get")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Name of the column to get the value from")
+@ReorgOperationShortcut(keyword = "source", property = "source")
 public class GetOperation extends ChessAbstractReorgOperation {
 
 	/**
-	 * Required properties for source column specification.
-	 */
-	public static final String OPDATA_FIELD_SOURCE = "srcColumn";
-
-	/**
 	 * Required properties for value specification in shortcut should match
-	 * {@link ChessOperationShortcut#keyword()}.
+	 * {@link ReorgOperationShortcut#keyword()}.
 	 */
 	public static final String SHORTCUT_KEY = "source";
 

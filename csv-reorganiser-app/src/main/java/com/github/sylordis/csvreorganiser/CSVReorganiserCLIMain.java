@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 import com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess;
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.csvreorganiser.model.Reorganiser;
-import com.github.sylordis.csvreorganiser.model.chess.config.dictionary.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
 
