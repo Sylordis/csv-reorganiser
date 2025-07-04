@@ -49,7 +49,7 @@ public class EngineFactory {
 			        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				Message msg = logger.getMessageFactory().newMessage(
 						"Provided ID matches an engine ({}) but engine cannot be retrieved", engineType.getEngineType());
-				throw new ConfigurationException(msg.getFormattedMessage());
+				throw new ConfigurationException(msg.getFormattedMessage(), e);
 			}
 		}
 		return engine;

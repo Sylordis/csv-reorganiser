@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -239,6 +240,7 @@ class ReorganiserTest {
 	@Nested
 	@Tag("Integration")
 	class IntegrationTests {
+
 		/**
 		 * Test method for {@link com.github.sylordis.csvreorganiser.model.Reorganiser#reorganise()} when an
 		 * operation fails to process.
@@ -252,6 +254,7 @@ class ReorganiserTest {
 			when(op.getName()).thenReturn("Failure");
 			when(op.apply(any(CSVRecord.class))).thenThrow(new IllegalArgumentException("trooper"));
 			operations.add(op);
+			when(cfg.getEngine()).thenReturn(mock(ChessEngine.class));
 			when(cfg.getOperations()).thenReturn(operations);
 			fillFileWithSamples(srcFile, SOURCE_CONTENT);
 			assertThrows(ReorganiserRuntimeException.class, reorg::reorganise,

@@ -1,8 +1,10 @@
 package com.github.sylordis.csvreorganiser.doc;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -20,7 +22,7 @@ import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationS
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
 import com.github.sylordis.csvreorganiser.utils.MarkupLanguageUtils;
-import com.github.sylordis.csvreorganiser.utils.PathsUtils;
+import com.github.sylordis.csvreorganiser.utils.ParsingUtils;
 
 /**
  * This class scans the project and outputs a documentation for each operation from the default
@@ -33,19 +35,58 @@ import com.github.sylordis.csvreorganiser.utils.PathsUtils;
 public class MarkdownDocumentationOutputChess {
 
 	/**
+	 * Default compilation unit provider (
+	 */
+	public static final BiFunction<SourceRoot, Class<? extends ChessAbstractReorgOperation>, CompilationUnit> DEFAULT_COMPILATION_UNIT_PROVIDER = (
+	        r, t) -> r.parse(ConfigConstants.Chess.OPERATIONS_PACKAGE, t.getSimpleName() + ".java");
+	/**
+	 * Default output consumer.
+	 */
+	public static final Consumer<String> DEFAULT_OUTPUT_CONSUMER = System.out::println;
+
+	/**
+	 * Default statement for empty documentation.
+	 */
+	private static final String DOCUMENTATION_NOT_PROVIDED = "Documentation not provided";
+
+	/**
 	 * Output consumer.
 	 */
-	private Consumer<String> out = System.out::println;
+	private Consumer<String> out;
 	/**
 	 * Source root for java code parser.
 	 */
-	private final SourceRoot sourceRoot = new SourceRoot(
-	        PathsUtils.gradleModuleRoot(getClass()).resolve("src/main/java/"));
+	private SourceRoot sourceRoot;
+	/**
+	 * Compilation unit provider.
+	 */
+	private BiFunction<SourceRoot, Class<? extends ChessAbstractReorgOperation>, CompilationUnit> compilationUnitProvider;
 
 	/**
 	 * Class logger.
 	 */
 	private final Logger logger = LogManager.getLogger();
+
+	/**
+	 * Default Markdown documentation output producer.
+	 */
+	public MarkdownDocumentationOutputChess() {
+		this(ParsingUtils.sourceFromRoot("src/main/java/"), DEFAULT_COMPILATION_UNIT_PROVIDER, DEFAULT_OUTPUT_CONSUMER);
+	}
+
+	/**
+	 * Creates a custom markdown documentation output producer.
+	 * 
+	 * @param sourceRoot              Source root for java code parser
+	 * @param compilationUnitProvider Compilation unit provider from
+	 */
+	public MarkdownDocumentationOutputChess(SourceRoot sourceRoot,
+	        BiFunction<SourceRoot, Class<? extends ChessAbstractReorgOperation>, CompilationUnit> compilationUnitProvider,
+	        Consumer<String> outputConsumer) {
+		this.sourceRoot = sourceRoot;
+		this.compilationUnitProvider = compilationUnitProvider;
+		this.out = outputConsumer;
+	}
 
 	/**
 	 * Generates the documentation for the Chess engine.
@@ -72,8 +113,7 @@ public class MarkdownDocumentationOutputChess {
 	public void generateOperationDocumentation(Class<? extends ChessAbstractReorgOperation> type) {
 		logger.debug("Generating operation documentation for {}", type);
 		// Get the actual class
-		CompilationUnit compilationUnit = sourceRoot.parse(ConfigConstants.Chess.OPERATIONS_PACKAGE,
-		        type.getSimpleName() + ".java");
+		CompilationUnit compilationUnit = compilationUnitProvider.apply(sourceRoot, type);
 		ClassOrInterfaceDeclaration decl = compilationUnit.getClassByName(type.getSimpleName()).get();
 		// Title
 		out.accept("# " + MarkupLanguageUtils.splitCamelCase(type.getSimpleName().replace("Operation", "")) + "\n");
@@ -81,9 +121,8 @@ public class MarkdownDocumentationOutputChess {
 		String opTag = type.getAnnotation(ReorgOperation.class).name();
 		out.accept("**Configuration name:** `" + opTag + "`" + "\n");
 		// Operation description extracted from Javadoc
-		JavadocComment opComment = decl.getJavadocComment().orElse(new JavadocComment());
-		String opCommentText = opComment.getContent().replaceAll("\n[ \t]+\\* ?", "\n")
-		        .replaceAll("(?m)^([ \t]*|@.*)\r?\n", "");
+		JavadocComment opComment = decl.getJavadocComment().orElse(new JavadocComment(DOCUMENTATION_NOT_PROVIDED));
+		String opCommentText = sanitizeJavadoc(opComment.getContent()) + "\n";
 		out.accept(MarkupLanguageUtils.htmlToMarkdown(opCommentText));
 		// Yaml definition example
 		ReorgOperationProperty[] properties = type.getAnnotationsByType(ReorgOperationProperty.class);
@@ -102,9 +141,10 @@ public class MarkdownDocumentationOutputChess {
 			out.accept("```yaml");
 			ReorgOperationShortcut shortcutAnnotation = type.getAnnotation(ReorgOperationShortcut.class);
 			String shortcut = shortcutAnnotation.keyword();
+			String propertyFromShortcut = Arrays.stream(type.getAnnotationsByType(ReorgOperationProperty.class)).filter(a -> a.name().equals(shortcutAnnotation.property())).findFirst().get().name();
 			out.accept(String.format("""
 			        column: <column-name>
-			        %s:%s""", shortcut, propValueToYaml(type, shortcutAnnotation.property(), () -> shortcut)));
+			        %s:%s""", shortcut, propValueToYaml(type, shortcutAnnotation.property(), () -> propertyFromShortcut)));
 			out.accept("```\n");
 		}
 		// Properties description
@@ -116,11 +156,16 @@ public class MarkdownDocumentationOutputChess {
 			rame.append("| `").append(prop.name()).append("`");
 			rame.append(" | ").append(getFieldType(type, prop.field()).getSimpleName());
 			rame.append(" | ").append(prop.required() ? "y" : "n");
-			rame.append(" | ").append(prop.description());
+			rame.append(" | ").append(sanitizeJavadoc(decl.getFieldByName(prop.field()).get().getJavadocComment()
+			        .orElse(new JavadocComment(DOCUMENTATION_NOT_PROVIDED)).getContent()));
 			rame.append(" |");
 			out.accept(rame.toString());
 		}
 		out.accept("");
+	}
+
+	private String sanitizeJavadoc(String doc) {
+		return doc.replaceAll("\n[ \t]+\\* ?", "\n").replaceAll("(?m)^([ \t]*|@.*)\r?\n", "").trim();
 	}
 
 	/**
@@ -151,9 +196,9 @@ public class MarkdownDocumentationOutputChess {
 	/**
 	 * Converts a parameter into Yaml format.
 	 * 
-	 * @param type Type holding the property
+	 * @param type  Type holding the property
 	 * @param field Name of the class' field
-	 * @param name Supplier for the name of the parameter
+	 * @param name  Supplier for the name of the parameter
 	 * @return
 	 */
 	public String propValueToYaml(Class<? extends ChessAbstractReorgOperation> type, String field,
@@ -196,7 +241,5 @@ public class MarkdownDocumentationOutputChess {
 	public void setOutputConsumer(Consumer<String> out) {
 		this.out = out;
 	}
-	
-
 
 }

@@ -36,11 +36,11 @@ public final class ConfigConstants {
 		/**
 		 * Symbol for modifier delimiter.
 		 */
-		public final static String TEMPLATE_MODIFIER_DELIMITER = "|";
+		public final static String TEMPLATE_FILTER_DELIMITER = "|";
 		/**
 		 * Symbol for modifier parameter delimiter..
 		 */
-		public final static String TEMPLATE_MODIFIER_PARAM_DELIMITER = ":";
+		public final static String TEMPLATE_FILTER_PARAM_DELIMITER = ":";
 		/**
 		 * Name of the package with all operations definitions.
 		 */

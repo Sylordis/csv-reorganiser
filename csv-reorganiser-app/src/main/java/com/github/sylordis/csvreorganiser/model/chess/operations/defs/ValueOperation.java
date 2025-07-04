@@ -15,7 +15,7 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  *
  */
 @ReorgOperation(name = "value")
-@ReorgOperationProperty(name = "value", field = "value", required = true, description = "Constant value to output")
+@ReorgOperationProperty(name = "value", field = "value", required = true)
 @ReorgOperationShortcut(keyword = "value", property = "value")
 public class ValueOperation extends ChessAbstractReorgOperation {
 
@@ -31,7 +31,7 @@ public class ValueOperation extends ChessAbstractReorgOperation {
 	public static final String SHORTCUT_KEY = OPDATA_FIELD_VALUE;
 
 	/**
-	 * Index of the source column.
+	 * Constant value provided by the operation.
 	 */
 	private String value;
 

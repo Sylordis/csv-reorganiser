@@ -19,7 +19,7 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  *
  */
 @ReorgOperation(name = "concat")
-@ReorgOperationProperty(name = "values", field = "values", required = true, description = "List of columns to take values from and/or constants strings ")
+@ReorgOperationProperty(name = "values", field = "values", required = true)
 @ReorgOperationShortcut(keyword = "concat", property = "values")
 public class ConcatenationOperation extends ChessAbstractReorgOperation {
 
@@ -35,7 +35,7 @@ public class ConcatenationOperation extends ChessAbstractReorgOperation {
 	public static final String SHORTCUT_KEY = "concat";
 
 	/**
-	 * Index of the source column.
+	 * List of columns to take values from and/or constants strings.
 	 */
 	private List<String> values;
 

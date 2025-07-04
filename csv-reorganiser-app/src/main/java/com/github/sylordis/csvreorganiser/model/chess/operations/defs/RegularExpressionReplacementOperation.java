@@ -16,9 +16,9 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  *
  */
 @ReorgOperation(name = "regreplace")
-@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
-@ReorgOperationProperty(name = "pattern", field = "pattern", required = true, description = "Pattern to look for in the content")
-@ReorgOperationProperty(name = "replace", field = "replacement", required = true, description = "Replacement for the pattern")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true)
+@ReorgOperationProperty(name = "pattern", field = "pattern", required = true)
+@ReorgOperationProperty(name = "replace", field = "replacement", required = true)
 public class RegularExpressionReplacementOperation extends ChessAbstractReorgOperation {
 
 	/**
@@ -43,15 +43,15 @@ public class RegularExpressionReplacementOperation extends ChessAbstractReorgOpe
 	public static final String OPDATA_FIELD_REPLACEMENT = "replacement";
 
 	/**
-	 * Pattern to search for.
+	 * Pattern to look for in the content.
 	 */
 	private String pattern;
 	/**
-	 * Regex to replace the searched pattern with.
+	 * Replacement for the pattern.
 	 */
 	private String replacement;
 	/**
-	 * Index of the source column.
+	 * Column of the source file to take the content from.
 	 */
 	private String srcColumn;
 

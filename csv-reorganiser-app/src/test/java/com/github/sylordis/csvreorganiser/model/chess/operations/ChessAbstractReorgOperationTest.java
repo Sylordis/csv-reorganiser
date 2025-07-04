@@ -32,7 +32,7 @@ import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
  * @author sylordis
  *
  */
-class AbstractReorgOperationTest {
+class ChessAbstractReorgOperationTest {
 
 	/**
 	 * Default operation name.
@@ -65,7 +65,7 @@ class AbstractReorgOperationTest {
 	 */
 	@Test
 	@Tag("Constructor")
-	void testAbstractReorgOperation() {
+	void testChessAbstractReorgOperation() {
 		assertNotNull(op, "Constructor should provide an instance of the object");
 	}
 
@@ -76,7 +76,7 @@ class AbstractReorgOperationTest {
 	 */
 	@Test
 	@Tag("Constructor")
-	void testAbstractReorgOperationName_Null() {
+	void testChessAbstractReorgOperationName_Null() {
 		assertThrows(ConfigurationImportException.class, () -> new ReorgOperationImpl(null),
 		        "Constructor should throw an error if provided name is null");
 	}
@@ -88,7 +88,7 @@ class AbstractReorgOperationTest {
 	 */
 	@Test
 	@Tag("Constructor")
-	void testAbstractReorgOperationName_Empty() {
+	void testChessAbstractReorgOperationName_Empty() {
 		assertThrows(ConfigurationImportException.class, () -> new ReorgOperationImpl(""),
 		        "Constructor should throw an error if provided name is empty");
 	}

@@ -1,4 +1,4 @@
-package com.github.sylordis.csvreorganiser.model.chess.config.dictionary;
+package com.github.sylordis.csvreorganiser.model.chess.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessOperationInstantiator;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ConcatenationOperation;
@@ -74,7 +73,7 @@ class DefaultConfigurationSupplierTest {
 	void testGetShortcutDictionary() {
 		Map<String, ChessOperationInstantiator> m = dcs.getShortcutDictionary();
 		assertNotNull(m);
-		Set<String> expected = Set.of(ConcatenationOperation.SHORTCUT_KEY, GetOperation.SHORTCUT_KEY,
+		Set<String> expected = Set.of("dumdum", ConcatenationOperation.SHORTCUT_KEY, GetOperation.SHORTCUT_KEY,
 				ValueOperation.SHORTCUT_KEY);
 		assertEquals(expected, m.keySet());
 	}

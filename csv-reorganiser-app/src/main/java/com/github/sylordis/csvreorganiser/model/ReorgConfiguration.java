@@ -228,7 +228,7 @@ public class ReorgConfiguration {
 	 * @return true if an engine is set, false otherwise.
 	 */
 	public boolean hasEngine() {
-		return null != null;
+		return engine != null;
 	}
 
 	/**

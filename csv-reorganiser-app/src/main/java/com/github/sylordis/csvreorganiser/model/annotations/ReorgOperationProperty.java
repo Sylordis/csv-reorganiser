@@ -42,13 +42,6 @@ public @interface ReorgOperationProperty {
 	public boolean required() default false;
 
 	/**
-	 * Description of the required property.
-	 *
-	 * @return description of the property
-	 */
-	public String description() default "";
-
-	/**
 	 * Position of the property.
 	 * 
 	 * @return

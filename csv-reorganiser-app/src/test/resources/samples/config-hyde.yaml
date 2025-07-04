@@ -6,5 +6,5 @@ reorg:
         Identifier: "{{id}}"
         something: "s"
         login: "{{first_name}}.{{last_name}}"
-        Network group: "{{ip_address|replace:'([0-9]{1,3}\\.[0-9]{1,3})\\..*':'$1'}}"
+        Network group: "{{ip_address|replace:([0-9]{1,3}\\.[0-9]{1,3})\\..*:$1}}"
         Gender: "{{gender|substring:0:1}}"

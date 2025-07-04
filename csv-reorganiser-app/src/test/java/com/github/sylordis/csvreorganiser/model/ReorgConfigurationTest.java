@@ -146,6 +146,7 @@ class ReorgConfigurationTest {
 	void testLoadFromFile() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
 		rcfg = new ReorgConfiguration(new ChessEngine());
 		rcfg.loadFromFile(cfgFile);
+		assertTrue(rcfg.hasEngine());
 		assertEquals(6, rcfg.getOperations().size());
 		ChessAbstractReorgOperation op = (ChessAbstractReorgOperation) rcfg.getOperations().get(0);
 		assertEquals(GetOperation.class, op.getClass());
@@ -199,6 +200,30 @@ class ReorgConfigurationTest {
 	/**
 	 * Test method for
 	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#loadFromFile(java.io.File)}
+	 * when no proper shortcut is found.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws ConfigurationImportException
+	 * @throws EngineException 
+	 */
+	@Test
+	@Tag("Integration")
+	void testLoadFromFile_NoOperationRoot() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
+		String content = """
+reorg:
+   header:
+      engine: chess
+   bla:
+      hello: test
+		        """;
+		File configFile = createFileWith(content);
+		assertThrows(ConfigurationImportException.class, () ->  rcfg.loadFromFile(configFile));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#loadFromFile(java.io.File)}
 	 * when no operation dictionary has been setup.
 	 *
 	 * @throws IOException
@@ -210,8 +235,14 @@ class ReorgConfigurationTest {
 	@Tag("Integration")
 	void testLoadFromFile_NoEngine()
 	        throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
-		rcfg.loadFromFile(cfgFile);
+		String content = """
+reorg:
+   structure: []
+		        """;
+		File configFile = createFileWith(content);
+		rcfg.loadFromFile(configFile);
 		assertNotNull(rcfg);
+		configFile.delete();
 	}
 
 	/**
@@ -389,9 +420,28 @@ class ReorgConfigurationTest {
 	 */
 	@Test
 	@Tag("Constructor")
-	void testFromFile() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
-		ReorgConfiguration nrcfg;
-		nrcfg = ReorgConfiguration.fromFile(cfgFile, new ChessEngine());
+	void testFromFileFile() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
+		ReorgConfiguration nrcfg = ReorgConfiguration.fromFile(cfgFile);
+		assertNotNull(nrcfg);
+		assertNotSame(nrcfg, rcfg);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.github.sylordis.csvreorganiser.model.ReorgConfiguration#fromFile(java.io.File)}
+	 * checking that calling this static constructor creates a new instance loading the provided file.
+	 * Content of the file and proper loading tests will be done with appropriate unit tests on
+	 * {@link ReorgConfiguration#loadFromFile(File)}.
+	 *
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws ConfigurationImportException
+	 * @throws EngineException
+	 */
+	@Test
+	@Tag("Constructor")
+	void testFromFileFileReorgEngine() throws ConfigurationImportException, FileNotFoundException, IOException, EngineException {
+		ReorgConfiguration nrcfg = ReorgConfiguration.fromFile(cfgFile, new ChessEngine());
 		assertNotNull(nrcfg);
 		assertNotSame(nrcfg, rcfg);
 	}

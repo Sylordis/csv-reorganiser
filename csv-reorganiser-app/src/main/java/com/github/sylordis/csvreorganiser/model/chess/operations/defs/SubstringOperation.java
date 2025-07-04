@@ -21,9 +21,9 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportEx
  *
  */
 @ReorgOperation(name = "substring")
-@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Column of the source file to take the content from")
-@ReorgOperationProperty(name = "start", field = "indexStart", required = true, description = "Start index of the substring")
-@ReorgOperationProperty(name = "end", field = "indexEnd", description = "End index of the substring, leave not set for until the end of the text")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true)
+@ReorgOperationProperty(name = "start", field = "indexStart", required = true)
+@ReorgOperationProperty(name = "end", field = "indexEnd")
 public class SubstringOperation extends ChessAbstractReorgOperation {
 
 	/**
@@ -44,15 +44,15 @@ public class SubstringOperation extends ChessAbstractReorgOperation {
 	public static final int NO_START_INDEX = 0;
 	
 	/**
-	 * Index of the source column.
+	 * Column of the source file to take the content from.
 	 */
 	private String srcColumn;
 	/**
-	 * Start index.
+	 * Start index of the substring.
 	 */
 	private int indexStart;
 	/**
-	 * End index.
+	 * End index of the substring, leave not set for until the end of the text.
 	 */
 	private int indexEnd;
 

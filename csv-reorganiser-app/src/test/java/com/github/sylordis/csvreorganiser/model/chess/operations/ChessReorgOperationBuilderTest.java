@@ -28,7 +28,7 @@ import com.github.sylordis.csvreorganiser.test.chess.defs.WrongFakeOperation;
  * @author sylordis
  *
  */
-class ReorgOperationBuilderTest {
+class ChessReorgOperationBuilderTest {
 
 	/**
 	 * Default object for tests.

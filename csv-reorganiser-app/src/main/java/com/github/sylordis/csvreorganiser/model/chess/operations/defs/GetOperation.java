@@ -14,7 +14,7 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  *
  */
 @ReorgOperation(name = "get")
-@ReorgOperationProperty(name = "source", field = "srcColumn", required = true, description = "Name of the column to get the value from")
+@ReorgOperationProperty(name = "source", field = "srcColumn", required = true)
 @ReorgOperationShortcut(keyword = "source", property = "source")
 public class GetOperation extends ChessAbstractReorgOperation {
 
@@ -25,7 +25,7 @@ public class GetOperation extends ChessAbstractReorgOperation {
 	public static final String SHORTCUT_KEY = "source";
 
 	/**
-	 * Index of the source column.
+	 * Name of the column to get the value from.
 	 */
 	private String srcColumn;
 

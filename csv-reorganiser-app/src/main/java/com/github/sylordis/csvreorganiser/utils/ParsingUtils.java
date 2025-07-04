@@ -4,11 +4,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.github.javaparser.utils.CodeGenerationUtils;
+import com.github.javaparser.utils.SourceRoot;
 
 /**
- * Utils for pathing.
+ * Utils for parsing.
  */
-public class PathsUtils {
+public class ParsingUtils {
 
 	/**
 	 * Gets the root of the current Gradle module from a given class.
@@ -31,7 +32,17 @@ public class PathsUtils {
 		return normalize;
 	}
 
-	private PathsUtils() {
+	/**
+	 * Resolves the given path from the Gradle module root.
+	 * 
+	 * @param path additional path to resolve from the module root
+	 * @return a Source Root
+	 */
+	public static SourceRoot sourceFromRoot(String path) {
+		return new SourceRoot(ParsingUtils.gradleModuleRoot(ParsingUtils.class).resolve(path));
+	}
+
+	private ParsingUtils() {
 		// Nothing to do here
 	}
 

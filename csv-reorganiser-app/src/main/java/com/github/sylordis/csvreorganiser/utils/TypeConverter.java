@@ -38,7 +38,7 @@ public final class TypeConverter {
 		} else if (o instanceof String s) {
 			// Convert from String...
 			// ... to Integer
-			if (Integer.class.equals(type))
+			if (Integer.class.equals(type) || Integer.TYPE.equals(type))
 				desired = (T) Integer.valueOf(s);
 		}
 		if (o != null && desired == null)

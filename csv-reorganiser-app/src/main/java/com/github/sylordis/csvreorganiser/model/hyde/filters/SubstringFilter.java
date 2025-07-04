@@ -5,23 +5,23 @@ import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProper
 import com.github.sylordis.csvreorganiser.model.hyde.HydeAbstractFilter;
 
 @ReorgOperation(name = "substring")
-@ReorgOperationProperty(name = "start", field = "startIndex", position = 0, description = "Start index of the substring", required = true)
-@ReorgOperationProperty(name = "end", field = "endIndex", position = 1, description = "End index of the substring (excluded) or until the end of the string if not specified")
-public class HydeFilterSubstring extends HydeAbstractFilter {
+@ReorgOperationProperty(name = "start", field = "startIndex", position = 0, required = true)
+@ReorgOperationProperty(name = "end", field = "endIndex", position = 1)
+public class SubstringFilter extends HydeAbstractFilter {
 
 	/**
 	 * Start index of the substring.
 	 */
 	private int startIndex;
 	/**
-	 * End index of the substring (excluded).
+	 * End index of the substring (excluded) or until the end of the string if not specified.
 	 */
-	private Integer endIndex;
+	private int endIndex = -1;
 
 	@Override
 	public String apply(String t) {
 		String res = t;
-		if (endIndex != null)
+		if (endIndex != -1)
 			res = t.substring(startIndex, endIndex);
 		else
 			res = t.substring(startIndex);
