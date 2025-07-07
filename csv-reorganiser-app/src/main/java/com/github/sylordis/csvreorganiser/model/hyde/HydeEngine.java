@@ -17,7 +17,6 @@ import com.github.sylordis.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationException;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
-import com.github.sylordis.csvreorganiser.model.exceptions.OperationBuildingException;
 import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
 import com.github.sylordis.csvreorganiser.model.hyde.config.HydeConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.hyde.config.HydeDefaultConfigurationSupplier;
@@ -120,15 +119,8 @@ public class HydeEngine implements ReorganiserEngine {
 		String filterDelim = ConfigConstants.Hyde.TEMPLATE_FILTER_DELIMITER;
 		String[] parts = templateCfg.split("\\Q" + filterDelim + "\\E");
 		String field = parts[0];
-		for (int i = 1; i < parts.length; i++) {
-			logger.debug("Filter: {}", parts[i]);
-			String[] filterParts = parts[i].split("\\Q" + ConfigConstants.Hyde.TEMPLATE_FILTER_PARAM_DELIMITER + "\\E");
-			String filterName = filterParts[0];
-			List<Object> args = new ArrayList<>();
-			for (int j = 1; j < filterParts.length; j++)
-				args.add(filterParts[j]);
-			filters.add(createFilter(filterName, args));
-		}
+		for (int i = 1; i < parts.length; i++)
+			filters.add(createFilter(parts[i]));
 		logger.debug("Template: field='{}', filters={}", field,
 		        filters.stream().map(f -> f.getClass().getSimpleName()).collect(Collectors.toList()));
 		HydeReorgOperationTemplatePart part = new HydeReorgOperationTemplatePart();
@@ -137,31 +129,26 @@ public class HydeEngine implements ReorganiserEngine {
 		return part;
 	}
 
-	/**
-	 * Creates a filter from its name and a list of arguments.
-	 * 
-	 * @param name name of the filter, e.g. the type of the filter
-	 * @param args arguments to provide to the filter
-	 * @return
-	 * @throws ConfigurationException     if something goes wrong
-	 * @throws OperationBuildingException if the filter type is unknown
-	 */
-	public HydeFilter createFilter(String name, List<Object> args) {
-		logger.debug("Creating filter {}{}", name, args);
-		String lname = name.toLowerCase();
-		HydeAbstractFilter filter = null;
-		if (filtersDictionary.containsKey(lname)) {
+	public HydeFilter createFilter(String filterString) {
+		String[] filterParts = filterString
+				.split("\\Q" + ConfigConstants.Hyde.TEMPLATE_FILTER_PARAM_DELIMITER + "\\E");
+		String name = filterParts[0];
+		List<Object> args = new ArrayList<>();
+		for (int i = 1; i < filterParts.length; i++)
+			args.add(filterParts[i]);
+		HydeFilter filter = null;
+		if (filtersDictionary.containsKey(name)) {
 			try {
-				final Class<? extends HydeAbstractFilter> type = filtersDictionary.get(lname);
-				filter = type.getDeclaredConstructor().newInstance();
+				filter = filtersDictionary.get(name).getDeclaredConstructor().newInstance();
 				filter.fill(args);
-			} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-			        | InvocationTargetException | SecurityException | SelfFillingException e) {
-				throw new ConfigurationException(e);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new ConfigurationImportException("Unable to create filter.", e);
+			} catch (SelfFillingException e) {
+				throw new ConfigurationImportException(e);
 			}
-		} else {
-			throw new OperationBuildingException("Unknown filter type '" + lname + "'");
-		}
+		} else
+			throw new ConfigurationException("Unknown filter type " + name);
 		return filter;
 	}
 

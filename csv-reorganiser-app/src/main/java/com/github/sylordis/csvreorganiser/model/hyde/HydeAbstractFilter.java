@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.sylordis.csvreorganiser.model.SelfFiller;
 import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
 import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
 
@@ -22,7 +21,7 @@ import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
  * annotation {@link ReorgOperationProperty#position()}, i.e. argument N will be used to fill
  * property position N.
  */
-public abstract class HydeAbstractFilter implements HydeFilter, SelfFiller<List<Object>> {
+public abstract class HydeAbstractFilter implements HydeFilter {
 
 	/**
 	 * Class logger.
@@ -30,7 +29,11 @@ public abstract class HydeAbstractFilter implements HydeFilter, SelfFiller<List<
 	private final Logger logger;
 
 	/**
+<<<<<<< HEAD
 	 * Creates a new Hyde abstract filter.
+=======
+	 * Constructs a new abstract filter.
+>>>>>>> 9ac6bc5 (New hyde filters, performance files)
 	 */
 	public HydeAbstractFilter() {
 		this.logger = LogManager.getLogger();

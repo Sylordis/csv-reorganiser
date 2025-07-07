@@ -4,6 +4,9 @@ import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
 import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
 import com.github.sylordis.csvreorganiser.model.hyde.HydeAbstractFilter;
 
+/**
+ * Extracts a portion of the source string.
+ */
 @ReorgOperation(name = "substring")
 @ReorgOperationProperty(name = "start", field = "startIndex", position = 0, required = true)
 @ReorgOperationProperty(name = "end", field = "endIndex", position = 1)
@@ -26,6 +29,12 @@ public class SubstringFilter extends HydeAbstractFilter {
 		else
 			res = t.substring(startIndex);
 		return res;
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "[" + startIndex + " => "
+		        + (endIndex == -1 ? "" : endIndex) + "]";
 	}
 
 	/**
