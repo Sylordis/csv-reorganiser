@@ -50,14 +50,14 @@ Follow typical Gradle java application goals regarding your intention (`build`, 
 ### Installing
 
 Just download the jar file associated to the release or run `gradle shadowJar` (at least) from the repository.
-Jar file should be provided under `csv-reorganiser-app/build/libs/csv-reorganiser-app-all.jar`
+Jar file should be provided under `csv-reorganiser-app/build/libs/csv-reorganiser-app-<version>-all.jar`
 
 ### Executing software
 
 Run the following command:
 
 ```
-java -jar <path-to-jar>/csv-reorganiser-app-all.jar [options] <yaml-cfg> <csv-sources..> <csv-target>
+java -jar <path-to-jar>/csv-reorganiser-app-<version>-all.jar [options] <yaml-cfg> <csv-sources..> <csv-target>
 ```
 
 With:
