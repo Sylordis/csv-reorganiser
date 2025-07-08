@@ -2,17 +2,17 @@ package com.github.sylordis.csvreorganiser.test.chess.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
  * Dummy <em>operation</em> with a shortcut for the generation.
  */
-@ReorgOperation(name = "dummyshort")
-@ReorgOperationProperty(name = "important", field = "importance", required = true)
-@ReorgOperationShortcut(keyword = "dumdum", property = "important")
+@Operation(name = "dummyshort")
+@OperationProperty(name = "important", field = "importance", required = true)
+@OperationShortcut(keyword = "dumdum", property = "important")
 public class DummyOperationWithShortcut extends ChessAbstractReorgOperation {
 
 	/**

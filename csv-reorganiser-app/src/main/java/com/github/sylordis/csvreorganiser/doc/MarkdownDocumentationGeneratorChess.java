@@ -15,9 +15,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.utils.SourceRoot;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.constants.ConfigConstants;
@@ -29,10 +29,8 @@ import com.github.sylordis.csvreorganiser.utils.ParsingUtils;
  * configuration.
  * 
  * @author sylordis
- *
- * 
  */
-public class MarkdownDocumentationOutputChess {
+public class MarkdownDocumentationGeneratorChess {
 
 	/**
 	 * Default compilation unit provider (
@@ -70,7 +68,7 @@ public class MarkdownDocumentationOutputChess {
 	/**
 	 * Default Markdown documentation output producer.
 	 */
-	public MarkdownDocumentationOutputChess() {
+	public MarkdownDocumentationGeneratorChess() {
 		this(ParsingUtils.sourceFromRoot("src/main/java/"), DEFAULT_COMPILATION_UNIT_PROVIDER, DEFAULT_OUTPUT_CONSUMER);
 	}
 
@@ -80,7 +78,7 @@ public class MarkdownDocumentationOutputChess {
 	 * @param sourceRoot              Source root for java code parser
 	 * @param compilationUnitProvider Compilation unit provider from
 	 */
-	public MarkdownDocumentationOutputChess(SourceRoot sourceRoot,
+	public MarkdownDocumentationGeneratorChess(SourceRoot sourceRoot,
 	        BiFunction<SourceRoot, Class<? extends ChessAbstractReorgOperation>, CompilationUnit> compilationUnitProvider,
 	        Consumer<String> outputConsumer) {
 		this.sourceRoot = sourceRoot;
@@ -107,7 +105,6 @@ public class MarkdownDocumentationOutputChess {
 	/**
 	 * Generates documentation for one operation type.
 	 * 
-	 * @param sourceRoot
 	 * @param type
 	 */
 	public void generateOperationDocumentation(Class<? extends ChessAbstractReorgOperation> type) {
@@ -118,53 +115,63 @@ public class MarkdownDocumentationOutputChess {
 		// Title
 		out.accept("# " + MarkupLanguageUtils.splitCamelCase(type.getSimpleName().replace("Operation", "")) + "\n");
 		// Config name
-		String opTag = type.getAnnotation(ReorgOperation.class).name();
+		String opTag = type.getAnnotation(Operation.class).name();
 		out.accept("**Configuration name:** `" + opTag + "`" + "\n");
 		// Operation description extracted from Javadoc
 		JavadocComment opComment = decl.getJavadocComment().orElse(new JavadocComment(DOCUMENTATION_NOT_PROVIDED));
-		String opCommentText = sanitizeJavadoc(opComment.getContent()) + "\n";
+		String opCommentText = sanitiseJavadoc(opComment.getContent()) + "\n";
 		out.accept(MarkupLanguageUtils.htmlToMarkdown(opCommentText));
 		// Yaml definition example
-		ReorgOperationProperty[] properties = type.getAnnotationsByType(ReorgOperationProperty.class);
+		OperationProperty[] properties = type.getAnnotationsByType(OperationProperty.class);
 		out.accept("```yaml");
 		out.accept(String.format("""
 		        column: <column-name>
 		        operation:
 		          type: %s""", opTag));
-		for (ReorgOperationProperty prop : properties) {
+		for (OperationProperty prop : properties) {
 			out.accept(propToYaml(type, prop));
 		}
 		out.accept("```\n");
 		// Shortcut Yaml definition example
-		if (type.isAnnotationPresent(ReorgOperationShortcut.class)) {
+		if (type.isAnnotationPresent(OperationShortcut.class)) {
 			out.accept("Shortcut:");
 			out.accept("```yaml");
-			ReorgOperationShortcut shortcutAnnotation = type.getAnnotation(ReorgOperationShortcut.class);
+			OperationShortcut shortcutAnnotation = type.getAnnotation(OperationShortcut.class);
 			String shortcut = shortcutAnnotation.keyword();
-			String propertyFromShortcut = Arrays.stream(type.getAnnotationsByType(ReorgOperationProperty.class)).filter(a -> a.name().equals(shortcutAnnotation.property())).findFirst().get().name();
+			String propertyFromShortcut = Arrays.stream(type.getAnnotationsByType(OperationProperty.class))
+			        .filter(a -> a.name().equals(shortcutAnnotation.property())).findFirst().get().name();
 			out.accept(String.format("""
 			        column: <column-name>
-			        %s:%s""", shortcut, propValueToYaml(type, shortcutAnnotation.property(), () -> propertyFromShortcut)));
+			        %s:%s""", shortcut,
+			        propValueToYaml(type, shortcutAnnotation.property(), () -> propertyFromShortcut)));
 			out.accept("```\n");
 		}
 		// Properties description
 		out.accept("| Property | type | required? | description |");
 		out.accept("| --- | --- | --- | --- |");
 		// Create properties lines for each property
-		for (ReorgOperationProperty prop : properties) {
+		for (OperationProperty prop : properties) {
 			StringBuilder rame = new StringBuilder();
 			rame.append("| `").append(prop.name()).append("`");
 			rame.append(" | ").append(getFieldType(type, prop.field()).getSimpleName());
 			rame.append(" | ").append(prop.required() ? "y" : "n");
-			rame.append(" | ").append(sanitizeJavadoc(decl.getFieldByName(prop.field()).get().getJavadocComment()
-			        .orElse(new JavadocComment(DOCUMENTATION_NOT_PROVIDED)).getContent()));
+			String documentation = prop.description();
+			if (documentation.isBlank())
+				documentation = sanitiseJavadoc(decl.getFieldByName(prop.field()).get().getJavadocComment()
+				        .orElse(new JavadocComment(DOCUMENTATION_NOT_PROVIDED)).getContent());
+			rame.append(" | ").append(documentation);
 			rame.append(" |");
 			out.accept(rame.toString());
 		}
 		out.accept("");
 	}
 
-	private String sanitizeJavadoc(String doc) {
+	/**
+	 * Sanitises a Javadoc to be processed properly as String.
+	 * @param doc
+	 * @return
+	 */
+	protected String sanitiseJavadoc(String doc) {
 		return doc.replaceAll("\n[ \t]+\\* ?", "\n").replaceAll("(?m)^([ \t]*|@.*)\r?\n", "").trim();
 	}
 
@@ -175,7 +182,7 @@ public class MarkdownDocumentationOutputChess {
 	 * @param prop
 	 * @return
 	 */
-	public String propToYaml(Class<? extends ChessAbstractReorgOperation> type, ReorgOperationProperty prop) {
+	public String propToYaml(Class<? extends ChessAbstractReorgOperation> type, OperationProperty prop) {
 		StringBuilder rame = new StringBuilder();
 		rame.append("  ").append(prop.name()).append(":");
 		rame.append(propValueToYaml(type, prop));
@@ -189,7 +196,7 @@ public class MarkdownDocumentationOutputChess {
 	 * @param prop Property to transcribe to YAML
 	 * @return
 	 */
-	public String propValueToYaml(Class<? extends ChessAbstractReorgOperation> type, ReorgOperationProperty prop) {
+	public String propValueToYaml(Class<? extends ChessAbstractReorgOperation> type, OperationProperty prop) {
 		return propValueToYaml(type, prop.field(), () -> prop.name());
 	}
 

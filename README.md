@@ -8,6 +8,12 @@ Ever had to manipulate hundred of CSV files, change ordering from exports, or wh
 
 Stop to the long hours trying to export, reorganise and separate fields values. All you need is Java and a YAML configuration file and that tool will make the job for you.
 
+A new engine, `Hyde`, was created, making it even easier to use (previous one is called `Chess`).
+
+## Latest news
+
+Hyde engine is out and working! Check out the [documentation](https://github.com/sylordis/csv-reorganiser/wiki/Hyde-engine).
+
 ## Getting Started
 
 ### Dependencies
@@ -18,16 +24,15 @@ This tool was made with/for Java 21 and Gradle as dependency manager.
 
 It is using the following dependencies (already included as-is in the jar):
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)
-* [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/)
-* [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
-* [Apache Commons IO](https://commons.apache.org/proper/commons-io/)
+* Some Apache Commons
 * [Apache Log4J](https://logging.apache.org/log4j/2.x/)
 * [Reflections](https://github.com/ronmamo/reflections)
+* [Guava](https://github.com/google/guava)
 
 Testing dependencies:
 * [JUnit 5 (Jupiter)](https://junit.org/junit5/)
 * [Mockito](https://site.mockito.org/)
-* [Hamcrest 2](http://hamcrest.org/JavaHamcrest)
+* [Hamcrest 3](http://hamcrest.org/JavaHamcrest)
 
 Documentation dependencies (by and for):
 * [Javaparser](https://javaparser.org/)
@@ -65,15 +70,15 @@ Run with `--help` for full documentation and options.
 #### Engines
 
 There are 2 engines in the CSV reorganiser. For each engine, the configuration file is written in a slight different way.
-* The first one (id `1` or `chess`), is using a simple structure and performs only simple operations.
-* The second one (id `2` or `hyde`), is an experimental engine using a text based definition of operations, with text filters directly included in the operation definition (still in implementation).
+* The first one (id `1` or `chess`), is using a simple and clear structure and performs only simple operations.
+* The second one (id `2` or `hyde`), is a text & column references based definition of operations, with text filters directly included in the latter. It is easier to use, more permissive and faster than its predecessor.
 
 You can change which engine you are using by using the option flag `-engine <engine-id>` or `-e <engine-id>` where `<engine-id>` is the engine name or number.
 You can also specify the engine in the configuration file via the header, using the tag `engine` which behaves the same as the option.
 
-If no engine is specified, `chess` will be assumed.
+If no engine is specified, `hyde` will be assumed.
 
-Check the wiki for more information.
+Check the [wiki](https://github.com/sylordis/csv-reorganiser/wiki/) for more information.
 
 ### Executing unit tests
 
@@ -88,18 +93,6 @@ Check out the [wiki](https://github.com/Sylordis/csv-reorganiser/wiki).
 ## Authors
 
 * Sylvain Domenjoud aka "[Sylordis](https://github.com/Sylordis)" (creator and maintainer)
-
-## Version History
-
-* v1.1 - in progress (but usable with `chess` engine)
-  * Some unit tests were left behind (disabled).
-  * Multiple source files processing.
-  * New operation: Concat, Substring.
-  * Preparation for Hyde.
-* v1.0
-  * First official release.
-  * Unit-tested (most of it) along with some integration tests.
-  * 3 Operations: Get, Value and RegReplace.
 
 ## License
 

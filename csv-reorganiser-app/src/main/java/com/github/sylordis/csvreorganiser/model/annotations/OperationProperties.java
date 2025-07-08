@@ -7,15 +7,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Mandatory annotation class for repeatable {@link ReorgOperationProperty} encapsulation.
+ * Mandatory annotation class for repeatable {@link OperationProperty} encapsulation.
  *
  * @author sylordis
  *
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface ReorgOperationProperties {
+public @interface OperationProperties {
 
-	ReorgOperationProperty[] value();
+	OperationProperty[] value();
 
 }

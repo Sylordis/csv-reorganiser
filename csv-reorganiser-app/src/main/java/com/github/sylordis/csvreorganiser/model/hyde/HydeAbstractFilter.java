@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
 
 /**
  * Abstract class for Hyde filters.
  * 
  * When filled via {@link #fill(List)}, the list of arguments will be used according to the
- * annotation {@link ReorgOperationProperty#position()}, i.e. argument N will be used to fill
+ * annotation {@link OperationProperty#position()}, i.e. argument N will be used to fill
  * property position N.
  */
 public abstract class HydeAbstractFilter implements HydeFilter {
@@ -42,13 +42,13 @@ public abstract class HydeAbstractFilter implements HydeFilter {
 	@Override
 	public void fill(List<Object> data) throws SelfFillingException {
 		logger.debug("Filling");
-		List<ReorgOperationProperty> properties = new ArrayList<>(
-		        Arrays.asList(this.getClass().getAnnotationsByType(ReorgOperationProperty.class)));
+		List<OperationProperty> properties = new ArrayList<>(
+		        Arrays.asList(this.getClass().getAnnotationsByType(OperationProperty.class)));
 		logger.debug("class={} annotations={}", this.getClass(),
 		        properties.stream().map(a -> a.name()).collect(Collectors.toList()));
 		Collections.sort(properties, (p1, p2) -> Integer.compare(p1.position(), p2.position()));
 		Deque<Object> args = new ArrayDeque<>(data);
-		for (ReorgOperationProperty prop : properties) {
+		for (OperationProperty prop : properties) {
 			if (!args.isEmpty()) {
 				Object arg = args.pop();
 				this.setField(prop.field(), arg);

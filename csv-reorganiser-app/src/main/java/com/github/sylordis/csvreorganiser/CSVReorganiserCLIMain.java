@@ -15,10 +15,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess;
+import com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess;
 import com.github.sylordis.csvreorganiser.model.ReorgConfiguration;
 import com.github.sylordis.csvreorganiser.model.Reorganiser;
 import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
+import com.github.sylordis.csvreorganiser.model.engines.EngineFactory;
+import com.github.sylordis.csvreorganiser.model.engines.ReorganiserEngine;
 import com.github.sylordis.csvreorganiser.model.exceptions.EngineException;
 import com.github.sylordis.csvreorganiser.model.exceptions.ReorganiserRuntimeException;
 
@@ -42,12 +44,27 @@ public final class CSVReorganiserCLIMain {
 
 	/**
 	 * Runs the activity of taking the input, error checking it and running the Reorganiser model to
-	 * perform the required operations.
+	 * perform the required operations.<br/>
+	 * 
+	 * This method considers than no engine is specified.
 	 *
 	 * @param args command line arguments
+	 * @see #reorganise(String[], ReorganiserEngine)
 	 * @see #usage()
 	 */
 	public void reorganise(String[] args) {
+		reorganise(args, null);
+	}
+
+	/**
+	 * Runs the activity of taking the input, error checking it and running the Reorganiser model to
+	 * perform the required operations.
+	 *
+	 * @param args   command line arguments
+	 * @param engine custom engine to provide
+	 * @see #usage()
+	 */
+	public void reorganise(String[] args, ReorganiserEngine engine) {
 		// Args check
 		if (args.length < 3)
 			fatal("Wrong number of arguments.", this::usage);
@@ -111,6 +128,7 @@ public final class CSVReorganiserCLIMain {
 		options.addOption(optionEngine);
 		options.addOption(optionHelp);
 		CommandLineParser cliParser = new DefaultParser();
+		ReorganiserEngine engine = null;
 		try {
 			CommandLine cli = cliParser.parse(options, args);
 			if (cli.hasOption(optionHelp)) {
@@ -118,7 +136,9 @@ public final class CSVReorganiserCLIMain {
 			} else if (cli.hasOption(optionDoc)) {
 				generateDocumentation();
 			} else {
-				reorganise(args);
+				if (cli.hasOption(optionEngine))
+					engine = new EngineFactory().getEngineFromId(cli.getOptionValue(optionEngine));
+				reorganise(args, engine);
 			}
 		} catch (ParseException e) {
 			logger.error(e);
@@ -129,7 +149,7 @@ public final class CSVReorganiserCLIMain {
 	 * Generates code documentation.
 	 */
 	private void generateDocumentation() {
-		new MarkdownDocumentationOutputChess().generate(new ChessDefaultConfigurationSupplier());
+		new MarkdownDocumentationGeneratorChess().generate(new ChessDefaultConfigurationSupplier());
 	}
 
 	/**
@@ -159,7 +179,7 @@ public final class CSVReorganiserCLIMain {
 		            Those files should have the same columns available.
 		          target
 		            Target file, path to file to be written with the results.
-		        
+
 		        """, options, null, true);
 	}
 

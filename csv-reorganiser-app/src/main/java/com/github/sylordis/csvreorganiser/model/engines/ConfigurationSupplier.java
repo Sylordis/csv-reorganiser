@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
 
 /**
  * Implement this interface to supply a given configuration of operations. Defaults are taking all
  * classes that are in a specific package provided by {@link #getBasePackage()} and that inherit
- * from a given {@link #getBaseType()} and that possess the {@link ReorgOperation} annotation.
+ * from a given {@link #getBaseType()} and that possess the {@link Operation} annotation.
  * 
  * @param <T> type of the operation
  */
@@ -32,7 +32,7 @@ public interface ConfigurationSupplier<T> {
 	default Map<String, Class<? extends T>> getConfigurationDictionary() {
 		Map<String, Class<? extends T>> map = new HashMap<>();
 		Set<Class<? extends T>> types = getConfigurationByReflection(getBasePackage(), getBaseType());
-		types.forEach(t -> map.put(t.getAnnotation(ReorgOperation.class).name(), t));
+		types.forEach(t -> map.put(t.getAnnotation(Operation.class).name(), t));
 		return map;
 	}
 
@@ -47,6 +47,6 @@ public interface ConfigurationSupplier<T> {
 	default Set<Class<? extends T>> getConfigurationByReflection(String pack, Class<T> type) {
 		Reflections reflections = new Reflections(new ConfigurationBuilder().forPackage(pack));
 		Set<Class<? extends T>> types = reflections.getSubTypesOf(type);
-		return types.stream().filter(t -> t.isAnnotationPresent(ReorgOperation.class)).collect(Collectors.toSet());
+		return types.stream().filter(t -> t.isAnnotationPresent(Operation.class)).collect(Collectors.toSet());
 	}
 }

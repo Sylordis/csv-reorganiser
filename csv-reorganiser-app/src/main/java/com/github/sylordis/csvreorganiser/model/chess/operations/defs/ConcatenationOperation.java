@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -18,9 +18,9 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ReorgOperation(name = "concat")
-@ReorgOperationProperty(name = "values", field = "values", required = true)
-@ReorgOperationShortcut(keyword = "concat", property = "values")
+@Operation(name = "concat")
+@OperationProperty(name = "values", field = "values", required = true)
+@OperationShortcut(keyword = "concat", property = "values")
 public class ConcatenationOperation extends ChessAbstractReorgOperation {
 
 	/**
@@ -30,7 +30,7 @@ public class ConcatenationOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Required properties for value specification in shortcut should match
-	 * {@link ReorgOperationShortcut#keyword()}.
+	 * {@link OperationShortcut#keyword()}.
 	 */
 	public static final String SHORTCUT_KEY = "concat";
 

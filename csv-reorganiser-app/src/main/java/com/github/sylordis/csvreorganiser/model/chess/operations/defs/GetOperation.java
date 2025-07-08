@@ -2,9 +2,9 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationShortcut;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationShortcut;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 
 /**
@@ -13,14 +13,14 @@ import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractRe
  * @author sylordis
  *
  */
-@ReorgOperation(name = "get")
-@ReorgOperationProperty(name = "source", field = "srcColumn", required = true)
-@ReorgOperationShortcut(keyword = "source", property = "source")
+@Operation(name = "get")
+@OperationProperty(name = "source", field = "srcColumn", required = true)
+@OperationShortcut(keyword = "source", property = "source")
 public class GetOperation extends ChessAbstractReorgOperation {
 
 	/**
 	 * Required properties for value specification in shortcut should match
-	 * {@link ReorgOperationShortcut#keyword()}.
+	 * {@link OperationShortcut#keyword()}.
 	 */
 	public static final String SHORTCUT_KEY = "source";
 

@@ -1,17 +1,21 @@
 package com.github.sylordis.csvreorganiser.model.hyde.filters;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.hyde.HydeAbstractFilter;
 
 /**
  * Extracts a portion of the source string.
  */
-@ReorgOperation(name = "substring")
-@ReorgOperationProperty(name = "start", field = "startIndex", position = 0, required = true)
-@ReorgOperationProperty(name = "end", field = "endIndex", position = 1)
+@Operation(name = "substring")
+@OperationProperty(name = "start", field = "startIndex", position = 0, required = true)
+@OperationProperty(name = "end", field = "endIndex", position = 1)
 public class SubstringFilter extends HydeAbstractFilter {
 
+	/**
+	 * Default end index value if not set.
+	 */
+	public static final int DEFAULT_END_INDEX = -1;
 	/**
 	 * Start index of the substring.
 	 */
@@ -19,12 +23,12 @@ public class SubstringFilter extends HydeAbstractFilter {
 	/**
 	 * End index of the substring (excluded) or until the end of the string if not specified.
 	 */
-	private int endIndex = -1;
+	private int endIndex = DEFAULT_END_INDEX;
 
 	@Override
 	public String apply(String t) {
 		String res = t;
-		if (endIndex != -1)
+		if (endIndex != DEFAULT_END_INDEX)
 			res = t.substring(startIndex, endIndex);
 		else
 			res = t.substring(startIndex);
@@ -34,7 +38,7 @@ public class SubstringFilter extends HydeAbstractFilter {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "[" + startIndex + " => "
-		        + (endIndex == -1 ? "" : endIndex) + "]";
+		        + (endIndex == DEFAULT_END_INDEX ? "" : endIndex) + "]";
 	}
 
 	/**

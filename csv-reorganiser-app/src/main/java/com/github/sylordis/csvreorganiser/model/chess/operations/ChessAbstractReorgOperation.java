@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.sylordis.csvreorganiser.model.SelfFiller;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.engines.ReorganiserOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
 import com.github.sylordis.csvreorganiser.model.exceptions.SelfFillingException;
@@ -69,13 +69,13 @@ public abstract class ChessAbstractReorgOperation implements ReorganiserOperatio
 	/**
 	 * Hidden setup of the operation, setting all properties to be given using
 	 * {@link #addProperty(String, String)}. If not overridden, this method will get all annotations
-	 * {@link ReorgOperationProperty} to automatically fill the properties map.
+	 * {@link OperationProperty} to automatically fill the properties map.
 	 */
 	protected void setup() {
 		logger.debug("Setting up");
-		ReorgOperationProperty[] properties = this.getClass().getAnnotationsByType(ReorgOperationProperty.class);
+		OperationProperty[] properties = this.getClass().getAnnotationsByType(OperationProperty.class);
 		logger.debug("class={} annotations={}", this.getClass(), Arrays.toString(properties));
-		for (ReorgOperationProperty prop : properties) {
+		for (OperationProperty prop : properties) {
 			logger.debug("Setting property {} linking to field {}", prop.name(), prop.field());
 			addProperty(prop.name(), prop.field());
 			if (prop.required())

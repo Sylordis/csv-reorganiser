@@ -9,6 +9,11 @@ package com.github.sylordis.csvreorganiser.model.constants;
 public final class ConfigConstants {
 
 	/**
+	 * Default string ellipsis.
+	 */
+	public final static String DEFAULT_ELLIPSIS = "...";
+
+	/**
 	 * Constants for Chess engine.
 	 *
 	 */

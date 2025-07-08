@@ -2,8 +2,8 @@ package com.github.sylordis.csvreorganiser.model.chess.operations.defs;
 
 import org.apache.commons.csv.CSVRecord;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportException;
 
@@ -20,10 +20,10 @@ import com.github.sylordis.csvreorganiser.model.exceptions.ConfigurationImportEx
  * @author sylordis
  *
  */
-@ReorgOperation(name = "substring")
-@ReorgOperationProperty(name = "source", field = "srcColumn", required = true)
-@ReorgOperationProperty(name = "start", field = "indexStart", required = true)
-@ReorgOperationProperty(name = "end", field = "indexEnd")
+@Operation(name = "substring")
+@OperationProperty(name = "source", field = "srcColumn", required = true)
+@OperationProperty(name = "start", field = "indexStart", required = true)
+@OperationProperty(name = "end", field = "indexEnd")
 public class SubstringOperation extends ChessAbstractReorgOperation {
 
 	/**

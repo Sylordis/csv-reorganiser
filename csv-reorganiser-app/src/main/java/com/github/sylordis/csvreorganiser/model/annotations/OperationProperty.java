@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation keeping track of operations required properties to be set to facilitate configuration
- * of future operations. Setup of operations will just parse all {@link ReorgOperationProperty}
+ * of future operations. Setup of operations will just parse all {@link OperationProperty}
  * annotations and fill everything by itself without having to override the setup() method.
  *
  * @author sylordis
@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-@Repeatable(ReorgOperationProperties.class)
-public @interface ReorgOperationProperty {
+@Repeatable(OperationProperties.class)
+public @interface OperationProperty {
 
 	/**
 	 * Name of the required property in configuration.
@@ -35,17 +35,25 @@ public @interface ReorgOperationProperty {
 	public String field();
 
 	/**
-	 * Whether this property is required (true) or not (false).
+	 * Whether this property is required (true) or not (false). Default is <code>false</code>.
 	 * 
 	 * @return
 	 */
 	public boolean required() default false;
 
 	/**
-	 * Position of the property.
+	 * Position of the property. Default is <code>-1</code> for no position.
 	 * 
 	 * @return
 	 */
 	public int position() default -1;
+
+	/**
+	 * Description of the property. If left blank, the {@link #field()}'s javadoc will be taken instead.
+	 * Default is empty string.
+	 * 
+	 * @return
+	 */
+	public String description() default "";
 
 }

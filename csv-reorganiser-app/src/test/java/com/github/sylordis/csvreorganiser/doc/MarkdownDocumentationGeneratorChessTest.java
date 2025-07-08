@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
 import com.github.sylordis.csvreorganiser.model.chess.operations.defs.ConcatenationOperation;
@@ -35,12 +35,12 @@ import com.github.sylordis.csvreorganiser.utils.ParsingUtils;
  *
  */
 @Tag("Documentation")
-class MarkdownDocumentationOutputChessTest {
+class MarkdownDocumentationGeneratorChessTest {
 
 	/**
 	 * Class under test.
 	 */
-	private MarkdownDocumentationOutputChess mdoc;
+	private MarkdownDocumentationGeneratorChess mdoc;
 	/**
 	 * Holder for documentation output.
 	 */
@@ -59,16 +59,16 @@ class MarkdownDocumentationOutputChessTest {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		mdoc = spy(new MarkdownDocumentationOutputChess());
+		mdoc = spy(new MarkdownDocumentationGeneratorChess());
 		mdocOutput = new StringBuilder();
 		mdoc.setOutputConsumer(mdocConsumer);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#generate()}. Sorry
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#generate()}. Sorry
 	 * for this lazy test but it's too big to match against. Since this method just calls
-	 * {@link MarkdownDocumentationOutputChess#generateOperationDocumentation(Class)} for each chess
+	 * {@link MarkdownDocumentationGeneratorChess#generateOperationDocumentation(Class)} for each chess
 	 * operation, we just check that this method was called once per operation.
 	 */
 	@Test
@@ -91,7 +91,7 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#generateOperationDocumentation(Class)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#generateOperationDocumentation(Class)}.
 	 */
 	@Test
 	@Tag("Integration")
@@ -125,7 +125,7 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#generateOperationDocumentation(Class)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#generateOperationDocumentation(Class)}.
 	 */
 	@Test
 	@Tag("Integration")
@@ -163,31 +163,31 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#propToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.OperationProperty)}.
 	 */
 	@Test
 	@Tag("Integration")
 	void testPropToYaml() {
 		String yaml = mdoc.propToYaml(GetOperation.class,
-		        GetOperation.class.getDeclaredAnnotation(ReorgOperationProperty.class));
+		        GetOperation.class.getDeclaredAnnotation(OperationProperty.class));
 		assertEquals("  source: <source>", yaml);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propValueToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#propValueToYaml(java.lang.Class, com.github.sylordis.csvreorganiser.model.annotations.OperationProperty)}.
 	 */
 	@Test
 	@Tag("Integration")
 	void testPropValueToYamlClassOfQextendsChessAbstractReorgOperationChessOperationProperty() {
 		String yaml = mdoc.propValueToYaml(ValueOperation.class,
-		        ValueOperation.class.getDeclaredAnnotation(ReorgOperationProperty.class));
+		        ValueOperation.class.getDeclaredAnnotation(OperationProperty.class));
 		assertEquals(" <value>", yaml);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propValueToYaml(java.lang.Class, java.lang.String, java.util.function.Supplier)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#propValueToYaml(java.lang.Class, java.lang.String, java.util.function.Supplier)}.
 	 */
 	@Test
 	void testPropValueToYamlClassOfQextendsChessAbstractReorgOperationStringSupplierOfString() {
@@ -198,7 +198,7 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#propValueToYaml(java.lang.Class, java.lang.String, java.util.function.Supplier)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#propValueToYaml(java.lang.Class, java.lang.String, java.util.function.Supplier)}.
 	 */
 	@Test
 	void testPropValueToYamlClassOfQextendsChessAbstractReorgOperationStringSupplierOfString_list() {
@@ -209,7 +209,7 @@ class MarkdownDocumentationOutputChessTest {
 
 	/**
 	 * Test method for
-	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationOutputChess#getFieldType(java.lang.Class, java.lang.String)}.
+	 * {@link com.github.sylordis.csvreorganiser.doc.MarkdownDocumentationGeneratorChess#getFieldType(java.lang.Class, java.lang.String)}.
 	 */
 	@Test
 	void testGetFieldType() {
@@ -220,8 +220,8 @@ class MarkdownDocumentationOutputChessTest {
 	 * Creates a documentation generator for this test (for internal classes)
 	 * @return
 	 */
-	private MarkdownDocumentationOutputChess createForTest() {
-		return new MarkdownDocumentationOutputChess(ParsingUtils.sourceFromRoot("src/test/java"), (r,t) -> r.parse("com.github.sylordis.csvreorganiser.test.chess.defs", t.getSimpleName() + ".java"), mdocConsumer);
+	private MarkdownDocumentationGeneratorChess createForTest() {
+		return new MarkdownDocumentationGeneratorChess(ParsingUtils.sourceFromRoot("src/test/java"), (r,t) -> r.parse("com.github.sylordis.csvreorganiser.test.chess.defs", t.getSimpleName() + ".java"), mdocConsumer);
 	}
 	
 }

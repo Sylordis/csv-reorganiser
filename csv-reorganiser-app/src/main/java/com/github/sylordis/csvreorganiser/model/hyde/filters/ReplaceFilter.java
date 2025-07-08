@@ -1,25 +1,31 @@
 package com.github.sylordis.csvreorganiser.model.hyde.filters;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperationProperty;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
+import com.github.sylordis.csvreorganiser.model.annotations.OperationProperty;
 import com.github.sylordis.csvreorganiser.model.hyde.HydeAbstractFilter;
 
 /**
- * Performs a regular expression replacement on the source string.
+ * Performs a regular expression replacement on the source string.<br/>
+ * <br/>
+ * Only the first argument is mandatory. If the second is not provided, the replacement will be
+ * considered as an empty string, e.g. to remove the pattern.
  */
-@ReorgOperation(name = "replace")
-@ReorgOperationProperty(name = "pattern", field = "pattern", position = 0, required = true)
-@ReorgOperationProperty(name = "replace", field = "replacement", position = 1, required = true)
+@Operation(name = "replace")
+@OperationProperty(name = "pattern", field = "pattern", position = 0, required = true)
+@OperationProperty(name = "replace", field = "replacement", position = 1)
 public class ReplaceFilter extends HydeAbstractFilter {
 
 	/**
-	 * Pattern to look for in the content as defined by <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html>Java Pattern</a>.
+	 * Pattern to look for in the content as defined by <a
+	 * href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html>Java
+	 * Pattern</a>.
 	 */
 	private String pattern;
 	/**
-	 * Replacement to replace the identified patterns in the source string. Use `$X` to replace by capture group number X.
+	 * Replacement to replace the identified patterns in the source string. Use `$X` to replace by
+	 * capture group number X. If not specified, will be considered as empty string.
 	 */
-	private String replacement;
+	private String replacement = "";
 
 	@Override
 	public String apply(String t) {
@@ -28,8 +34,7 @@ public class ReplaceFilter extends HydeAbstractFilter {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "[" + pattern + " => "
-		        + replacement + "]";
+		return this.getClass().getSimpleName() + "[" + pattern + " => " + replacement + "]";
 	}
 
 	/**
@@ -60,5 +65,4 @@ public class ReplaceFilter extends HydeAbstractFilter {
 		this.replacement = replacement;
 	}
 
-	
 }

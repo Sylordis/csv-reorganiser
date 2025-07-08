@@ -28,15 +28,18 @@ configurations {
     mockitoAgent
 }
 dependencies {
+	// Apache commons
 	implementation "commons-cli:commons-cli:1.9.0"
 	implementation "org.apache.commons:commons-csv:1.14.0"
 	implementation "commons-io:commons-io:2.19.0"
 	implementation "org.apache.commons:commons-lang3:3.17.0"
 	implementation "org.apache.logging.log4j:log4j-core:2.25.0"
+	// Others
 	implementation "org.reflections:reflections:0.10.2"
 	implementation "org.yaml:snakeyaml:2.4"
 	implementation "com.github.javaparser:javaparser-core:3.27.0"
-	
+    implementation libs.guava
+
     // Use JUnit Jupiter for testing.
     testImplementation libs.junit.jupiter
 	testImplementation "org.hamcrest:hamcrest:3.0"
@@ -45,13 +48,11 @@ dependencies {
         transitive = false
     }
     testImplementation "org.mockito:mockito-junit-jupiter:2.19.0"
-    
+   
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
+	// Since reflections includes an old slf4j version, nop is added to remove the log messages
 	runtimeOnly 'org.slf4j:slf4j-nop:2.0.17'
 
-    // This dependency is used by the application.
-    implementation libs.guava
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

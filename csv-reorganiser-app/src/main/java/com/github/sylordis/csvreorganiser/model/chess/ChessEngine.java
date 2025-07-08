@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.Message;
 
-import com.github.sylordis.csvreorganiser.model.annotations.ReorgOperation;
+import com.github.sylordis.csvreorganiser.model.annotations.Operation;
 import com.github.sylordis.csvreorganiser.model.chess.config.ChessConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.config.ChessDefaultConfigurationSupplier;
 import com.github.sylordis.csvreorganiser.model.chess.operations.ChessAbstractReorgOperation;
@@ -42,7 +42,7 @@ import com.github.sylordis.csvreorganiser.utils.yaml.YAMLUtils;
  * <ul>
  * <li>Class is located into or under the package
  * ConfigConstants#{@link Chess#OPERATIONS_PACKAGE}.</li>
- * <li>Class is annotated with {@link ReorgOperation}.</li>
+ * <li>Class is annotated with {@link Operation}.</li>
  * </ul>
  * Operations will be collected via reflection if they meet these criteria. Each operation is in
  * charge of describing via other annotations their structure and parameters.
