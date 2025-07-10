@@ -7,7 +7,7 @@ public class HydeDefaultConfigurationSupplier implements HydeConfigurationSuppli
 
 	@Override
 	public String getBasePackage() {
-		return ConfigConstants.Hyde.OPERATIONS_PACKAGE;
+		return ConfigConstants.Hyde.FILTERS_PACKAGE;
 	}
 
 	@Override

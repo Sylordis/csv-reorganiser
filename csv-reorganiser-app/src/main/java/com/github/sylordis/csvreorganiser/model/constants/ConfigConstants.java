@@ -14,6 +14,11 @@ public final class ConfigConstants {
 	public final static String DEFAULT_ELLIPSIS = "...";
 
 	/**
+	 * Path of the source files from the module root.
+	 */
+	public final static String SOURCE_ROOT = "src/main/java/";
+
+	/**
 	 * Constants for Chess engine.
 	 *
 	 */
@@ -49,7 +54,7 @@ public final class ConfigConstants {
 		/**
 		 * Name of the package with all operations definitions.
 		 */
-		public final static String OPERATIONS_PACKAGE = "com.github.sylordis.csvreorganiser.model.hyde.filters";
+		public final static String FILTERS_PACKAGE = "com.github.sylordis.csvreorganiser.model.hyde.filters";
 	}
 
 	/**

@@ -42,6 +42,15 @@ public class ParsingUtils {
 		return new SourceRoot(ParsingUtils.gradleModuleRoot(ParsingUtils.class).resolve(path));
 	}
 
+	/**
+	 * Sanitises a Javadoc to be processed properly as String.
+	 * @param doc
+	 * @return
+	 */
+	public static String sanitiseJavadoc(String doc) {
+		return doc.replaceAll("\n[ \t]+\\* ?", "\n").replaceAll("(?m)^([ \t]*|@.*)\r?\n", "").trim();
+	}
+
 	private ParsingUtils() {
 		// Nothing to do here
 	}

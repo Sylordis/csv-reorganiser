@@ -29,11 +29,7 @@ public abstract class HydeAbstractFilter implements HydeFilter {
 	private final Logger logger;
 
 	/**
-<<<<<<< HEAD
-	 * Creates a new Hyde abstract filter.
-=======
 	 * Constructs a new abstract filter.
->>>>>>> 9ac6bc5 (New hyde filters, performance files)
 	 */
 	public HydeAbstractFilter() {
 		this.logger = LogManager.getLogger();
